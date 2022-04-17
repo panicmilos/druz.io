@@ -1,8 +1,8 @@
 # socializac.io
-Socializac.io je web aplikacija koja predstavlja društvenu mrežu.
+Druž.io je web aplikacija koja predstavlja društvenu mrežu.
 
 # Funkcionalnosti:
-Funkcionalnosti koje socializac.io pruža:
+Funkcionalnosti koje druž.io pruža:
 
 ### Ne ulogovani korisnik:
 * Prijava
