@@ -1,4 +1,4 @@
-# socializac.io
+# druž.io
 Druž.io je web aplikacija koja predstavlja društvenu mrežu.
 
 # Funkcionalnosti:
