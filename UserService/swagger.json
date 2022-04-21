@@ -1,0 +1,49 @@
+{
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "title": "Comapany Api:",
+    "version": "0.0.1"
+  },
+  "host": "localhost:5000",
+  "basePath": "/",
+  "paths": {
+    "/admin/company/{id}": {
+      "delete": {
+        "security": [
+          {
+            "apiKey": [
+              "[]"
+            ]
+          }
+        ],
+        "description": "Delete company",
+        "tags": [
+          "admin"
+        ],
+        "operationId": "deleteCompany",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/Account"
+          },
+          "401": {
+            "$ref": "#/responses/Account"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "apiKey": {
+      "type": "apiKey",
+      "name": "authorization",
+      "in": "header"
+    }
+  }
+}
