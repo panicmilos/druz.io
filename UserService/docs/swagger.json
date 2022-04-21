@@ -8,17 +8,17 @@
   ],
   "swagger": "2.0",
   "info": {
-    "title": "Comapany Api:",
+    "title": "User Service:",
     "version": "0.0.1"
   },
-  "host": "localhost:5000",
+  "host": "localhost:8000",
   "basePath": "/",
   "paths": {
     "/admin/company/{id}": {
       "delete": {
         "security": [
           {
-            "apiKey": [
+            "Bearer": [
               "[]"
             ]
           }
@@ -40,7 +40,7 @@
     }
   },
   "securityDefinitions": {
-    "apiKey": {
+    "Bearer": {
       "type": "apiKey",
       "name": "authorization",
       "in": "header"

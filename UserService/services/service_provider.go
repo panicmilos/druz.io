@@ -1,7 +1,8 @@
-package config
+package services
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/sarulabs/di"
@@ -9,12 +10,14 @@ import (
 	"gorm.io/gorm"
 )
 
+var Provider = buildServiceContainer()
+
 const (
 	DatabaseSeeder     = "DatabaseSeeder"
 	DatabaseConnection = "DatabaseConnection"
 )
 
-var ServiceContainer = []di.Def{
+var serviceContainer = []di.Def{
 	{
 		Name:  DatabaseSeeder,
 		Scope: di.App,
@@ -43,4 +46,20 @@ var ServiceContainer = []di.Def{
 			return err
 		},
 	},
+}
+
+func buildServiceContainer() di.Container {
+	builder, err := di.NewBuilder()
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	err = builder.Add(serviceContainer...)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+
+	return builder.Build()
 }

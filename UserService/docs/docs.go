@@ -1,16 +1,16 @@
-//  Comapany Api:
+//  User Service:
 //   version: 0.0.1
-//   title: Comapany Api
+//   title: User Service
 //  Schemes: http, https
-//  Host: localhost:5000
+//  Host: localhost:8000
 //  BasePath: /
 //  Produces:
 //    - application/json
 //
 // securityDefinitions:
-//  apiKey:
+//  Bearer:
 //    type: apiKey
 //    in: header
 //    name: authorization
 // swagger:meta
-package controllers
+package docs
