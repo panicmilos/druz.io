@@ -8,8 +8,7 @@ import (
 
 func main() {
 	setup.SetupEnviroment()
-	setup.SetupMapper()
-	setup.SetupDatabase()
+	// setup.SetupDatabase()
 
 	server.New().Start()
 

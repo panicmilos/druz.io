@@ -38,6 +38,17 @@ func (userCollection *UsersCollection) ReadAccountByProfileId(id uint) *models.A
 	return account
 }
 
+func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
+	profile := &models.Profile{}
+
+	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
+	if result.RowsAffected == 0 {
+		return nil
+	}
+
+	return profile
+}
+
 func (userCollection *UsersCollection) Create(user *models.Account) *models.Profile {
 	userCollection.DB.Create(user)
 
@@ -48,4 +59,10 @@ func (userCollection *UsersCollection) UpdateAccount(account *models.Account) *m
 	userCollection.DB.Save(account)
 
 	return account
+}
+
+func (userCollection *UsersCollection) UpdateProfile(profile *models.Profile) *models.Profile {
+	userCollection.DB.Save(profile)
+
+	return profile
 }

@@ -40,18 +40,10 @@ func (request *CreateAccountRequest) Validate() error {
 				validation.Required.Error("Last name must be provided"),
 			),
 			validation.Field(&request.Profile.Birthday,
-				validation.Required.Error("Birthdate must be provided"),
-				validation.By(func(value interface{}) error {
-					birthday := value.(time.Time).AddDate(13, 0, 0)
-					if birthday.After(time.Now()) {
-						return errors.NewErrValidation("You have to be at least 13 years old")
-					}
-					return nil
-				}),
+				*helpers.ValidateBirthday()...,
 			),
 			validation.Field(&request.Profile.Gender,
-				validation.Min(0).Error("Gender must be >= 0"),
-				validation.Max(2).Error("Gender must be <= 2"),
+				*helpers.ValidateGender()...,
 			),
 		),
 	)

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/devfeel/mapper"
+	"github.com/dranikpg/dto-mapper"
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
 )
@@ -29,6 +29,20 @@ var YourGetHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 	// helpers.JSONResponse(w, 200, service.ReadUsers())
 })
 
+var ReadUserById = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	userService := di.Get(r, services.UsersService).(*services.UserService)
+	user, err := userService.ReadById(uint(id))
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, user)
+})
+
 var CreateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	var request *api_contracts.CreateAccountRequest
 	err := helpers.ReadJSONBody(r, &request)
@@ -43,7 +57,7 @@ var CreateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &models.Account{}
-	mapper.Mapper(request, user)
+	dto.Map(user, request)
 
 	userService := di.Get(r, services.UsersService).(*services.UserService)
 	createdUser, err := userService.Create(user)
@@ -52,6 +66,36 @@ var CreateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.JSONResponse(w, 200, createdUser)
+})
+
+var UpdateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var request *api_contracts.UpdateProfileRequest
+	err := helpers.ReadJSONBody(r, &request)
+
+	if errors.Handle(err, w) {
+		return
+	}
+
+	err = request.Validate()
+	if errors.Handle(err, w) {
+		return
+	}
+
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	profile := &models.Profile{}
+	dto.Map(profile, request)
+	profile.ID = uint(id)
+
+	userService := di.Get(r, services.UsersService).(*services.UserService)
+
+	updatedUser, err := userService.Update(profile)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, updatedUser)
 })
 
 var ChangePassword = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

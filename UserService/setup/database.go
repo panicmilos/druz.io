@@ -12,4 +12,9 @@ func SetupDatabase() {
 
 	db.AutoMigrate(&models.Account{})
 	db.AutoMigrate(&models.Profile{})
+	db.AutoMigrate(&models.LivePlace{})
+	db.AutoMigrate(&models.WorkPlace{})
+	db.AutoMigrate(&models.Education{})
+	db.AutoMigrate(&models.Interes{})
+
 }

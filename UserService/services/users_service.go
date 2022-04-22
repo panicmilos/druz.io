@@ -15,6 +15,15 @@ type UserService struct {
 // 	return userService.repository.Users.ReadUsers()
 // }
 
+func (userService *UserService) ReadById(id uint) (*models.Profile, error) {
+	profile := userService.repository.Users.ReadById(id)
+	if profile == nil {
+		return nil, errors.NewErrNotFound("Profile is not found")
+	}
+
+	return profile, nil
+}
+
 func (userService *UserService) Create(user *models.Account) (*models.Profile, error) {
 	if userService.repository.Users.ReadAccountByEmail(user.Email) != nil {
 		return nil, errors.NewErrBadRequest("Email is already in use.")
@@ -24,6 +33,27 @@ func (userService *UserService) Create(user *models.Account) (*models.Profile, e
 	user.Password = helpers.GetSaltedAndHashedPassword(user.Password, user.Salt)
 
 	return userService.repository.Users.Create(user), nil
+}
+
+func (userService *UserService) Update(profile *models.Profile) (*models.Profile, error) {
+	existingProfile, err := userService.ReadById(profile.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	userService.repository.LivePlaces.DeleteByProfileId(profile.ID)
+	userService.repository.WorkPlaces.DeleteByProfileId(profile.ID)
+	userService.repository.Educations.DeleteByProfileId(profile.ID)
+	userService.repository.Intereses.DeleteByProfileId(profile.ID)
+
+	existingProfile.About = profile.About
+	existingProfile.PhoneNumber = profile.PhoneNumber
+	existingProfile.LivePlaces = profile.LivePlaces
+	existingProfile.WorkPlaces = profile.WorkPlaces
+	existingProfile.Educations = profile.Educations
+	existingProfile.Intereses = profile.Intereses
+
+	return userService.repository.Users.UpdateProfile(existingProfile), nil
 }
 
 func (userService *UserService) ChangePassword(id uint, currentPassword string, newPassword string) (*models.Profile, error) {

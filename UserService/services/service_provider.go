@@ -28,7 +28,9 @@ var serviceContainer = []di.Def{
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
 			connectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_ADDRESS"), os.Getenv("DB_NAME"))
-			return gorm.Open(mysql.Open(connectionString), &gorm.Config{})
+			return gorm.Open(mysql.Open(connectionString), &gorm.Config{
+				Logger: logger.Default.LogMode(logger.Info),
+			})
 		},
 		Close: func(obj interface{}) error {
 			db, err := obj.(*gorm.DB).DB()
@@ -61,6 +63,18 @@ var serviceContainer = []di.Def{
 			return &repository.Repository{
 				DB: db,
 				Users: &repository.UsersCollection{
+					DB: db,
+				},
+				LivePlaces: &repository.LivePlacesCollection{
+					DB: db,
+				},
+				WorkPlaces: &repository.WorkPlacesCollection{
+					DB: db,
+				},
+				Educations: &repository.EducationsCollection{
+					DB: db,
+				},
+				Intereses: &repository.InteresesCollection{
 					DB: db,
 				},
 			}, nil
