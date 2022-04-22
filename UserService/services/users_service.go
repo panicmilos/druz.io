@@ -16,7 +16,7 @@ type UserService struct {
 // }
 
 func (userService *UserService) Create(user *models.Account) (*models.Profile, error) {
-	if userService.repository.Users.ReadByEmail(user.Email) != nil {
+	if userService.repository.Users.ReadAccountByEmail(user.Email) != nil {
 		return nil, errors.NewErrBadRequest("Email is already in use.")
 	}
 

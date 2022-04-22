@@ -12,6 +12,7 @@ type Account struct {
 	Email    string
 	Password string
 	Salt     string
+	Role     Role
 
 	Profile Profile
 }

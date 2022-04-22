@@ -19,6 +19,7 @@ const (
 	DatabaseConnection = "DatabaseConnection"
 	Repository         = "Repository"
 	UsersService       = "UsersService"
+	AuthService        = "AuthenticationService"
 )
 
 var serviceContainer = []di.Def{
@@ -71,6 +72,16 @@ var serviceContainer = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
 			return &UserService{
+				repository: repository,
+			}, nil
+		},
+	},
+	{
+		Name:  AuthService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			return &AuthenticationService{
 				repository: repository,
 			}, nil
 		},

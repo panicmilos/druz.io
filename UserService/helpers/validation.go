@@ -18,6 +18,12 @@ func NestedValidation(target interface{}, fieldRules ...*validation.FieldRules) 
 	}))
 }
 
+func ValidateEmail() *[]validation.Rule {
+	return &[]validation.Rule{
+		validation.Match(regexp.MustCompile(`^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$`)).Error("Email must be valid"),
+	}
+}
+
 func ValidatePassword() *[]validation.Rule {
 	return &[]validation.Rule{
 		validation.Length(14, 30).Error("Password should have atleast 14 characters"),

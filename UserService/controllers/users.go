@@ -23,13 +23,13 @@ import (
 //  401: Account
 //  200: Account
 // Create handles Delete get company
-func YourGetHandler(w http.ResponseWriter, r *http.Request) {
+var YourGetHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	// service := di.Get(r, services.UsersService).(*services.UserService)
 
 	// helpers.JSONResponse(w, 200, service.ReadUsers())
-}
+})
 
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+var CreateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	var request *api_contracts.CreateAccountRequest
 	err := helpers.ReadJSONBody(r, &request)
 
@@ -52,9 +52,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.JSONResponse(w, 200, createdUser)
-}
+})
 
-func ChangePassword(w http.ResponseWriter, r *http.Request) {
+var ChangePassword = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	var request *api_contracts.ChangePasswordRequest
 	err := helpers.ReadJSONBody(r, &request)
 
@@ -77,4 +77,4 @@ func ChangePassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.JSONResponse(w, 200, createdUser)
-}
+})

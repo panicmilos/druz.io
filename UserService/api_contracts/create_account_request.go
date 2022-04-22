@@ -1,7 +1,6 @@
 package api_contracts
 
 import (
-	"regexp"
 	"time"
 
 	"UserService/errors"
@@ -28,7 +27,8 @@ type CreateProfileRequest struct {
 func (request *CreateAccountRequest) Validate() error {
 	err := validation.ValidateStruct(request,
 		validation.Field(&request.Email,
-			validation.Match(regexp.MustCompile(`^([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$`)).Error("Email must be valid")),
+			*helpers.ValidateEmail()...,
+		),
 		validation.Field(&request.Password,
 			*helpers.ValidatePassword()...,
 		),

@@ -10,15 +10,15 @@ type UsersCollection struct {
 	DB *gorm.DB
 }
 
-func (userCollection *UsersCollection) ReadByEmail(email string) *models.Profile {
+func (userCollection *UsersCollection) ReadAccountByEmail(email string) *models.Account {
 	account := &models.Account{}
 
-	result := userCollection.DB.Where("email = ?", email).First(account)
+	result := userCollection.DB.Preload("Profile").Where("email = ?", email).First(account)
 	if result.RowsAffected == 0 {
 		return nil
 	}
 
-	return &account.Profile
+	return account
 }
 
 func (userCollection *UsersCollection) ReadAccountByProfileId(id uint) *models.Account {

@@ -35,3 +35,27 @@ func NewErrBadRequest(msg string) *ErrBadRequest {
 func (err *ErrBadRequest) Error() string {
 	return err.msg
 }
+
+type ErrUnauthorized struct {
+	msg string
+}
+
+func NewErrUnauthorized(msg string) *ErrUnauthorized {
+	return &ErrUnauthorized{msg: msg}
+}
+
+func (err *ErrUnauthorized) Error() string {
+	return err.msg
+}
+
+type ErrForbidden struct {
+	msg string
+}
+
+func NewErrForbidden(msg string) *ErrForbidden {
+	return &ErrForbidden{msg: msg}
+}
+
+func (err *ErrForbidden) Error() string {
+	return err.msg
+}
