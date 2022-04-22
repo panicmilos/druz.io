@@ -29,7 +29,7 @@ func (server *Server) addHandlers() {
 
 	router.HandleFunc("/", controllers.YourGetHandler).Methods("GET")
 	router.HandleFunc("/users", controllers.CreateUser).Methods("POST")
-
+	router.HandleFunc("/users/{id}/password", controllers.ChangePassword).Methods("PUT")
 }
 
 func (server *Server) addMiddlewares() {

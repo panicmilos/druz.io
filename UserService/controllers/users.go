@@ -7,8 +7,10 @@ import (
 	"UserService/models"
 	"UserService/services"
 	"net/http"
+	"strconv"
 
 	"github.com/devfeel/mapper"
+	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
 )
 
@@ -45,6 +47,31 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	userService := di.Get(r, services.UsersService).(*services.UserService)
 	createdUser, err := userService.Create(user)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, createdUser)
+}
+
+func ChangePassword(w http.ResponseWriter, r *http.Request) {
+	var request *api_contracts.ChangePasswordRequest
+	err := helpers.ReadJSONBody(r, &request)
+
+	if errors.Handle(err, w) {
+		return
+	}
+
+	err = request.Validate()
+	if errors.Handle(err, w) {
+		return
+	}
+
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	userService := di.Get(r, services.UsersService).(*services.UserService)
+	createdUser, err := userService.ChangePassword(uint(id), request.CurrentPassword, request.NewPassword)
 	if errors.Handle(err, w) {
 		return
 	}
