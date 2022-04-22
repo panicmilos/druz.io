@@ -28,7 +28,7 @@ func (server *Server) addHandlers() {
 	router := server.Router
 
 	router.HandleFunc("/", controllers.YourGetHandler).Methods("GET")
-	router.HandleFunc("/", controllers.YourPostHandler).Methods("POST")
+	router.HandleFunc("/users", controllers.CreateUser).Methods("POST")
 
 }
 
