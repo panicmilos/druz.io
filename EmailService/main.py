@@ -5,6 +5,8 @@ import json
 import smtplib
 from email.message import EmailMessage
 
+from jinja2 import Environment, PackageLoader, select_autoescape
+
 load_dotenv()
 
 ##################### AMQP #####################
@@ -95,15 +97,36 @@ class EmailSender:
   def __del__(self):
     self._server.quit()
 
-def main():
-    email = Email(
-    subject = 'foo',
-    sender = 'panic.milos99@gmail.com',
-    to = 'panic.milos99@gmail.com',
-    message = '<font color="red">red color text</font>')
+##################### TEMPALTES #####################
 
-    emailSender = EmailSender()
-    emailSender.send(email)
+class TemplateManager:
+  def __init__(self, package_name = 'main'):
+    self._env = Environment(
+      loader=PackageLoader(package_name),
+      autoescape=select_autoescape()
+    )
+
+  def get_template(self, template_name):
+    return self._env.get_template(template_name)
+
+  def compute_tempalte(self, template_name, params = {}):
+    template = self.get_template(template_name)
+
+    return template.render(params)
+
+def main():
+  templateManager = TemplateManager()
+  print(templateManager.compute_tempalte('test_template.html', { 'name': 'Milos' }))
+
+
+  # email = Email(
+  # subject = 'foo',
+  # sender = 'panic.milos99@gmail.com',
+  # to = 'panic.milos99@gmail.com',
+  # message = '<font color="red">red color text</font>')
+
+  # emailSender = EmailSender()
+  # emailSender.send(email)
 
   # consumer = AMQPConsumer('emails')
   # consumer.on_data(callback)
