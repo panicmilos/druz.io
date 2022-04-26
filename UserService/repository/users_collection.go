@@ -4,6 +4,7 @@ import (
 	"UserService/models"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type UsersCollection struct {
@@ -65,4 +66,12 @@ func (userCollection *UsersCollection) UpdateProfile(profile *models.Profile) *m
 	userCollection.DB.Save(profile)
 
 	return profile
+}
+
+func (userCollection *UsersCollection) Delete(id uint) *models.Profile {
+	account := userCollection.ReadAccountByProfileId(id)
+
+	userCollection.DB.Select(clause.Associations).Delete(account)
+
+	return &account.Profile
 }

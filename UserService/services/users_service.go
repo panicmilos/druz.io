@@ -46,6 +46,10 @@ func (userService *UserService) Update(profile *models.Profile) (*models.Profile
 	userService.repository.Educations.DeleteByProfileId(profile.ID)
 	userService.repository.Intereses.DeleteByProfileId(profile.ID)
 
+	existingProfile.FirstName = profile.FirstName
+	existingProfile.LastName = profile.LastName
+	existingProfile.Birthday = profile.Birthday
+	existingProfile.Gender = profile.Gender
 	existingProfile.About = profile.About
 	existingProfile.PhoneNumber = profile.PhoneNumber
 	existingProfile.LivePlaces = profile.LivePlaces
@@ -71,4 +75,13 @@ func (userService *UserService) ChangePassword(id uint, currentPassword string, 
 
 	return &userService.repository.Users.UpdateAccount(account).Profile, nil
 
+}
+
+func (userService *UserService) Delete(id uint) (*models.Profile, error) {
+	existingProfile, err := userService.ReadById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return userService.repository.Users.Delete(existingProfile.ID), nil
 }

@@ -122,3 +122,18 @@ var ChangePassword = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reques
 
 	helpers.JSONResponse(w, 200, createdUser)
 })
+
+var BlockUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	userService := di.Get(r, services.UsersService).(*services.UserService)
+
+	blockedUser, err := userService.Delete(uint(id))
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, blockedUser)
+})

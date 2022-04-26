@@ -27,11 +27,12 @@ func New() *Server {
 func (server *Server) addHandlers() {
 	router := server.Router
 
-	router.Handle("/", AuthenticateMiddlewate(controllers.YourGetHandler)).Methods("GET")
-	router.Handle("/users/{id}", AuthenticateMiddlewate(controllers.ReadUserById)).Methods("GET")
+	router.Handle("/", controllers.YourGetHandler).Methods("GET")
+	router.Handle("/users/{id}", controllers.ReadUserById).Methods("GET")
 	router.Handle("/users", controllers.CreateUser).Methods("POST")
 	router.Handle("/users/{id}", controllers.UpdateUser).Methods("PUT")
-	router.Handle("/users/{id}/password", AuthenticateMiddlewate(controllers.ChangePassword)).Methods("PUT")
+	router.Handle("/users/{id}/password", controllers.ChangePassword).Methods("PUT")
+	router.Handle("/users/{id}/block", controllers.BlockUser).Methods("DELETE")
 
 	router.Handle("/auth", controllers.Authenticate).Methods("POST")
 }
