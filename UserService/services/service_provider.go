@@ -22,6 +22,7 @@ const (
 	AuthService               = "AuthenticationService"
 	EmailDispatcher           = "EmailDispatcher"
 	PasswordRecoveriesService = "PasswordRecoveryService"
+	UserReportService         = "UserReportsService"
 )
 
 var serviceContainer = []di.Def{
@@ -82,6 +83,9 @@ var serviceContainer = []di.Def{
 				PasswordRecoveriesCollection: &repository.PasswordRecoveriesCollection{
 					DB: db,
 				},
+				UserReportsCollection: &repository.UserReportsCollection{
+					DB: db,
+				},
 			}, nil
 		},
 	},
@@ -114,6 +118,16 @@ var serviceContainer = []di.Def{
 			return &PasswordRecoveryService{
 				repository:      repository,
 				emailDispatcher: emailDispatcher,
+			}, nil
+		},
+	},
+	{
+		Name:  UserReportService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			return &UserReportsService{
+				repository: repository,
 			}, nil
 		},
 	},

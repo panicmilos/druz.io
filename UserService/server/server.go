@@ -36,6 +36,9 @@ func (server *Server) addHandlers() {
 
 	router.Handle("/users/password/recover/request", controllers.PasswordRecovery).Methods("GET")
 	router.Handle("/users/{id}/password/recover", controllers.RecoverPassword).Methods("POST")
+	router.Handle("/users/{id}/report", AuthenticateMiddlewate(controllers.ReportUser)).Methods("POST")
+
+	router.Handle("/reports/{id}/ignore", controllers.IgnoreReport).Methods("DELETE")
 
 	router.Handle("/auth", controllers.Authenticate).Methods("POST")
 }

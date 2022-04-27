@@ -16,7 +16,6 @@ func SetupDatabase() {
 	db.AutoMigrate(&models.WorkPlace{})
 	db.AutoMigrate(&models.Education{})
 	db.AutoMigrate(&models.Interes{})
-
+	db.AutoMigrate(&models.UserReport{})
 	db.AutoMigrate(&models.PasswordRecovery{})
-
 }
