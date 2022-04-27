@@ -15,17 +15,18 @@ import (
 var Provider = buildServiceContainer()
 
 const (
-	DatabaseSeeder     = "DatabaseSeeder"
-	DatabaseConnection = "DatabaseConnection"
-	Repository         = "Repository"
-	UsersService       = "UsersService"
-	AuthService        = "AuthenticationService"
-	EmailDispatcher    = "EmailDispatcher"
+	AppDatabaseInstance       = "AppDatabaseInstance"
+	DatabaseConnection        = "DatabaseConnection"
+	Repository                = "Repository"
+	UsersService              = "UsersService"
+	AuthService               = "AuthenticationService"
+	EmailDispatcher           = "EmailDispatcher"
+	PasswordRecoveriesService = "PasswordRecoveryService"
 )
 
 var serviceContainer = []di.Def{
 	{
-		Name:  DatabaseSeeder,
+		Name:  AppDatabaseInstance,
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
 			connectionString := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local", os.Getenv("DB_USERNAME"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_ADDRESS"), os.Getenv("DB_NAME"))
@@ -78,6 +79,9 @@ var serviceContainer = []di.Def{
 				Intereses: &repository.InteresesCollection{
 					DB: db,
 				},
+				PasswordRecoveriesCollection: &repository.PasswordRecoveriesCollection{
+					DB: db,
+				},
 			}, nil
 		},
 	},
@@ -98,6 +102,18 @@ var serviceContainer = []di.Def{
 			repository := ctn.Get(Repository).(*repository.Repository)
 			return &AuthenticationService{
 				repository: repository,
+			}, nil
+		},
+	},
+	{
+		Name:  PasswordRecoveriesService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			emailDispatcher := ctn.Get(EmailDispatcher).(*EmailService)
+			return &PasswordRecoveryService{
+				repository:      repository,
+				emailDispatcher: emailDispatcher,
 			}, nil
 		},
 	},

@@ -8,7 +8,8 @@ import (
 
 func main() {
 	setup.SetupEnviroment()
-	// setup.SetupDatabase()
+	setup.SetupDatabase()
+	setup.SetupCronTasks()
 
 	server.New().Start()
 

@@ -9,4 +9,6 @@ type Repository struct {
 	WorkPlaces *WorkPlacesCollection
 	Educations *EducationsCollection
 	Intereses  *InteresesCollection
+
+	PasswordRecoveriesCollection *PasswordRecoveriesCollection
 }

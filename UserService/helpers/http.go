@@ -12,8 +12,13 @@ import (
 // The response headers are updated with 'Content-Type: application/json'
 // and the request status is changed to the given status.
 func JSONResponse(w http.ResponseWriter, status int, data interface{}) {
-	resp, _ := json.Marshal(data)
 	w.WriteHeader(status)
+
+	if data == nil {
+		return
+	}
+
+	resp, _ := json.Marshal(data)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resp)
 }

@@ -1,10 +1,11 @@
+import os
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 
 class TemplateManager:
-  def __init__(self, search_path = './templates'):
+  def __init__(self, search_path = '/templates'):
     self._env = Environment(
-      loader=FileSystemLoader(search_path),
+      loader=FileSystemLoader(os.path.abspath(os.path.dirname(__file__)) + search_path),
       autoescape=select_autoescape()
     )
 

@@ -8,7 +8,7 @@ import (
 )
 
 func SetupDatabase() {
-	db := services.Provider.Get(services.DatabaseSeeder).(*gorm.DB)
+	db := services.Provider.Get(services.AppDatabaseInstance).(*gorm.DB)
 
 	db.AutoMigrate(&models.Account{})
 	db.AutoMigrate(&models.Profile{})
@@ -16,5 +16,7 @@ func SetupDatabase() {
 	db.AutoMigrate(&models.WorkPlace{})
 	db.AutoMigrate(&models.Education{})
 	db.AutoMigrate(&models.Interes{})
+
+	db.AutoMigrate(&models.PasswordRecovery{})
 
 }
