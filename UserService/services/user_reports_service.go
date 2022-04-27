@@ -1,6 +1,7 @@
 package services
 
 import (
+	"UserService/dto"
 	"UserService/errors"
 	"UserService/models"
 	"UserService/repository"
@@ -8,6 +9,11 @@ import (
 
 type UserReportsService struct {
 	repository *repository.Repository
+}
+
+func (userReportsService *UserReportsService) Search(params *dto.UserReportsSearchParams) *[]models.UserReport {
+
+	return userReportsService.repository.UserReportsCollection.Search(params)
 }
 
 func (userReportsService *UserReportsService) Create(report *models.UserReport) (*models.UserReport, error) {

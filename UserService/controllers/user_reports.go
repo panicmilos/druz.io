@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"UserService/api_contracts"
+	"UserService/dto"
 	"UserService/errors"
 	"UserService/helpers"
 	"UserService/models"
@@ -12,6 +13,19 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
 )
+
+var SearchReports = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	params := &dto.UserReportsSearchParams{
+		Reported:   r.URL.Query().Get("Reported"),
+		ReportedBy: r.URL.Query().Get("ReportedBy"),
+		Reason:     r.URL.Query().Get("Reason"),
+	}
+
+	userReportsService := di.Get(r, services.UserReportService).(*services.UserReportsService)
+
+	helpers.JSONResponse(w, 200, userReportsService.Search(params))
+})
 
 var ReportUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	var request *api_contracts.ReportUserRequest

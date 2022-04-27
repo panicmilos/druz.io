@@ -1,13 +1,36 @@
 package repository
 
 import (
+	"UserService/dto"
 	"UserService/models"
+	"strings"
 
 	"gorm.io/gorm"
 )
 
 type UserReportsCollection struct {
 	DB *gorm.DB
+}
+
+func (userReportsCollection *UserReportsCollection) Search(params *dto.UserReportsSearchParams) *[]models.UserReport {
+	userReports := &[]models.UserReport{}
+
+	query := userReportsCollection.DB.Table("user_reports")
+
+	if len(strings.TrimSpace(params.Reason)) != 0 {
+		query.Where("LOWER(user_reports.reason) like ?", "%"+strings.ToLower(params.Reason)+"%")
+	}
+
+	if len(strings.TrimSpace(params.Reported)) != 0 {
+		query.Joins("JOIN profiles p ON user_reports.reported = p.id").Where("CONCAT(LOWER(p.first_name), ' ', LOWER(p.last_name)) like ?", "%"+strings.ToLower(params.Reported)+"%")
+	}
+
+	if len(strings.TrimSpace(params.ReportedBy)) != 0 {
+		query.Joins("JOIN profiles p2 ON user_reports.reported_by = p2.id").Where("CONCAT(LOWER(p2.first_name), ' ', LOWER(p2.last_name)) like ?", "%"+strings.ToLower(params.ReportedBy)+"%")
+	}
+
+	query.Find(userReports)
+	return userReports
 }
 
 func (userReportsCollection *UserReportsCollection) Create(report *models.UserReport) *models.UserReport {
