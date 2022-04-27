@@ -31,6 +31,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/sarulabs/di v2.0.0+incompatible // indirect
+	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/stroiman/go-automapper v0.0.0-20200419053654-7c63d5bb0eb4 // indirect
 	go.mongodb.org/mongo-driver v1.8.3 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect

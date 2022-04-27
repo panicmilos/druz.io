@@ -20,6 +20,7 @@ const (
 	Repository         = "Repository"
 	UsersService       = "UsersService"
 	AuthService        = "AuthenticationService"
+	EmailDispatcher    = "EmailDispatcher"
 )
 
 var serviceContainer = []di.Def{
@@ -98,6 +99,22 @@ var serviceContainer = []di.Def{
 			return &AuthenticationService{
 				repository: repository,
 			}, nil
+		},
+	},
+	{
+		Name:  EmailDispatcher,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			emailService := &EmailService{}
+			emailService.Initialize()
+
+			return emailService, nil
+		},
+		Close: func(obj interface{}) error {
+			emailService := obj.(*EmailService)
+			emailService.Deinitialize()
+
+			return nil
 		},
 	},
 }
