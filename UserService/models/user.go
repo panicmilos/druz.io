@@ -33,6 +33,7 @@ type Profile struct {
 	Intereses   []Interes
 
 	AccountID uint
+	Disabled  bool
 }
 
 type LivePlaceType int64

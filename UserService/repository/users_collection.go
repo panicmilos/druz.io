@@ -15,7 +15,7 @@ func (userCollection *UsersCollection) ReadAccountByEmail(email string) *models.
 	account := &models.Account{}
 
 	result := userCollection.DB.Preload("Profile").Where("email = ?", email).First(account)
-	if result.RowsAffected == 0 {
+	if result.RowsAffected == 0 || account.Profile.Disabled == true {
 		return nil
 	}
 
@@ -26,7 +26,7 @@ func (userCollection *UsersCollection) ReadAccountByProfileId(id uint) *models.A
 	profile := &models.Profile{}
 
 	result := userCollection.DB.First(profile, id)
-	if result.RowsAffected == 0 {
+	if result.RowsAffected == 0 || profile.Disabled == true {
 		return nil
 	}
 
@@ -43,7 +43,7 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 	profile := &models.Profile{}
 
 	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
-	if result.RowsAffected == 0 {
+	if result.RowsAffected == 0 || profile.Disabled == true {
 		return nil
 	}
 

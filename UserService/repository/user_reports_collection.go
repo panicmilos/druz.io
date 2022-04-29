@@ -21,12 +21,14 @@ func (userReportsCollection *UserReportsCollection) Search(params *dto.UserRepor
 		query.Where("LOWER(user_reports.reason) like ?", "%"+strings.ToLower(params.Reason)+"%")
 	}
 
+	query.Joins("JOIN profiles p ON user_reports.reported = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
 	if len(strings.TrimSpace(params.Reported)) != 0 {
-		query.Joins("JOIN profiles p ON user_reports.reported = p.id").Where("CONCAT(LOWER(p.first_name), ' ', LOWER(p.last_name)) like ?", "%"+strings.ToLower(params.Reported)+"%")
+		query.Where("CONCAT(LOWER(p.first_name), ' ', LOWER(p.last_name)) like ?", "%"+strings.ToLower(params.Reported)+"%")
 	}
 
+	query.Joins("JOIN profiles p2 ON user_reports.reported_by = p2.id").Where("(p2.disabled is NULL OR p2.disabled = 0) AND p2.deleted_at is NULL")
 	if len(strings.TrimSpace(params.ReportedBy)) != 0 {
-		query.Joins("JOIN profiles p2 ON user_reports.reported_by = p2.id").Where("CONCAT(LOWER(p2.first_name), ' ', LOWER(p2.last_name)) like ?", "%"+strings.ToLower(params.ReportedBy)+"%")
+		query.Where("CONCAT(LOWER(p2.first_name), ' ', LOWER(p2.last_name)) like ?", "%"+strings.ToLower(params.ReportedBy)+"%")
 	}
 
 	query.Find(userReports)

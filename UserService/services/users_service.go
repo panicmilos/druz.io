@@ -11,10 +11,6 @@ type UserService struct {
 	repository *repository.Repository
 }
 
-// func (userService *UserService) ReadUsers() *[]models.Profile {
-// 	return userService.repository.Users.ReadUsers()
-// }
-
 func (userService *UserService) ReadById(id uint) (*models.Profile, error) {
 	profile := userService.repository.Users.ReadById(id)
 	if profile == nil {
@@ -74,7 +70,6 @@ func (userService *UserService) ChangePassword(id uint, currentPassword string, 
 	account.Password = helpers.GetSaltedAndHashedPassword(newPassword, account.Salt)
 
 	return &userService.repository.Users.UpdateAccount(account).Profile, nil
-
 }
 
 func (userService *UserService) Delete(id uint) (*models.Profile, error) {
@@ -84,4 +79,15 @@ func (userService *UserService) Delete(id uint) (*models.Profile, error) {
 	}
 
 	return userService.repository.Users.Delete(existingProfile.ID), nil
+}
+
+func (userService *UserService) Disable(id uint) (*models.Profile, error) {
+	existingProfile, err := userService.ReadById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	existingProfile.Disabled = true
+
+	return userService.repository.Users.UpdateProfile(existingProfile), nil
 }

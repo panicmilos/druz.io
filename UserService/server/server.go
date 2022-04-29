@@ -34,8 +34,10 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/{id}/password", controllers.ChangePassword).Methods("PUT")
 	router.Handle("/users/{id}/block", controllers.BlockUser).Methods("DELETE")
 
+	router.Handle("/users/{id}/disable", controllers.DisableUser).Methods("PUT")
+
 	router.Handle("/users/password/recover/request", controllers.PasswordRecovery).Methods("GET")
-	router.Handle("/users/{id}/password/recover", controllers.RecoverPassword).Methods("POST")
+	router.Handle("/users/{id}/password/recover", controllers.RecoverPassword).Methods("PUT")
 	router.Handle("/users/{id}/report", AuthenticateMiddlewate(controllers.ReportUser)).Methods("POST")
 
 	router.Handle("/reports/search", controllers.SearchReports).Methods("GET")

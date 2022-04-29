@@ -61,6 +61,9 @@ func (passwordRecoveryService *PasswordRecoveryService) Recover(id uint, token s
 	passwordRecoveryService.repository.PasswordRecoveriesCollection.DeleteByProfileId(id)
 
 	account := passwordRecoveryService.repository.Users.ReadAccountByProfileId(id)
+	if account == nil {
+		return nil, errors.NewErrNotFound("Account does not exist.")
+	}
 	account.Salt = helpers.GetRandomToken(16)
 	account.Password = helpers.GetSaltedAndHashedPassword(newPassword, account.Salt)
 
