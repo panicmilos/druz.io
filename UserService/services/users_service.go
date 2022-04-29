@@ -1,6 +1,7 @@
 package services
 
 import (
+	"UserService/dto"
 	"UserService/errors"
 	"UserService/helpers"
 	"UserService/models"
@@ -9,6 +10,11 @@ import (
 
 type UserService struct {
 	repository *repository.Repository
+}
+
+func (userService *UserService) Search(params *dto.UsersSearchParams) *[]models.Profile {
+
+	return userService.repository.Users.Search(params)
 }
 
 func (userService *UserService) ReadById(id uint) (*models.Profile, error) {

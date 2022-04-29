@@ -1,7 +1,9 @@
 package repository
 
 import (
+	"UserService/dto"
 	"UserService/models"
+	"strings"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -9,6 +11,40 @@ import (
 
 type UsersCollection struct {
 	DB *gorm.DB
+}
+
+func (userCollection *UsersCollection) Search(params *dto.UsersSearchParams) *[]models.Profile {
+	users := &[]models.Profile{}
+
+	query := userCollection.DB.Table("profiles")
+	query.Where("(profiles.disabled is NULL OR profiles.disabled = 0)")
+
+	if len(strings.TrimSpace(params.Name)) != 0 {
+		query.Where("CONCAT(LOWER(profiles.first_name), ' ', LOWER(profiles.last_name)) like ?", "%"+strings.ToLower(params.Name)+"%")
+	}
+
+	if params.Gender != nil {
+		query.Where("profiles.gender = ?", params.Gender)
+	}
+
+	if len(strings.TrimSpace(params.LivePlace)) != 0 {
+		query.Joins("JOIN live_places lp ON profiles.id = lp.profile_id").Where("LOWER(lp.place) like ?", "%"+strings.ToLower(params.LivePlace)+"%")
+	}
+
+	if len(strings.TrimSpace(params.WorkPlace)) != 0 {
+		query.Joins("JOIN work_places wp ON profiles.id = wp.profile_id").Where("LOWER(wp.place) like ?", "%"+strings.ToLower(params.WorkPlace)+"%")
+	}
+
+	if len(strings.TrimSpace(params.Education)) != 0 {
+		query.Joins("JOIN educations e ON profiles.id = e.profile_id").Where("LOWER(e.place) like ?", "%"+strings.ToLower(params.Education)+"%")
+	}
+
+	if len(strings.TrimSpace(params.Interes)) != 0 {
+		query.Joins("JOIN interes i ON profiles.id = i.profile_id").Where("LOWER(i.interes) like ?", "%"+strings.ToLower(params.Interes)+"%")
+	}
+
+	query.Distinct().Find(users)
+	return users
 }
 
 func (userCollection *UsersCollection) ReadAccountByEmail(email string) *models.Account {

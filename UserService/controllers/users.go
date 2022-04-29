@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"UserService/api_contracts"
+	"UserService/dto"
 	"UserService/errors"
 	"UserService/helpers"
 	"UserService/models"
@@ -9,24 +10,27 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/dranikpg/dto-mapper"
+	dtoMapper "github.com/dranikpg/dto-mapper"
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"
 )
 
-// swagger:route DELETE /admin/company/{id} admin deleteCompany
-// Delete company
-//
-// security:
-// - Bearer: []
-// responses:
-//  401: Account
-//  200: Account
-// Create handles Delete get company
-var YourGetHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-	// service := di.Get(r, services.UsersService).(*services.UserService)
+var SearchUsers = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-	// helpers.JSONResponse(w, 200, service.ReadUsers())
+	gender, err := models.GenderFromString(r.URL.Query().Get("Gender"))
+
+	params := &dto.UsersSearchParams{
+		Name:      r.URL.Query().Get("Name"),
+		Gender:    map[bool]*models.Gender{true: &gender, false: nil}[err == nil],
+		LivePlace: r.URL.Query().Get("LivePlace"),
+		WorkPlace: r.URL.Query().Get("WorkPlace"),
+		Education: r.URL.Query().Get("Education"),
+		Interes:   r.URL.Query().Get("Interes"),
+	}
+
+	userService := di.Get(r, services.UsersService).(*services.UserService)
+
+	helpers.JSONResponse(w, 200, userService.Search(params))
 })
 
 var ReadUserById = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +61,7 @@ var CreateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := &models.Account{}
-	dto.Map(user, request)
+	dtoMapper.Map(user, request)
 
 	userService := di.Get(r, services.UsersService).(*services.UserService)
 	createdUser, err := userService.Create(user)
@@ -85,7 +89,7 @@ var UpdateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	id, _ := strconv.Atoi(params["id"])
 
 	profile := &models.Profile{}
-	dto.Map(profile, request)
+	dtoMapper.Map(profile, request)
 	profile.ID = uint(id)
 
 	userService := di.Get(r, services.UsersService).(*services.UserService)

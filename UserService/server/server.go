@@ -27,7 +27,7 @@ func New() *Server {
 func (server *Server) addHandlers() {
 	router := server.Router
 
-	router.Handle("/", controllers.YourGetHandler).Methods("GET")
+	router.Handle("/users/search", controllers.SearchUsers).Methods("GET")
 	router.Handle("/users/{id}", controllers.ReadUserById).Methods("GET")
 	router.Handle("/users", controllers.CreateUser).Methods("POST")
 	router.Handle("/users/{id}", controllers.UpdateUser).Methods("PUT")

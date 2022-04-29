@@ -1,5 +1,7 @@
 package models
 
+import "UserService/errors"
+
 type Gender int64
 
 const (
@@ -7,3 +9,16 @@ const (
 	Female
 	Other
 )
+
+func GenderFromString(value string) (Gender, error) {
+	switch value {
+	case "0":
+		return Male, nil
+	case "1":
+		return Female, nil
+	case "2":
+		return Other, nil
+	default:
+		return Other, errors.NewErrBadRequest("Bad Gender")
+	}
+}
