@@ -35,6 +35,8 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/{id}/block", controllers.BlockUser).Methods("DELETE")
 
 	router.Handle("/users/{id}/disable", controllers.DisableUser).Methods("PUT")
+	router.Handle("/users/reactivation/request", controllers.UserReactivation).Methods("POST")
+	router.Handle("/users/{id}/reactivation", controllers.ReactivateUser).Methods("PUT")
 
 	router.Handle("/users/password/recover/request", controllers.PasswordRecovery).Methods("GET")
 	router.Handle("/users/{id}/password/recover", controllers.RecoverPassword).Methods("PUT")

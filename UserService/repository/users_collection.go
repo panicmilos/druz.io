@@ -86,6 +86,26 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 	return profile
 }
 
+func (userCollection *UsersCollection) ReadDeactivatedByEmail(email string) *models.Profile {
+	account := &models.Account{}
+	result := userCollection.DB.Preload("Profile").Where("email = ?", email).First(account)
+	if result.RowsAffected == 0 || account.Profile.Disabled == false {
+		return nil
+	}
+
+	return &account.Profile
+}
+
+func (userCollection *UsersCollection) ReadDeactivatedById(id uint) *models.Profile {
+	profile := &models.Profile{}
+	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
+	if result.RowsAffected == 0 || profile.Disabled == false {
+		return nil
+	}
+
+	return profile
+}
+
 func (userCollection *UsersCollection) Create(user *models.Account) *models.Profile {
 	userCollection.DB.Create(user)
 

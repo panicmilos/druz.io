@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func DeletePasswordRecoveryRequests() {
+func DeleteUserReactivationsRequests() {
 	db := services.Provider.Get(services.AppDatabaseInstance).(*gorm.DB)
-	db.Where("expires_at < ?", time.Now()).Delete(&[]models.PasswordRecovery{})
+	db.Where("expires_at < ?", time.Now()).Delete(&[]models.UserReactivation{})
 }

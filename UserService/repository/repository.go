@@ -11,4 +11,5 @@ type Repository struct {
 	Intereses                    *InteresesCollection
 	PasswordRecoveriesCollection *PasswordRecoveriesCollection
 	UserReportsCollection        *UserReportsCollection
+	UserReactivationsCollection  *UserReactivationsCollection
 }
