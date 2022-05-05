@@ -13,9 +13,8 @@ type AMQPSender struct {
 	queue      *amqp.Queue
 }
 
-func (sender *AMQPSender) Initialize(settings settings.AMQPSettings, queueName string) {
+func (sender *AMQPSender) Initialize(settings *settings.AMQPSettings, queueName string) {
 	conn, err := amqp.Dial(settings.ToConnectionString())
-
 	errors.FailOnError(err, "Failed to connect to RabbitMQ")
 	sender.connection = conn
 

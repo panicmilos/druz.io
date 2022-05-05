@@ -42,3 +42,6 @@ require (
 	gorm.io/driver/mysql v1.3.3 // indirect
 	gorm.io/gorm v1.23.4 // indirect
 )
+
+require github.com/panicmilos/druz.io/AMQPGO v0.0.0
+replace github.com/panicmilos/druz.io/AMQPGO v0.0.0 => ../AMQPGO
