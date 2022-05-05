@@ -11,4 +11,5 @@ func SetupDatabase() {
 
 	db.AutoMigrate(&models.User{})
 	db.AutoMigrate(&models.UserBlock{})
+	db.AutoMigrate(&models.UserFriend{})
 }

@@ -13,12 +13,12 @@ type UserBlocksService struct {
 }
 
 func (userBlockService *UserBlocksService) ReadByBlockedById(id uint) *[]models.UserBlock {
-	return userBlockService.repository.UserBlocks.ReadByBleckedById(id)
+	return userBlockService.repository.UserBlocks.ReadByBlockedById(id)
 }
 
 func (userBlockService *UserBlocksService) Create(userBlock *models.UserBlock) (*models.UserBlock, error) {
 
-	blockedBy, err := userBlockService.usersService.ReadById(uint(userBlock.BlockedById))
+	_, err := userBlockService.usersService.ReadById(uint(userBlock.BlockedById))
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,6 @@ func (userBlockService *UserBlocksService) Create(userBlock *models.UserBlock) (
 		return nil, errors.NewErrBadRequest("User has blocked you.")
 	}
 
-	userBlock.BlockedBy = blockedBy
 	userBlock.Blocked = blocked
 
 	return userBlockService.repository.UserBlocks.Create(userBlock), nil

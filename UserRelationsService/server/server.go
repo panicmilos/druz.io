@@ -31,6 +31,9 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/{id}/block-list", controllers.BlockUser).Methods("POST")
 	router.Handle("/users/{id}/block-list", controllers.UnblockUser).Methods("DELETE")
 
+	router.Handle("/users/{id}/friends", controllers.ReadFriendsList).Methods("GET")
+	router.Handle("/users/{id}/friends", controllers.UnfriendUser).Methods("DELETE")
+
 }
 
 func (server *Server) addMiddlewares() {

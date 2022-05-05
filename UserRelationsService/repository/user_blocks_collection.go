@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/panicmilos/druz.io/UserRelationsService/models"
 	"gorm.io/gorm"
 )
@@ -14,24 +12,23 @@ type UserBlocksCollection struct {
 func (userBlocksCollection *UserBlocksCollection) ReadById(id uint) *models.UserBlock {
 	userBlock := &models.UserBlock{}
 
-	userBlocksCollection.DB.Preload("Blocked").Preload("BlockedBy").First(userBlock, id)
+	userBlocksCollection.DB.Preload("Blocked").First(userBlock, id)
 
 	return userBlock
 }
 
-func (userBlocksCollection *UserBlocksCollection) ReadByBleckedById(blockedById uint) *[]models.UserBlock {
-	userBlock := &[]models.UserBlock{}
+func (userBlocksCollection *UserBlocksCollection) ReadByBlockedById(blockedById uint) *[]models.UserBlock {
+	userBlocks := &[]models.UserBlock{}
 
-	userBlocksCollection.DB.Preload("Blocked").Preload("BlockedBy").Where("blocked_by_id = ?", blockedById).Find(userBlock)
+	userBlocksCollection.DB.Preload("Blocked").Where("blocked_by_id = ?", blockedById).Find(userBlocks)
 
-	return userBlock
+	return userBlocks
 }
 
 func (userBlocksCollection *UserBlocksCollection) ReadByIds(blockedById uint, blockedId uint) *models.UserBlock {
 	userBlock := &models.UserBlock{}
 
-	result := userBlocksCollection.DB.Preload("Blocked").Preload("BlockedBy").Where("blocked_by_id = ? AND blocked_id = ?", blockedById, blockedId).First(userBlock)
-	fmt.Println(result.RowsAffected)
+	result := userBlocksCollection.DB.Preload("Blocked").Where("blocked_by_id = ? AND blocked_id = ?", blockedById, blockedId).First(userBlock)
 	if result.RowsAffected == 0 {
 		return nil
 	}

@@ -20,6 +20,7 @@ const (
 	Repository          = "Repository"
 	UsersReplicator     = "UsersReplicator"
 	UserBlockService    = "UserBlockService"
+	UserFriendService   = "UserFriendService"
 	UserService         = "UserService"
 )
 
@@ -69,6 +70,9 @@ var serviceContainer = []di.Def{
 				UserBlocks: &repository.UserBlocksCollection{
 					DB: db,
 				},
+				UserFriends: &repository.UserFriendsCollection{
+					DB: db,
+				},
 			}, nil
 		},
 	},
@@ -103,6 +107,17 @@ var serviceContainer = []di.Def{
 			return &UserBlocksService{
 				repository:   repository,
 				usersService: userService,
+			}, nil
+		},
+	},
+	{
+		Name:  UserFriendService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+
+			return &UserFriendsService{
+				repository: repository,
 			}, nil
 		},
 	},

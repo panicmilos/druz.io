@@ -6,7 +6,6 @@ type UserBlock struct {
 	*gorm.Model
 
 	BlockedById uint
-	BlockedBy   *User
 
 	BlockedId uint
 	Blocked   *User
