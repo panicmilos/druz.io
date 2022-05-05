@@ -52,7 +52,7 @@ func (userCollection *UsersCollection) ReadAccountByEmail(email string) *models.
 	account := &models.Account{}
 
 	result := userCollection.DB.Preload("Profile").Where("email = ?", email).First(account)
-	if result.RowsAffected == 0 || account.Profile.Disabled == true {
+	if result.RowsAffected == 0 || account.Profile.Disabled {
 		return nil
 	}
 
@@ -63,7 +63,7 @@ func (userCollection *UsersCollection) ReadAccountByProfileId(id uint) *models.A
 	profile := &models.Profile{}
 
 	result := userCollection.DB.First(profile, id)
-	if result.RowsAffected == 0 || profile.Disabled == true {
+	if result.RowsAffected == 0 || profile.Disabled {
 		return nil
 	}
 
@@ -80,7 +80,7 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 	profile := &models.Profile{}
 
 	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
-	if result.RowsAffected == 0 || profile.Disabled == true {
+	if result.RowsAffected == 0 || profile.Disabled {
 		return nil
 	}
 
@@ -90,7 +90,7 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 func (userCollection *UsersCollection) ReadDeactivatedByEmail(email string) *models.Profile {
 	account := &models.Account{}
 	result := userCollection.DB.Preload("Profile").Where("email = ?", email).First(account)
-	if result.RowsAffected == 0 || account.Profile.Disabled == false {
+	if result.RowsAffected == 0 || !account.Profile.Disabled {
 		return nil
 	}
 
@@ -100,7 +100,7 @@ func (userCollection *UsersCollection) ReadDeactivatedByEmail(email string) *mod
 func (userCollection *UsersCollection) ReadDeactivatedById(id uint) *models.Profile {
 	profile := &models.Profile{}
 	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
-	if result.RowsAffected == 0 || profile.Disabled == false {
+	if result.RowsAffected == 0 || !profile.Disabled {
 		return nil
 	}
 

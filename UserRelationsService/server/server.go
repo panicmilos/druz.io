@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
+	"github.com/panicmilos/druz.io/UserRelationsService/controllers"
 )
 
 type Server struct {
@@ -24,7 +25,12 @@ func New() *Server {
 }
 
 func (server *Server) addHandlers() {
-	// router := server.Router
+	router := server.Router
+
+	router.Handle("/users/{id}/block-list", controllers.ReadBlockList).Methods("GET")
+	router.Handle("/users/{id}/block-list", controllers.BlockUser).Methods("POST")
+	router.Handle("/users/{id}/block-list", controllers.UnblockUser).Methods("DELETE")
+
 }
 
 func (server *Server) addMiddlewares() {

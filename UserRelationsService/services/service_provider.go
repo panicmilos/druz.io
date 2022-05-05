@@ -19,6 +19,8 @@ const (
 	DatabaseConnection  = "DatabaseConnection"
 	Repository          = "Repository"
 	UsersReplicator     = "UsersReplicator"
+	UserBlockService    = "UserBlockService"
+	UserService         = "UserService"
 )
 
 var serviceContainer = []di.Def{
@@ -64,6 +66,9 @@ var serviceContainer = []di.Def{
 				Users: &repository.UsersCollection{
 					DB: db,
 				},
+				UserBlocks: &repository.UserBlocksCollection{
+					DB: db,
+				},
 			}, nil
 		},
 	},
@@ -86,6 +91,29 @@ var serviceContainer = []di.Def{
 			userReplicator.Deinitialize()
 
 			return nil
+		},
+	},
+	{
+		Name:  UserBlockService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			userService := ctn.Get(UserService).(*UsersService)
+
+			return &UserBlocksService{
+				repository:   repository,
+				usersService: userService,
+			}, nil
+		},
+	},
+	{
+		Name:  UserService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			return &UsersService{
+				repository: repository,
+			}, nil
 		},
 	},
 }

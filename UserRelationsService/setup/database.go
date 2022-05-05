@@ -10,4 +10,5 @@ func SetupDatabase() {
 	db := services.Provider.Get(services.AppDatabaseInstance).(*gorm.DB)
 
 	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(&models.UserBlock{})
 }
