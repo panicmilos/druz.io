@@ -39,7 +39,10 @@ func (userReportsCollection *UserReportsCollection) Search(params *dto.UserRepor
 func (userReportsCollection *UserReportsCollection) ReadById(id uint) *models.UserReport {
 	report := &models.UserReport{}
 
-	result := userReportsCollection.DB.First(report, id)
+	query := userReportsCollection.DB.Table("user_reports")
+	query.Joins("JOIN profiles p ON user_reports.reported = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
+	query.Joins("JOIN profiles p2 ON user_reports.reported_by = p2.id").Where("(p2.disabled is NULL OR p2.disabled = 0) AND p2.deleted_at is NULL")
+	result := query.First(report, id)
 	if result.RowsAffected == 0 {
 		return nil
 	}

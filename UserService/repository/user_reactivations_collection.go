@@ -13,7 +13,9 @@ type UserReactivationsCollection struct {
 func (userReactivationsCollection *UserReactivationsCollection) ReadByProfileId(profileId uint) *models.UserReactivation {
 	userReactivation := &models.UserReactivation{}
 
-	result := userReactivationsCollection.DB.Where("profile_id = ?", profileId).First(userReactivation)
+	query := userReactivationsCollection.DB.Table("user_reactivations")
+	query.Joins("JOIN profiles p ON user_reactivations.profile_id = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
+	result := query.Where("profile_id = ?", profileId).First(userReactivation)
 	if result.RowsAffected == 0 {
 		return nil
 	}

@@ -13,7 +13,9 @@ type PasswordRecoveriesCollection struct {
 func (passwordRecoveriesCollection *PasswordRecoveriesCollection) ReadByProfileId(profileId uint) *models.PasswordRecovery {
 	passwordRecovery := &models.PasswordRecovery{}
 
-	result := passwordRecoveriesCollection.DB.Where("profile_id = ?", profileId).First(passwordRecovery)
+	query := passwordRecoveriesCollection.DB.Table("password_recoveries")
+	query.Joins("JOIN profiles p ON password_recoveries.profile_id = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
+	result := query.Where("profile_id = ?", profileId).First(passwordRecovery)
 	if result.RowsAffected == 0 {
 		return nil
 	}
