@@ -15,6 +15,7 @@ type UserReactivationsService struct {
 	repository *repository.Repository
 
 	emailDispatcher *EmailService
+	userReplicator  *UserReplicator
 }
 
 func (userReactivationsService *UserReactivationsService) Request(email string) (*models.UserReactivation, error) {
@@ -31,7 +32,7 @@ func (userReactivationsService *UserReactivationsService) Request(email string) 
 		ExpiresAt: time.Now().Add(15 * time.Minute),
 	}
 
-	userReactivationsService.emailDispatcher.Send(dto.Email{
+	userReactivationsService.emailDispatcher.Send(&dto.Email{
 		Subject: "User Reactivation",
 		From:    "panic.milos99@gmail.com",
 		To:      email,
@@ -67,5 +68,12 @@ func (userReactivationsService *UserReactivationsService) Reactivate(id uint, to
 
 	profile.Disabled = false
 
-	return userReactivationsService.repository.Users.UpdateProfile(profile), nil
+	reactivatedUser := userReactivationsService.repository.Users.UpdateProfile(profile)
+
+	userReactivationsService.userReplicator.Replicate(&dto.UserReplication{
+		ReplicationType: "Reactivated",
+		User:            reactivatedUser,
+	})
+
+	return reactivatedUser, nil
 }

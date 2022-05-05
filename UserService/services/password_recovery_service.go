@@ -32,7 +32,7 @@ func (passwordRecoveryService *PasswordRecoveryService) Request(email string) (*
 		ExpiresAt: time.Now().Add(5 * time.Minute),
 	}
 
-	passwordRecoveryService.emailDispatcher.Send(dto.Email{
+	passwordRecoveryService.emailDispatcher.Send(&dto.Email{
 		Subject: "Password recovery",
 		From:    "panic.milos99@gmail.com",
 		To:      account.Email,

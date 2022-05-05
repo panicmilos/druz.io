@@ -19,7 +19,7 @@ func (emailService *EmailService) Initialize() {
 	emailService.sender.Initialize(&settings, "emails")
 }
 
-func (emailService *EmailService) Send(email dto.Email) {
+func (emailService *EmailService) Send(email *dto.Email) {
 	body, _ := json.Marshal(email)
 
 	emailService.sender.Send(body)

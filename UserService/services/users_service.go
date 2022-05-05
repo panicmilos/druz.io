@@ -10,6 +10,8 @@ import (
 
 type UserService struct {
 	repository *repository.Repository
+
+	userReplicator *UserReplicator
 }
 
 func (userService *UserService) Search(params *dto.UsersSearchParams) *[]models.Profile {
@@ -34,7 +36,14 @@ func (userService *UserService) Create(user *models.Account) (*models.Profile, e
 	user.Salt = helpers.GetRandomToken(16)
 	user.Password = helpers.GetSaltedAndHashedPassword(user.Password, user.Salt)
 
-	return userService.repository.Users.Create(user), nil
+	createdUser := userService.repository.Users.Create(user)
+
+	userService.userReplicator.Replicate(&dto.UserReplication{
+		ReplicationType: "Create",
+		User:            createdUser,
+	})
+
+	return createdUser, nil
 }
 
 func (userService *UserService) Update(profile *models.Profile) (*models.Profile, error) {
@@ -59,7 +68,14 @@ func (userService *UserService) Update(profile *models.Profile) (*models.Profile
 	existingProfile.Educations = profile.Educations
 	existingProfile.Intereses = profile.Intereses
 
-	return userService.repository.Users.UpdateProfile(existingProfile), nil
+	updatedUser := userService.repository.Users.UpdateProfile(existingProfile)
+
+	userService.userReplicator.Replicate(&dto.UserReplication{
+		ReplicationType: "Update",
+		User:            updatedUser,
+	})
+
+	return updatedUser, nil
 }
 
 func (userService *UserService) ChangePassword(id uint, currentPassword string, newPassword string) (*models.Profile, error) {
@@ -84,7 +100,14 @@ func (userService *UserService) Delete(id uint) (*models.Profile, error) {
 		return nil, err
 	}
 
-	return userService.repository.Users.Delete(existingProfile.ID), nil
+	deletedUser := userService.repository.Users.Delete(existingProfile.ID)
+
+	userService.userReplicator.Replicate(&dto.UserReplication{
+		ReplicationType: "Delete",
+		User:            deletedUser,
+	})
+
+	return deletedUser, nil
 }
 
 func (userService *UserService) Disable(id uint) (*models.Profile, error) {
@@ -95,5 +118,12 @@ func (userService *UserService) Disable(id uint) (*models.Profile, error) {
 
 	existingProfile.Disabled = true
 
-	return userService.repository.Users.UpdateProfile(existingProfile), nil
+	disabledUser := userService.repository.Users.UpdateProfile(existingProfile)
+
+	userService.userReplicator.Replicate(&dto.UserReplication{
+		ReplicationType: "Disabled",
+		User:            disabledUser,
+	})
+
+	return disabledUser, nil
 }

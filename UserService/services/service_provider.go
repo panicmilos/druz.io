@@ -25,6 +25,7 @@ const (
 	PasswordRecoveriesService = "PasswordRecoveryService"
 	UserReportService         = "UserReportsService"
 	UserReactivationService   = "UserReactivationService"
+	UsersReplicator           = "UsersReplicator"
 )
 
 var serviceContainer = []di.Def{
@@ -99,8 +100,10 @@ var serviceContainer = []di.Def{
 		Scope: di.Request,
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
+			userReplicator := ctn.Get(UsersReplicator).(*UserReplicator)
 			return &UserService{
-				repository: repository,
+				repository:     repository,
+				userReplicator: userReplicator,
 			}, nil
 		},
 	},
@@ -142,9 +145,11 @@ var serviceContainer = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
 			emailDispatcher := ctn.Get(EmailDispatcher).(*EmailService)
+			userReplicator := ctn.Get(UsersReplicator).(*UserReplicator)
 			return &UserReactivationsService{
 				repository:      repository,
 				emailDispatcher: emailDispatcher,
+				userReplicator:  userReplicator,
 			}, nil
 		},
 	},
@@ -160,6 +165,22 @@ var serviceContainer = []di.Def{
 		Close: func(obj interface{}) error {
 			emailService := obj.(*EmailService)
 			emailService.Deinitialize()
+
+			return nil
+		},
+	},
+	{
+		Name:  UsersReplicator,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			userReplicator := &UserReplicator{}
+			userReplicator.Initialize()
+
+			return userReplicator, nil
+		},
+		Close: func(obj interface{}) error {
+			userReplicator := obj.(*UserReplicator)
+			userReplicator.Deinitialize()
 
 			return nil
 		},
