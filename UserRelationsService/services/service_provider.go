@@ -15,13 +15,14 @@ import (
 var Provider = buildServiceContainer()
 
 const (
-	AppDatabaseInstance = "AppDatabaseInstance"
-	DatabaseConnection  = "DatabaseConnection"
-	Repository          = "Repository"
-	UsersReplicator     = "UsersReplicator"
-	UserBlockService    = "UserBlockService"
-	UserFriendService   = "UserFriendService"
-	UserService         = "UserService"
+	AppDatabaseInstance  = "AppDatabaseInstance"
+	DatabaseConnection   = "DatabaseConnection"
+	Repository           = "Repository"
+	UsersReplicator      = "UsersReplicator"
+	UserBlockService     = "UserBlockService"
+	UserFriendService    = "UserFriendService"
+	UserService          = "UserService"
+	FriendRequestService = "FriendRequestService"
 )
 
 var serviceContainer = []di.Def{
@@ -73,6 +74,9 @@ var serviceContainer = []di.Def{
 				UserFriends: &repository.UserFriendsCollection{
 					DB: db,
 				},
+				FriendRequests: &repository.FriendRequestsCollection{
+					DB: db,
+				},
 			}, nil
 		},
 	},
@@ -118,6 +122,21 @@ var serviceContainer = []di.Def{
 
 			return &UserFriendsService{
 				repository: repository,
+			}, nil
+		},
+	},
+	{
+		Name:  FriendRequestService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			usersService := ctn.Get(UserService).(*UsersService)
+			userFriendsService := ctn.Get(UserFriendService).(*UserFriendsService)
+
+			return &FriendRequestsService{
+				repository:         repository,
+				usersService:       usersService,
+				userFriendsService: userFriendsService,
 			}, nil
 		},
 	},
