@@ -71,7 +71,7 @@ func (userReactivationsService *UserReactivationsService) Reactivate(id uint, to
 	reactivatedUser := userReactivationsService.repository.Users.UpdateProfile(profile)
 
 	userReactivationsService.userReplicator.Replicate(&dto.UserReplication{
-		ReplicationType: "Reactivated",
+		ReplicationType: "Reactivate",
 		User:            reactivatedUser,
 	})
 

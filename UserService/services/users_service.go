@@ -121,7 +121,7 @@ func (userService *UserService) Disable(id uint) (*models.Profile, error) {
 	disabledUser := userService.repository.Users.UpdateProfile(existingProfile)
 
 	userService.userReplicator.Replicate(&dto.UserReplication{
-		ReplicationType: "Disabled",
+		ReplicationType: "Disable",
 		User:            disabledUser,
 	})
 
