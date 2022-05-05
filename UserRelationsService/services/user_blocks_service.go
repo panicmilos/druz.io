@@ -42,7 +42,31 @@ func (userBlockService *UserBlocksService) Create(userBlock *models.UserBlock) (
 
 	userBlock.Blocked = blocked
 
+	userBlockService.DeleteFriendsOrRequest(userBlock)
+
 	return userBlockService.repository.UserBlocks.Create(userBlock), nil
+}
+
+func (userBlockService *UserBlocksService) DeleteFriendsOrRequest(userBlock *models.UserBlock) {
+	friendRequest := userBlockService.repository.FriendRequests.ReadByIds(userBlock.BlockedId, userBlock.BlockedById)
+	if friendRequest != nil {
+		userBlockService.repository.FriendRequests.Delete(friendRequest.ID)
+	}
+
+	friendRequest = userBlockService.repository.FriendRequests.ReadByIds(userBlock.BlockedById, userBlock.BlockedId)
+	if friendRequest != nil {
+		userBlockService.repository.FriendRequests.Delete(friendRequest.ID)
+	}
+
+	userFriend := userBlockService.repository.UserFriends.ReadByIds(userBlock.BlockedId, userBlock.BlockedById)
+	if userFriend != nil {
+		userBlockService.repository.UserFriends.Delete(userFriend.ID)
+	}
+
+	userFriend = userBlockService.repository.UserFriends.ReadByIds(userBlock.BlockedById, userBlock.BlockedId)
+	if userFriend != nil {
+		userBlockService.repository.UserFriends.Delete(userFriend.ID)
+	}
 }
 
 func (userBlockService *UserBlocksService) Delete(userBlock *models.UserBlock) (*models.UserBlock, error) {
