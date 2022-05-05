@@ -54,3 +54,51 @@ var SendFriendRequests = http.HandlerFunc(func(w http.ResponseWriter, r *http.Re
 
 	helpers.JSONResponse(w, 200, createdFriendRequest)
 })
+
+var AcceptFriendRequest = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var request *api_contracts.AcceptFriendRequest
+	err := helpers.ReadJSONBody(r, &request)
+
+	if errors.Handle(err, w) {
+		return
+	}
+
+	userId, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	friendRequest := &models.FriendRequest{
+		UserId:   uint(userId),
+		FriendId: uint(request.FriendId),
+	}
+
+	friendRequestService := di.Get(r, services.FriendRequestService).(*services.FriendRequestsService)
+	acceptedFriendRequest, err := friendRequestService.Accept(friendRequest)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, acceptedFriendRequest)
+})
+
+var DeclineFriendRequest = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var request *api_contracts.DeclineFriendRequest
+	err := helpers.ReadJSONBody(r, &request)
+
+	if errors.Handle(err, w) {
+		return
+	}
+
+	userId, _ := strconv.Atoi(mux.Vars(r)["id"])
+
+	friendRequest := &models.FriendRequest{
+		UserId:   uint(userId),
+		FriendId: uint(request.FriendId),
+	}
+
+	friendRequestService := di.Get(r, services.FriendRequestService).(*services.FriendRequestsService)
+	declinedFriendRequest, err := friendRequestService.Decline(friendRequest)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, declinedFriendRequest)
+})

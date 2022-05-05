@@ -37,6 +37,8 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/{id}/friends/requests/sent", controllers.ReadSentFriendRequests).Methods("GET")
 	router.Handle("/users/{id}/friends/requests/received", controllers.ReadReceivedFriendRequests).Methods("GET")
 	router.Handle("/users/{id}/friends/requests", controllers.SendFriendRequests).Methods("POST")
+	router.Handle("/users/{id}/friends/requests/accept", controllers.AcceptFriendRequest).Methods("POST")
+	router.Handle("/users/{id}/friends/requests/decline", controllers.DeclineFriendRequest).Methods("DELETE")
 
 }
 
