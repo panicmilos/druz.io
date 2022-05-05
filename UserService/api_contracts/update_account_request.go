@@ -1,11 +1,12 @@
 package api_contracts
 
 import (
-	"UserService/errors"
-	"UserService/helpers"
-	"UserService/models"
 	"regexp"
 	"time"
+
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/helpers"
+	"github.com/panicmilos/druz.io/UserService/models"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 )

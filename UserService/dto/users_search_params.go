@@ -1,6 +1,6 @@
 package dto
 
-import "UserService/models"
+import "github.com/panicmilos/druz.io/UserService/models"
 
 type UsersSearchParams struct {
 	Name   string

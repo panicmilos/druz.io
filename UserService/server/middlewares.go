@@ -1,14 +1,15 @@
 package server
 
 import (
-	"UserService/errors"
-	"UserService/helpers"
-	"UserService/models"
-	"UserService/services"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/helpers"
+	"github.com/panicmilos/druz.io/UserService/models"
+	"github.com/panicmilos/druz.io/UserService/services"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/sarulabs/di"

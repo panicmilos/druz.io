@@ -1,10 +1,11 @@
 package services
 
 import (
-	"UserService/repository"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/panicmilos/druz.io/UserService/repository"
 
 	"github.com/sarulabs/di"
 	"gorm.io/driver/mysql"

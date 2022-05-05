@@ -1,11 +1,12 @@
 package services
 
 import (
-	"UserService/dto"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/panicmilos/druz.io/UserService/dto"
 
 	"github.com/streadway/amqp"
 )

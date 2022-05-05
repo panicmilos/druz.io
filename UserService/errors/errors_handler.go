@@ -1,8 +1,9 @@
 package errors
 
 import (
-	"UserService/helpers"
 	"net/http"
+
+	"github.com/panicmilos/druz.io/UserService/helpers"
 )
 
 func Handle(err error, w http.ResponseWriter) bool {

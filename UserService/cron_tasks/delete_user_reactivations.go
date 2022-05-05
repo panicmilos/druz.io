@@ -1,9 +1,10 @@
 package cron_tasks
 
 import (
-	"UserService/models"
-	"UserService/services"
 	"time"
+
+	"github.com/panicmilos/druz.io/UserService/models"
+	"github.com/panicmilos/druz.io/UserService/services"
 
 	"gorm.io/gorm"
 )

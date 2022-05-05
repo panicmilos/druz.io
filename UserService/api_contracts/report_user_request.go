@@ -1,7 +1,7 @@
 package api_contracts
 
 import (
-	"UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/errors"
 
 	validation "github.com/go-ozzo/ozzo-validation"
 )

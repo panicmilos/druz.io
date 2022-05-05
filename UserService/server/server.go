@@ -1,8 +1,9 @@
 package server
 
 import (
-	"UserService/controllers"
 	"net/http"
+
+	"github.com/panicmilos/druz.io/UserService/controllers"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"

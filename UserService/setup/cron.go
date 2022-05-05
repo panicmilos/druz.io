@@ -1,7 +1,7 @@
 package setup
 
 import (
-	"UserService/cron_tasks"
+	"github.com/panicmilos/druz.io/UserService/cron_tasks"
 
 	"gopkg.in/robfig/cron.v2"
 )

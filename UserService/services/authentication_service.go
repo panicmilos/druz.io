@@ -1,11 +1,12 @@
 package services
 
 import (
-	"UserService/dto"
-	"UserService/errors"
-	"UserService/helpers"
-	"UserService/repository"
 	"strconv"
+
+	"github.com/panicmilos/druz.io/UserService/dto"
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/helpers"
+	"github.com/panicmilos/druz.io/UserService/repository"
 )
 
 type AuthenticationService struct {

@@ -1,12 +1,13 @@
 package services
 
 import (
-	"UserService/dto"
-	"UserService/errors"
-	"UserService/helpers"
-	"UserService/models"
-	"UserService/repository"
 	"time"
+
+	"github.com/panicmilos/druz.io/UserService/dto"
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/helpers"
+	"github.com/panicmilos/druz.io/UserService/models"
+	"github.com/panicmilos/druz.io/UserService/repository"
 
 	"github.com/google/uuid"
 )

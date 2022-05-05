@@ -1,14 +1,15 @@
 package controllers
 
 import (
-	"UserService/api_contracts"
-	"UserService/dto"
-	"UserService/errors"
-	"UserService/helpers"
-	"UserService/models"
-	"UserService/services"
 	"net/http"
 	"strconv"
+
+	"github.com/panicmilos/druz.io/UserService/api_contracts"
+	"github.com/panicmilos/druz.io/UserService/dto"
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/helpers"
+	"github.com/panicmilos/druz.io/UserService/models"
+	"github.com/panicmilos/druz.io/UserService/services"
 
 	dtoMapper "github.com/dranikpg/dto-mapper"
 	"github.com/gorilla/mux"

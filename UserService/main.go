@@ -1,9 +1,9 @@
 package main
 
 import (
-	"UserService/server"
-	"UserService/services"
-	"UserService/setup"
+	"github.com/panicmilos/druz.io/UserService/server"
+	"github.com/panicmilos/druz.io/UserService/services"
+	"github.com/panicmilos/druz.io/UserService/setup"
 )
 
 func main() {

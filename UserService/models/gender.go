@@ -1,6 +1,6 @@
 package models
 
-import "UserService/errors"
+import "github.com/panicmilos/druz.io/UserService/errors"
 
 type Gender int64
 

@@ -1,9 +1,10 @@
 package repository
 
 import (
-	"UserService/dto"
-	"UserService/models"
 	"strings"
+
+	"github.com/panicmilos/druz.io/UserService/dto"
+	"github.com/panicmilos/druz.io/UserService/models"
 
 	"gorm.io/gorm"
 )

@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"UserService/api_contracts"
-	"UserService/errors"
-	"UserService/helpers"
-	"UserService/services"
 	"net/http"
 	"strconv"
+
+	"github.com/panicmilos/druz.io/UserService/api_contracts"
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/helpers"
+	"github.com/panicmilos/druz.io/UserService/services"
 
 	"github.com/gorilla/mux"
 	"github.com/sarulabs/di"

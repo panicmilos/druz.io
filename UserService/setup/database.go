@@ -1,8 +1,8 @@
 package setup
 
 import (
-	"UserService/models"
-	"UserService/services"
+	"github.com/panicmilos/druz.io/UserService/models"
+	"github.com/panicmilos/druz.io/UserService/services"
 
 	"gorm.io/gorm"
 )

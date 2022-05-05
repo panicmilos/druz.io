@@ -1,10 +1,10 @@
 package services
 
 import (
-	"UserService/dto"
-	"UserService/errors"
-	"UserService/models"
-	"UserService/repository"
+	"github.com/panicmilos/druz.io/UserService/dto"
+	"github.com/panicmilos/druz.io/UserService/errors"
+	"github.com/panicmilos/druz.io/UserService/models"
+	"github.com/panicmilos/druz.io/UserService/repository"
 )
 
 type UserReportsService struct {

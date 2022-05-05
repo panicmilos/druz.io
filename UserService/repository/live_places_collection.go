@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"UserService/models"
+	"github.com/panicmilos/druz.io/UserService/models"
 
 	"gorm.io/gorm"
 )

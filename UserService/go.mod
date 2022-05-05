@@ -1,4 +1,4 @@
-module UserService
+module github.com/panicmilos/druz.io/UserService
 
 go 1.18
 
