@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/panicmilos/druz.io/UserRelationsService/dto"
 	"github.com/panicmilos/druz.io/UserRelationsService/errors"
 	"github.com/panicmilos/druz.io/UserRelationsService/models"
 	"github.com/panicmilos/druz.io/UserRelationsService/repository"
@@ -9,7 +10,8 @@ import (
 type UserBlocksService struct {
 	repository *repository.Repository
 
-	usersService *UsersService
+	usersService        *UsersService
+	userBlockReplicator *UserBlockReplicator
 }
 
 func (userBlockService *UserBlocksService) ReadByBlockedById(id uint) *[]models.UserBlock {
@@ -44,6 +46,11 @@ func (userBlockService *UserBlocksService) Create(userBlock *models.UserBlock) (
 
 	userBlockService.DeleteFriendsOrRequest(userBlock)
 
+	userBlockService.userBlockReplicator.Replicate(&dto.UserBlockReplication{
+		ReplicationType: "Block",
+		UserBlock:       userBlock,
+	})
+
 	return userBlockService.repository.UserBlocks.Create(userBlock), nil
 }
 
@@ -75,6 +82,11 @@ func (userBlockService *UserBlocksService) Delete(userBlock *models.UserBlock) (
 	if existingUserBlock == nil {
 		return nil, errors.NewErrNotFound("User is not blocked.")
 	}
+
+	userBlockService.userBlockReplicator.Replicate(&dto.UserBlockReplication{
+		ReplicationType: "Unblock",
+		UserBlock:       existingUserBlock,
+	})
 
 	return userBlockService.repository.UserBlocks.Delete(existingUserBlock.ID), nil
 }

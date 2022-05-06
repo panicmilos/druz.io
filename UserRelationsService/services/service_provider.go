@@ -23,6 +23,7 @@ const (
 	UserFriendService    = "UserFriendService"
 	UserService          = "UserService"
 	FriendRequestService = "FriendRequestService"
+	UserBlocksReplicator = "UserBlocksReplicator"
 )
 
 var serviceContainer = []di.Def{
@@ -107,10 +108,12 @@ var serviceContainer = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
 			userService := ctn.Get(UserService).(*UsersService)
+			userBlocksService := ctn.Get(UserBlocksReplicator).(*UserBlockReplicator)
 
 			return &UserBlocksService{
-				repository:   repository,
-				usersService: userService,
+				repository:          repository,
+				usersService:        userService,
+				userBlockReplicator: userBlocksService,
 			}, nil
 		},
 	},
@@ -148,6 +151,22 @@ var serviceContainer = []di.Def{
 			return &UsersService{
 				repository: repository,
 			}, nil
+		},
+	},
+	{
+		Name:  UserBlocksReplicator,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			userBlocksReplicator := &UserBlockReplicator{}
+			userBlocksReplicator.Initialize()
+
+			return userBlocksReplicator, nil
+		},
+		Close: func(obj interface{}) error {
+			userBlocksReplicator := obj.(*UserBlockReplicator)
+			userBlocksReplicator.Deinitialize()
+
+			return nil
 		},
 	},
 }
