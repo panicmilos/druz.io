@@ -10,6 +10,7 @@ func main() {
 	setup.SetupEnviroment()
 	setup.SetupDatabase()
 	setup.SetupCronTasks()
+	setup.SetupReplicators()
 
 	server.New().Start()
 

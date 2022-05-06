@@ -12,4 +12,5 @@ type Repository struct {
 	PasswordRecoveriesCollection *PasswordRecoveriesCollection
 	UserReportsCollection        *UserReportsCollection
 	UserReactivationsCollection  *UserReactivationsCollection
+	UserBlocksCollection         *UserBlocksCollection
 }

@@ -26,6 +26,7 @@ const (
 	UserReportService         = "UserReportsService"
 	UserReactivationService   = "UserReactivationService"
 	UsersReplicator           = "UsersReplicator"
+	UserBlocksReplicator      = "UsersBlocksReplicator"
 )
 
 var serviceContainer = []di.Def{
@@ -90,6 +91,9 @@ var serviceContainer = []di.Def{
 					DB: db,
 				},
 				UserReactivationsCollection: &repository.UserReactivationsCollection{
+					DB: db,
+				},
+				UserBlocksCollection: &repository.UserBlocksCollection{
 					DB: db,
 				},
 			}, nil
@@ -181,6 +185,27 @@ var serviceContainer = []di.Def{
 		Close: func(obj interface{}) error {
 			userReplicator := obj.(*UserReplicator)
 			userReplicator.Deinitialize()
+
+			return nil
+		},
+	},
+	{
+		Name:  UserBlocksReplicator,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			db := ctn.Get(AppDatabaseInstance).(*gorm.DB)
+			userBlockReplicator := &UserBlockReplicator{
+				UserBlocks: &repository.UserBlocksCollection{
+					DB: db,
+				},
+			}
+			userBlockReplicator.Initialize()
+
+			return userBlockReplicator, nil
+		},
+		Close: func(obj interface{}) error {
+			userBlockReplicator := obj.(*UserBlockReplicator)
+			userBlockReplicator.Deinitialize()
 
 			return nil
 		},

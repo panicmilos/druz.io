@@ -19,4 +19,5 @@ func SetupDatabase() {
 	db.AutoMigrate(&models.UserReport{})
 	db.AutoMigrate(&models.PasswordRecovery{})
 	db.AutoMigrate(&models.UserReactivation{})
+	db.AutoMigrate(&models.UserBlock{})
 }
