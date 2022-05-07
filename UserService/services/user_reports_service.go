@@ -17,12 +17,12 @@ func (userReportsService *UserReportsService) Search(params *dto.UserReportsSear
 }
 
 func (userReportsService *UserReportsService) Create(report *models.UserReport) (*models.UserReport, error) {
-	profile := userReportsService.repository.Users.ReadById(report.Reported)
+	profile := userReportsService.repository.Users.ReadById(report.ReportedId)
 	if profile == nil {
 		return nil, errors.NewErrNotFound("Profile is not found")
 	}
 
-	if report.Reported == report.ReportedBy {
+	if report.ReportedId == report.ReportedById {
 		return nil, errors.NewErrBadRequest("You can not report yourself")
 	}
 

@@ -45,6 +45,9 @@ var AuthenticateMiddlewate = func(next http.Handler) http.Handler {
 		r.Header.Set("name", claims.(jwt.MapClaims)["name"].(string))
 		r.Header.Set("role", claims.(jwt.MapClaims)["role"].(string))
 
+		sessionStorage := di.Get(r, services.SessionStorage).(*helpers.SessionStorage)
+		sessionStorage.AuthenticatedUserId = claims.(jwt.MapClaims)["name"].(string)
+
 		next.ServeHTTP(w, r)
 	})
 }

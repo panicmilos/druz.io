@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/panicmilos/druz.io/UserService/helpers"
 	"github.com/panicmilos/druz.io/UserService/repository"
 
 	"github.com/sarulabs/di"
@@ -27,6 +28,7 @@ const (
 	UserReactivationService   = "UserReactivationService"
 	UsersReplicator           = "UsersReplicator"
 	UserBlocksReplicator      = "UsersBlocksReplicator"
+	SessionStorage            = "SessionStorage"
 )
 
 var serviceContainer = []di.Def{
@@ -67,10 +69,13 @@ var serviceContainer = []di.Def{
 		Scope: di.Request,
 		Build: func(ctn di.Container) (interface{}, error) {
 			db := ctn.Get(DatabaseConnection).(*gorm.DB)
+			sessionStorage := ctn.Get(SessionStorage).(*helpers.SessionStorage)
+
 			return &repository.Repository{
 				DB: db,
 				Users: &repository.UsersCollection{
-					DB: db,
+					DB:             db,
+					SessionStorage: sessionStorage,
 				},
 				LivePlaces: &repository.LivePlacesCollection{
 					DB: db,
@@ -208,6 +213,13 @@ var serviceContainer = []di.Def{
 			userBlockReplicator.Deinitialize()
 
 			return nil
+		},
+	},
+	{
+		Name:  SessionStorage,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			return &helpers.SessionStorage{}, nil
 		},
 	},
 }

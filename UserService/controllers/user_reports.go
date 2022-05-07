@@ -43,12 +43,12 @@ var ReportUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
-	reportedBy, _ := strconv.Atoi(r.Header.Get("name"))
+	reportedById, _ := strconv.Atoi(r.Header.Get("name"))
 
 	report := &models.UserReport{
-		Reported:   uint(id),
-		ReportedBy: uint(reportedBy),
-		Reason:     request.Reason,
+		ReportedId:   uint(id),
+		ReportedById: uint(reportedById),
+		Reason:       request.Reason,
 	}
 
 	userReportsService := di.Get(r, services.UserReportService).(*services.UserReportsService)

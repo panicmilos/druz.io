@@ -4,7 +4,12 @@ import "gorm.io/gorm"
 
 type UserReport struct {
 	gorm.Model
-	Reported   uint
-	ReportedBy uint
-	Reason     string
+
+	ReportedId uint
+	Reported   Profile
+
+	ReportedById uint
+	ReportedBy   Profile
+
+	Reason string
 }

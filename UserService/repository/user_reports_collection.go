@@ -17,17 +17,18 @@ func (userReportsCollection *UserReportsCollection) Search(params *dto.UserRepor
 	userReports := &[]models.UserReport{}
 
 	query := userReportsCollection.DB.Table("user_reports")
+	query.Preload("Reported").Preload("ReportedBy")
 
 	if len(strings.TrimSpace(params.Reason)) != 0 {
 		query.Where("LOWER(user_reports.reason) like ?", "%"+strings.ToLower(params.Reason)+"%")
 	}
 
-	query.Joins("JOIN profiles p ON user_reports.reported = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
+	query.Joins("JOIN profiles p ON user_reports.reported_id = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
 	if len(strings.TrimSpace(params.Reported)) != 0 {
 		query.Where("CONCAT(LOWER(p.first_name), ' ', LOWER(p.last_name)) like ?", "%"+strings.ToLower(params.Reported)+"%")
 	}
 
-	query.Joins("JOIN profiles p2 ON user_reports.reported_by = p2.id").Where("(p2.disabled is NULL OR p2.disabled = 0) AND p2.deleted_at is NULL")
+	query.Joins("JOIN profiles p2 ON user_reports.reported_by_id = p2.id").Where("(p2.disabled is NULL OR p2.disabled = 0) AND p2.deleted_at is NULL")
 	if len(strings.TrimSpace(params.ReportedBy)) != 0 {
 		query.Where("CONCAT(LOWER(p2.first_name), ' ', LOWER(p2.last_name)) like ?", "%"+strings.ToLower(params.ReportedBy)+"%")
 	}
@@ -40,8 +41,9 @@ func (userReportsCollection *UserReportsCollection) ReadById(id uint) *models.Us
 	report := &models.UserReport{}
 
 	query := userReportsCollection.DB.Table("user_reports")
-	query.Joins("JOIN profiles p ON user_reports.reported = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
-	query.Joins("JOIN profiles p2 ON user_reports.reported_by = p2.id").Where("(p2.disabled is NULL OR p2.disabled = 0) AND p2.deleted_at is NULL")
+	query.Preload("Reported").Preload("ReportedBy")
+	query.Joins("JOIN profiles p ON user_reports.reported_id = p.id").Where("(p.disabled is NULL OR p.disabled = 0) AND p.deleted_at is NULL")
+	query.Joins("JOIN profiles p2 ON user_reports.reported_by_id = p2.id").Where("(p2.disabled is NULL OR p2.disabled = 0) AND p2.deleted_at is NULL")
 	result := query.First(report, id)
 	if result.RowsAffected == 0 {
 		return nil

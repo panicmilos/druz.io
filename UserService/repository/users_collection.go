@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/panicmilos/druz.io/UserService/dto"
+	"github.com/panicmilos/druz.io/UserService/helpers"
 	"github.com/panicmilos/druz.io/UserService/models"
 
 	"gorm.io/gorm"
@@ -12,13 +13,17 @@ import (
 
 type UsersCollection struct {
 	DB *gorm.DB
+
+	SessionStorage *helpers.SessionStorage
 }
 
 func (userCollection *UsersCollection) Search(params *dto.UsersSearchParams) *[]models.Profile {
 	users := &[]models.Profile{}
 
 	query := userCollection.DB.Table("profiles")
+	query.Where("profiles.id != ?", userCollection.SessionStorage.AuthenticatedUserId)
 	query.Where("(profiles.disabled is NULL OR profiles.disabled = 0)")
+	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ?)", userCollection.SessionStorage.AuthenticatedUserId)
 
 	if len(strings.TrimSpace(params.Name)) != 0 {
 		query.Where("CONCAT(LOWER(profiles.first_name), ' ', LOWER(profiles.last_name)) like ?", "%"+strings.ToLower(params.Name)+"%")
@@ -79,7 +84,9 @@ func (userCollection *UsersCollection) ReadAccountByProfileId(id uint) *models.A
 func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 	profile := &models.Profile{}
 
-	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
+	query := userCollection.DB.Table("profiles")
+	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ?)", userCollection.SessionStorage.AuthenticatedUserId)
+	result := query.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
 	if result.RowsAffected == 0 || profile.Disabled {
 		return nil
 	}
