@@ -1,12 +1,8 @@
 package models
 
-import (
-	"gorm.io/gorm"
-)
-
 // swagger:model User
 type User struct {
-	gorm.Model
+	ID        string
 	FirstName string
 	LastName  string
 	Disabled  bool
