@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/panicmilos/druz.io/UserRelationsService/dto"
 	"github.com/panicmilos/druz.io/UserRelationsService/errors"
 	"github.com/panicmilos/druz.io/UserRelationsService/models"
 	"github.com/panicmilos/druz.io/UserRelationsService/repository"
@@ -8,6 +9,8 @@ import (
 
 type UserFriendsService struct {
 	repository *repository.Repository
+
+	UserFriendReplicator *UserFriendReplicator
 }
 
 func (userFriendService *UserFriendsService) ReadByUserId(id uint) *[]models.UserFriend {
@@ -16,10 +19,22 @@ func (userFriendService *UserFriendsService) ReadByUserId(id uint) *[]models.Use
 
 func (userFriendService *UserFriendsService) Create(userFriend *models.UserFriend) (*models.UserFriend, error) {
 
-	userFriendService.repository.UserFriends.Create(userFriend)
-	userFriendService.repository.UserFriends.Create(&models.UserFriend{
+	reversedUserFriend := &models.UserFriend{
 		UserId:   userFriend.FriendId,
 		FriendId: userFriend.UserId,
+	}
+
+	userFriendService.repository.UserFriends.Create(userFriend)
+	userFriendService.repository.UserFriends.Create(reversedUserFriend)
+
+	userFriendService.UserFriendReplicator.Replicate(&dto.UserFriendReplication{
+		ReplicationType: "Add",
+		UserFriend:      userFriend,
+	})
+
+	userFriendService.UserFriendReplicator.Replicate(&dto.UserFriendReplication{
+		ReplicationType: "Add",
+		UserFriend:      reversedUserFriend,
 	})
 
 	return userFriend, nil
@@ -34,6 +49,17 @@ func (userFriendService *UserFriendsService) Delete(userFriend *models.UserFrien
 
 	existingUserFriendReversed := userFriendService.repository.UserFriends.ReadByIds(userFriend.FriendId, userFriend.UserId)
 	userFriendService.repository.UserFriends.Delete(existingUserFriendReversed.ID)
+	userFriendService.repository.UserFriends.Delete(existingUserFriend.ID)
 
-	return userFriendService.repository.UserFriends.Delete(existingUserFriend.ID), nil
+	userFriendService.UserFriendReplicator.Replicate(&dto.UserFriendReplication{
+		ReplicationType: "Remove",
+		UserFriend:      existingUserFriend,
+	})
+
+	userFriendService.UserFriendReplicator.Replicate(&dto.UserFriendReplication{
+		ReplicationType: "Remove",
+		UserFriend:      existingUserFriendReversed,
+	})
+
+	return existingUserFriend, nil
 }

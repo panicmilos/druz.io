@@ -15,15 +15,16 @@ import (
 var Provider = buildServiceContainer()
 
 const (
-	AppDatabaseInstance  = "AppDatabaseInstance"
-	DatabaseConnection   = "DatabaseConnection"
-	Repository           = "Repository"
-	UsersReplicator      = "UsersReplicator"
-	UserBlockService     = "UserBlockService"
-	UserFriendService    = "UserFriendService"
-	UserService          = "UserService"
-	FriendRequestService = "FriendRequestService"
-	UserBlocksReplicator = "UserBlocksReplicator"
+	AppDatabaseInstance   = "AppDatabaseInstance"
+	DatabaseConnection    = "DatabaseConnection"
+	Repository            = "Repository"
+	UsersReplicator       = "UsersReplicator"
+	UserBlockService      = "UserBlockService"
+	UserFriendService     = "UserFriendService"
+	UserService           = "UserService"
+	FriendRequestService  = "FriendRequestService"
+	UserBlocksReplicator  = "UserBlocksReplicator"
+	UserFriendsReplicator = "UserFriendsReplicator"
 )
 
 var serviceContainer = []di.Def{
@@ -108,12 +109,12 @@ var serviceContainer = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
 			userService := ctn.Get(UserService).(*UsersService)
-			userBlocksService := ctn.Get(UserBlocksReplicator).(*UserBlockReplicator)
+			userBlocksReplicator := ctn.Get(UserBlocksReplicator).(*UserBlockReplicator)
 
 			return &UserBlocksService{
 				repository:          repository,
 				usersService:        userService,
-				userBlockReplicator: userBlocksService,
+				userBlockReplicator: userBlocksReplicator,
 			}, nil
 		},
 	},
@@ -122,9 +123,11 @@ var serviceContainer = []di.Def{
 		Scope: di.Request,
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
+			userFriendReplicator := ctn.Get(UserFriendsReplicator).(*UserFriendReplicator)
 
 			return &UserFriendsService{
-				repository: repository,
+				repository:           repository,
+				UserFriendReplicator: userFriendReplicator,
 			}, nil
 		},
 	},
@@ -165,6 +168,22 @@ var serviceContainer = []di.Def{
 		Close: func(obj interface{}) error {
 			userBlocksReplicator := obj.(*UserBlockReplicator)
 			userBlocksReplicator.Deinitialize()
+
+			return nil
+		},
+	},
+	{
+		Name:  UserFriendsReplicator,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			userFriendsReplicator := &UserFriendReplicator{}
+			userFriendsReplicator.Initialize()
+
+			return userFriendsReplicator, nil
+		},
+		Close: func(obj interface{}) error {
+			userFriendsReplicator := obj.(*UserFriendReplicator)
+			userFriendsReplicator.Deinitialize()
 
 			return nil
 		},
