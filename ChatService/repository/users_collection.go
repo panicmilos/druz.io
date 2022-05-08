@@ -14,14 +14,14 @@ type UsersCollection struct {
 
 const users_prefix = "users"
 
-func formKey(id string) string {
+func formUsersKey(id string) string {
 	return fmt.Sprintf("%s/%s", users_prefix, id)
 }
 
 func (usersCollection *UsersCollection) ReadById(id string) *models.User {
 	user := &models.User{}
 
-	err := usersCollection.Session.Load(user, formKey(id))
+	err := usersCollection.Session.Load(user, formUsersKey(id))
 	if err != nil || user.Disabled {
 		return nil
 	}
@@ -30,7 +30,7 @@ func (usersCollection *UsersCollection) ReadById(id string) *models.User {
 }
 
 func (usersCollection *UsersCollection) Create(user *models.User) *models.User {
-	user.ID = formKey(user.ID)
+	user.ID = formUsersKey(user.ID)
 
 	usersCollection.Session.Store(user)
 	usersCollection.Session.SaveChanges()
@@ -40,7 +40,7 @@ func (usersCollection *UsersCollection) Create(user *models.User) *models.User {
 
 func (usersCollection *UsersCollection) Update(user *models.User) *models.User {
 	if !strings.HasPrefix(user.ID, users_prefix) {
-		user.ID = formKey(user.ID)
+		user.ID = formUsersKey(user.ID)
 	}
 
 	usersCollection.Session.Store(user)

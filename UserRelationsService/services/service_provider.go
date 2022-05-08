@@ -110,11 +110,13 @@ var serviceContainer = []di.Def{
 			repository := ctn.Get(Repository).(*repository.Repository)
 			userService := ctn.Get(UserService).(*UsersService)
 			userBlocksReplicator := ctn.Get(UserBlocksReplicator).(*UserBlockReplicator)
+			userFriendReplicator := ctn.Get(UserFriendsReplicator).(*UserFriendReplicator)
 
 			return &UserBlocksService{
-				repository:          repository,
-				usersService:        userService,
-				userBlockReplicator: userBlocksReplicator,
+				repository:           repository,
+				usersService:         userService,
+				userBlockReplicator:  userBlocksReplicator,
+				UserFriendReplicator: userFriendReplicator,
 			}, nil
 		},
 	},

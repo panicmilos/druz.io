@@ -10,8 +10,9 @@ import (
 type UserBlocksService struct {
 	repository *repository.Repository
 
-	usersService        *UsersService
-	userBlockReplicator *UserBlockReplicator
+	usersService         *UsersService
+	userBlockReplicator  *UserBlockReplicator
+	UserFriendReplicator *UserFriendReplicator
 }
 
 func (userBlockService *UserBlocksService) ReadByBlockedById(id uint) *[]models.UserBlock {
@@ -68,11 +69,19 @@ func (userBlockService *UserBlocksService) DeleteFriendsOrRequest(userBlock *mod
 	userFriend := userBlockService.repository.UserFriends.ReadByIds(userBlock.BlockedId, userBlock.BlockedById)
 	if userFriend != nil {
 		userBlockService.repository.UserFriends.Delete(userFriend.ID)
+		userBlockService.UserFriendReplicator.Replicate(&dto.UserFriendReplication{
+			ReplicationType: "Remove",
+			UserFriend:      userFriend,
+		})
 	}
 
 	userFriend = userBlockService.repository.UserFriends.ReadByIds(userBlock.BlockedById, userBlock.BlockedId)
 	if userFriend != nil {
 		userBlockService.repository.UserFriends.Delete(userFriend.ID)
+		userBlockService.UserFriendReplicator.Replicate(&dto.UserFriendReplication{
+			ReplicationType: "Remove",
+			UserFriend:      userFriend,
+		})
 	}
 }
 

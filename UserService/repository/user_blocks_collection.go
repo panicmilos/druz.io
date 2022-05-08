@@ -1,8 +1,6 @@
 package repository
 
 import (
-	"fmt"
-
 	"github.com/panicmilos/druz.io/UserService/models"
 	"gorm.io/gorm"
 )
@@ -29,7 +27,6 @@ func (userBlocksCollection *UserBlocksCollection) Create(userBlock *models.UserB
 }
 
 func (userBlocksCollection *UserBlocksCollection) Delete(id uint) *models.UserBlock {
-	fmt.Println(id)
 	userBlock := userBlocksCollection.ReadById(id)
 
 	userBlocksCollection.DB.Delete(userBlock)

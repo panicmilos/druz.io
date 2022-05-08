@@ -12,11 +12,12 @@ import (
 var Provider = buildServiceContainer()
 
 const (
-	DocumentStore       = "DocumentStore"
-	AppDatabaseInstance = "AppDatabaseInstance"
-	DatabaseConnection  = "DatabaseConnection"
-	Repository          = "Repository"
-	UserReplicator      = "UserReplicator"
+	DocumentStore        = "DocumentStore"
+	AppDatabaseInstance  = "AppDatabaseInstance"
+	DatabaseConnection   = "DatabaseConnection"
+	Repository           = "Repository"
+	UserReplicator       = "UserReplicator"
+	UserFriendReplicator = "UserFriendReplicator"
 )
 
 var serviceContainer = []di.Def{
@@ -99,6 +100,27 @@ var serviceContainer = []di.Def{
 		Close: func(obj interface{}) error {
 			usersReplicator := obj.(*UsersReplicator)
 			usersReplicator.Deinitialize()
+
+			return nil
+		},
+	},
+	{
+		Name:  UserFriendReplicator,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			session := ctn.Get(AppDatabaseInstance).(*ravendb.DocumentSession)
+			userFriendsReplicator := &UserFriendsReplicator{
+				UserFriends: &repository.UserFriendsCollection{
+					Session: session,
+				},
+			}
+			userFriendsReplicator.Initialize()
+
+			return userFriendsReplicator, nil
+		},
+		Close: func(obj interface{}) error {
+			userFriendsReplicator := obj.(*UserFriendsReplicator)
+			userFriendsReplicator.Deinitialize()
 
 			return nil
 		},
