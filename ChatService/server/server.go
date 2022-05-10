@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
+	"github.com/panicmilos/druz.io/ChatService/controllers"
 )
 
 type Server struct {
@@ -24,9 +25,9 @@ func New() *Server {
 }
 
 func (server *Server) addHandlers() {
-	// router := server.Router
+	router := server.Router
 
-	// router.Handle("/users/{id}/block-list", controllers.ReadBlockList).Methods("GET")
+	router.Handle("/users/{id}/message", AuthenticateMiddlewate(controllers.SendMessage)).Methods("POST")
 
 }
 

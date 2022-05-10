@@ -20,7 +20,7 @@ func formUserFriendsKey(userId string, friendId string) string {
 func (userFriendsCollection *UserFriendsCollection) ReadByIds(userID string, friendID string) *models.UserFriend {
 	userFriend := &models.UserFriend{}
 
-	err := userFriendsCollection.Session.Load(userFriend, formUserFriendsKey(userID, friendID))
+	err := userFriendsCollection.Session.Include(formUsersKey(friendID)).Load(&userFriend, formUserFriendsKey(userID, friendID))
 	if err != nil {
 		return nil
 	}

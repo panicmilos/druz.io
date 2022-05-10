@@ -21,7 +21,7 @@ func formUsersKey(id string) string {
 func (usersCollection *UsersCollection) ReadById(id string) *models.User {
 	user := &models.User{}
 
-	err := usersCollection.Session.Load(user, formUsersKey(id))
+	err := usersCollection.Session.Load(&user, formUsersKey(id))
 	if err != nil || user.Disabled {
 		return nil
 	}

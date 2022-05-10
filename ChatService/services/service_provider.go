@@ -18,6 +18,8 @@ const (
 	Repository           = "Repository"
 	UserReplicator       = "UserReplicator"
 	UserFriendReplicator = "UserFriendReplicator"
+	UserService          = "UserService"
+	MessageService       = "MessageService"
 )
 
 var serviceContainer = []di.Def{
@@ -80,6 +82,12 @@ var serviceContainer = []di.Def{
 				Users: &repository.UsersCollection{
 					Session: session,
 				},
+				UserFriends: &repository.UserFriendsCollection{
+					Session: session,
+				},
+				Messages: &repository.MessagesCollection{
+					Session: session,
+				},
 			}, nil
 		},
 	},
@@ -123,6 +131,28 @@ var serviceContainer = []di.Def{
 			userFriendsReplicator.Deinitialize()
 
 			return nil
+		},
+	},
+	{
+		Name:  UserService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			return &UsersService{
+				repository: repository,
+			}, nil
+		},
+	},
+	{
+		Name:  MessageService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			usersService := ctn.Get(UserService).(*UsersService)
+			return &MessagesService{
+				repository:   repository,
+				UsersService: usersService,
+			}, nil
 		},
 	},
 }
