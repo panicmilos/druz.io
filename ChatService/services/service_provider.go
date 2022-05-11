@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/panicmilos/druz.io/ChatService/helpers"
 	"github.com/panicmilos/druz.io/ChatService/repository"
 	ravendb "github.com/ravendb/ravendb-go-client"
 	"github.com/sarulabs/di"
@@ -20,6 +21,7 @@ const (
 	UserFriendReplicator = "UserFriendReplicator"
 	UserService          = "UserService"
 	MessageService       = "MessageService"
+	SessionStorage       = "SessionStorage"
 )
 
 var serviceContainer = []di.Def{
@@ -76,6 +78,7 @@ var serviceContainer = []di.Def{
 		Scope: di.Request,
 		Build: func(ctn di.Container) (interface{}, error) {
 			session := ctn.Get(DatabaseConnection).(*ravendb.DocumentSession)
+			sessionStorage := ctn.Get(SessionStorage).(*helpers.SessionStorage)
 
 			return &repository.Repository{
 				Session: session,
@@ -86,7 +89,8 @@ var serviceContainer = []di.Def{
 					Session: session,
 				},
 				Messages: &repository.MessagesCollection{
-					Session: session,
+					Session:        session,
+					SessionStorage: sessionStorage,
 				},
 			}, nil
 		},
@@ -149,10 +153,20 @@ var serviceContainer = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
 			usersService := ctn.Get(UserService).(*UsersService)
+			sessionStorage := ctn.Get(SessionStorage).(*helpers.SessionStorage)
+
 			return &MessagesService{
-				repository:   repository,
-				UsersService: usersService,
+				repository:     repository,
+				UsersService:   usersService,
+				SessionStorage: sessionStorage,
 			}, nil
+		},
+	},
+	{
+		Name:  SessionStorage,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			return &helpers.SessionStorage{}, nil
 		},
 	},
 }

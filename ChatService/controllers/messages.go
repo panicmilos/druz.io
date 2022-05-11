@@ -43,3 +43,34 @@ var SendMessage = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) 
 
 	helpers.JSONResponse(w, 200, createdMessage)
 })
+
+var DeleteMessage = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+	chat := params["chat"]
+	messageId := params["messageId"]
+	mode := r.URL.Query().Get("mode")
+
+	messagesService := di.Get(r, services.MessageService).(*services.MessagesService)
+	deletedMessage, err := messagesService.DeleteMessage(chat, messageId, mode)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, deletedMessage)
+})
+
+var DeleteChat = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+	chat := params["chat"]
+	mode := r.URL.Query().Get("mode")
+
+	messagesService := di.Get(r, services.MessageService).(*services.MessagesService)
+	deletedChat, err := messagesService.DeleteChat(chat, mode)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, deletedChat)
+})

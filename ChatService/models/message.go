@@ -9,5 +9,6 @@ type Message struct {
 	Message string
 	Type    string
 
-	DeletedFor []string
+	DeletedBy1 string
+	DeletedBy2 string
 }
