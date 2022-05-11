@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 
@@ -52,7 +53,7 @@ func (messagesCollection *MessagesCollection) ReadMessage(chat string, messageId
 }
 
 func (messagesCollection *MessagesCollection) ReadChat(chat string) []*models.Message {
-	q := messagesCollection.Session.QueryCollection(strings.Replace(formChatCollection(chat), "/", "//", -1))
+	q := messagesCollection.Session.QueryCollection(formChatCollection(chat))
 
 	q.WaitForNonStaleResults(0)
 	q.WhereNotEquals("DeletedBy1", messagesCollection.SessionStorage.AuthenticatedUserId)
@@ -68,8 +69,62 @@ func (messagesCollection *MessagesCollection) ReadChat(chat string) []*models.Me
 	return messages
 }
 
+func (messagesCollection *MessagesCollection) ChatsWith(forId string) *[]dto.Chat {
+	q := messagesCollection.Session.QueryCollection("@all_docs")
+
+	q.WhereExists("ToId")
+	q.WhereExists("FromId")
+
+	q.Include("ToId")
+	q.Include("FromId")
+	q.SelectFields(reflect.TypeOf(""), "ToId", "FromId")
+	q.Distinct()
+
+	var messages []*models.Message
+	q.GetResults(&messages)
+
+	chats := []dto.Chat{}
+
+	for _, message := range messages {
+		if message.FromId != messagesCollection.SessionStorage.AuthenticatedUserId {
+			chat := messagesCollection.makeChat(message.FromId)
+			if !helpers.ContainsChat(chats, *chat) {
+				chats = append(chats, *chat)
+			}
+		}
+
+		if message.ToId != messagesCollection.SessionStorage.AuthenticatedUserId {
+			chat := messagesCollection.makeChat(message.ToId)
+			if !helpers.ContainsChat(chats, *chat) {
+				chats = append(chats, *chat)
+			}
+		}
+	}
+
+	return &chats
+}
+
+func (messagesCollection *MessagesCollection) makeChat(fromId string) *dto.Chat {
+	from := &models.User{}
+	messagesCollection.Session.Load(&from, formUsersKey(fromId))
+
+	chat := ""
+	fromIdParsed, _ := strconv.ParseUint(fromId, 10, 32)
+	toIdParsed, _ := strconv.ParseUint(messagesCollection.SessionStorage.AuthenticatedUserId, 10, 32)
+	if fromIdParsed < toIdParsed {
+		chat = fmt.Sprintf("%s-%s", fromId, messagesCollection.SessionStorage.AuthenticatedUserId)
+	} else {
+		chat = fmt.Sprintf("%s-%s", messagesCollection.SessionStorage.AuthenticatedUserId, fromId)
+	}
+
+	return &dto.Chat{
+		Chat: chat,
+		User: from,
+	}
+}
+
 func (messagesCollection *MessagesCollection) SearchChat(chat string, searchParams *dto.ChatSearchParams) []*models.Message {
-	q := messagesCollection.Session.QueryCollection(strings.Replace(formChatCollection(chat), "/", "//", -1))
+	q := messagesCollection.Session.QueryCollection(formChatCollection(chat))
 
 	q.WaitForNonStaleResults(0)
 	q.WhereNotEquals("DeletedBy1", messagesCollection.SessionStorage.AuthenticatedUserId)

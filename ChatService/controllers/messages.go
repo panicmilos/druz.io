@@ -15,6 +15,15 @@ import (
 	"github.com/sarulabs/di"
 )
 
+var ChatsWith = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	forId := r.Header.Get("name")
+
+	messagesService := di.Get(r, services.MessageService).(*services.MessagesService)
+
+	helpers.JSONResponse(w, 200, messagesService.ChatsWith(forId))
+})
+
 var ReadChat = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 	chat := mux.Vars(r)["chat"]

@@ -18,6 +18,10 @@ type MessagesService struct {
 	SessionStorage *helpers.SessionStorage
 }
 
+func (messagesService *MessagesService) ChatsWith(forId string) *[]dto.Chat {
+	return messagesService.repository.Messages.ChatsWith(forId)
+}
+
 func (messagesService *MessagesService) ReadMessage(chat string, messageId string) (*models.Message, error) {
 	message := messagesService.repository.Messages.ReadMessage(chat, messageId)
 	if message == nil {

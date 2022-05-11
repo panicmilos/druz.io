@@ -28,6 +28,7 @@ func (server *Server) addHandlers() {
 	router := server.Router
 
 	router.Handle("/users/{id}/message", AuthenticateMiddlewate(controllers.SendMessage)).Methods("POST")
+	router.Handle("/users/chats", AuthenticateMiddlewate(controllers.ChatsWith)).Methods("GET")
 	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(controllers.ReadChat)).Methods("GET")
 	router.Handle("/users/chats/{chat}/{messageId}", AuthenticateMiddlewate(controllers.DeleteMessage)).Methods("DELETE")
 	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(controllers.DeleteChat)).Methods("DELETE")
