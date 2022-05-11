@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/panicmilos/druz.io/ChatService/dto"
 	"github.com/panicmilos/druz.io/ChatService/helpers"
 	"github.com/panicmilos/druz.io/ChatService/models"
 	ravendb "github.com/ravendb/ravendb-go-client"
@@ -55,8 +56,29 @@ func (messagesCollection *MessagesCollection) ReadChat(chat string) []*models.Me
 
 	q.WaitForNonStaleResults(0)
 	q.WhereNotEquals("DeletedBy1", messagesCollection.SessionStorage.AuthenticatedUserId)
-	q.AndAlso()
 	q.WhereNotEquals("DeletedBy2", messagesCollection.SessionStorage.AuthenticatedUserId)
+	q.OrderBy("CreatedAt")
+
+	var messages []*models.Message
+	err := q.GetResults(&messages)
+	if err != nil || len(messages) == 0 {
+		return nil
+	}
+
+	return messages
+}
+
+func (messagesCollection *MessagesCollection) SearchChat(chat string, searchParams *dto.ChatSearchParams) []*models.Message {
+	q := messagesCollection.Session.QueryCollection(strings.Replace(formChatCollection(chat), "/", "//", -1))
+
+	q.WaitForNonStaleResults(0)
+	q.WhereNotEquals("DeletedBy1", messagesCollection.SessionStorage.AuthenticatedUserId)
+	q.WhereNotEquals("DeletedBy2", messagesCollection.SessionStorage.AuthenticatedUserId)
+	if len(strings.TrimSpace(searchParams.Keywoard)) != 0 {
+		q.Search("Message", searchParams.Keywoard)
+	}
+	q.Take(searchParams.Take)
+	q.OrderBy("CreatedAt")
 
 	var messages []*models.Message
 	err := q.GetResults(&messages)
@@ -81,13 +103,7 @@ func (messagesCollection *MessagesCollection) Create(message *models.Message) *m
 func (messagesCollection *MessagesCollection) DeleteMessage(chat string, messageId string, deleteFor []string) *models.Message {
 	message := messagesCollection.ReadMessage(chat, messageId)
 
-	for _, val := range deleteFor {
-		if message.DeletedBy1 == "" {
-			message.DeletedBy1 = val
-		} else {
-			message.DeletedBy2 = val
-		}
-	}
+	setDeleteFor(message, deleteFor)
 
 	messagesCollection.Session.SaveChanges()
 
@@ -98,16 +114,20 @@ func (messagesCollection *MessagesCollection) DeleteChat(chat string, deleteFor 
 	messages := messagesCollection.ReadChat(chat)
 
 	for _, message := range messages {
-		for _, val := range deleteFor {
-			if message.DeletedBy1 == "" {
-				message.DeletedBy1 = val
-			} else {
-				message.DeletedBy2 = val
-			}
-		}
+		setDeleteFor(message, deleteFor)
 	}
 
 	messagesCollection.Session.SaveChanges()
 
 	return messages
+}
+
+func setDeleteFor(message *models.Message, deleteFor []string) {
+	for _, val := range deleteFor {
+		if message.DeletedBy1 == "" {
+			message.DeletedBy1 = val
+		} else {
+			message.DeletedBy2 = val
+		}
+	}
 }

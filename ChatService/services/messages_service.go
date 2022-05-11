@@ -2,7 +2,9 @@ package services
 
 import (
 	"strings"
+	"time"
 
+	"github.com/panicmilos/druz.io/ChatService/dto"
 	"github.com/panicmilos/druz.io/ChatService/errors"
 	"github.com/panicmilos/druz.io/ChatService/helpers"
 	"github.com/panicmilos/druz.io/ChatService/models"
@@ -34,6 +36,10 @@ func (messagesService *MessagesService) ReadChat(chat string) ([]*models.Message
 	return messages, nil
 }
 
+func (messagesService *MessagesService) SearchChat(chat string, searchParams *dto.ChatSearchParams) []*models.Message {
+	return messagesService.repository.Messages.SearchChat(chat, searchParams)
+}
+
 func (messagesService *MessagesService) Create(message *models.Message) (*models.Message, error) {
 	userFriend := messagesService.repository.UserFriends.ReadByIds(message.FromId, message.ToId)
 	if userFriend == nil {
@@ -45,6 +51,7 @@ func (messagesService *MessagesService) Create(message *models.Message) (*models
 		return nil, err
 	}
 
+	message.CreatedAt = time.Now()
 	message.DeletedBy1 = ""
 	message.DeletedBy2 = ""
 
