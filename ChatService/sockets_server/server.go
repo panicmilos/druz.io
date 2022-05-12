@@ -1,8 +1,8 @@
 package sockets_server
 
 import (
+	"context"
 	"encoding/json"
-	"log"
 
 	"github.com/ambelovsky/gosf"
 	"github.com/jellydator/ttlcache/v3"
@@ -12,12 +12,14 @@ import (
 var _server *SocketsServer
 
 type SocketsServer struct {
-	Clients *ttlcache.Cache[string, *gosf.Client]
+	Clients         *ttlcache.Cache[string, *gosf.Client]
+	StatusesService *services.StatusesService
 }
 
 func New() *SocketsServer {
 	_server = &SocketsServer{
-		Clients: services.Provider.Get(services.ClientsCache).(*ttlcache.Cache[string, *gosf.Client]),
+		Clients:         services.Provider.Get(services.ClientsCache).(*ttlcache.Cache[string, *gosf.Client]),
+		StatusesService: services.Provider.Get(services.StatusService).(*services.StatusesService),
 	}
 
 	_server.addListeners()
@@ -26,24 +28,30 @@ func New() *SocketsServer {
 }
 
 func (server *SocketsServer) addListeners() {
-	gosf.Listen("init-user", initUser)
+	gosf.Listen("heartbit", heartbit)
 
-	gosf.OnDisconnect(func(client *gosf.Client, request *gosf.Request) {
-		log.Println("Client disconnected.")
+	server.Clients.OnEviction(func(context context.Context, reason ttlcache.EvictionReason, item *ttlcache.Item[string, *gosf.Client]) {
+		if reason == ttlcache.EvictionReasonExpired {
+			userId := item.Key()
+			_server.StatusesService.NotifyWentOffline(userId)
+		}
 	})
+
 }
 
-func initUser(client *gosf.Client, request *gosf.Request) *gosf.Message {
+func heartbit(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	text := request.Message.Text
+	heartbit := &Heartbit{}
+	json.Unmarshal([]byte(text), heartbit)
 
-	initUser := &InitUser{}
-	json.Unmarshal([]byte(text), initUser)
+	if _server.Clients.Get(heartbit.UserId) == nil {
+		client.Join(heartbit.UserId)
+		_server.StatusesService.NotifyCameOnline(heartbit.UserId)
+	}
 
-	client.Join(initUser.UserId)
+	_server.Clients.Set(heartbit.UserId, client, ttlcache.DefaultTTL)
 
-	_server.Clients.Set(initUser.UserId, client, ttlcache.NoTTL)
-
-	return gosf.NewSuccessMessage("Successfull init")
+	return gosf.NewSuccessMessage()
 }
 
 func (server *SocketsServer) Start() {

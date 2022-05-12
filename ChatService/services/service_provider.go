@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/ambelovsky/gosf"
 	"github.com/jellydator/ttlcache/v3"
@@ -25,6 +26,7 @@ const (
 	UserService          = "UserService"
 	MessageService       = "MessageService"
 	SessionStorage       = "SessionStorage"
+	StatusService        = "StatusService"
 )
 
 var serviceContainer = []di.Def{
@@ -32,7 +34,11 @@ var serviceContainer = []di.Def{
 		Name:  ClientsCache,
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
-			cache := ttlcache.New[string, *gosf.Client]()
+			cache := ttlcache.New(
+				ttlcache.WithTTL[string, *gosf.Client](30 * time.Second),
+			)
+
+			go cache.Start()
 
 			return cache, nil
 		},
@@ -187,6 +193,32 @@ var serviceContainer = []di.Def{
 		Scope: di.Request,
 		Build: func(ctn di.Container) (interface{}, error) {
 			return &helpers.SessionStorage{}, nil
+		},
+	},
+	{
+		Name:  StatusService,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			appDatabaseInstance := ctn.Get(AppDatabaseInstance).(*ravendb.DocumentSession)
+			repository := &repository.Repository{
+				Session: appDatabaseInstance,
+				UserFriends: &repository.UserFriendsCollection{
+					Session: appDatabaseInstance,
+				},
+				Users: &repository.UsersCollection{
+					Session: appDatabaseInstance,
+				},
+			}
+			usersService := &UsersService{
+				repository: repository,
+			}
+			clientsCache := ctn.Get(ClientsCache).(*ttlcache.Cache[string, *gosf.Client])
+
+			return &StatusesService{
+				repository:   repository,
+				UsersService: usersService,
+				Clients:      clientsCache,
+			}, nil
 		},
 	},
 }

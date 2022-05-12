@@ -28,6 +28,16 @@ func (userFriendsCollection *UserFriendsCollection) ReadByIds(userID string, fri
 	return userFriend
 }
 
+func (userFriendsCollection *UserFriendsCollection) ReadByUserId(userId string) []*models.UserFriend {
+	q := userFriendsCollection.Session.QueryCollection("UserFriends")
+	q.WhereEquals("UserId", userId)
+
+	var userFriends []*models.UserFriend
+	q.GetResults(&userFriends)
+
+	return userFriends
+}
+
 func (userFriendsCollection *UserFriendsCollection) Create(userFriend *models.UserFriend) *models.UserFriend {
 	userFriend.ID = formUserFriendsKey(userFriend.UserId, userFriend.FriendId)
 

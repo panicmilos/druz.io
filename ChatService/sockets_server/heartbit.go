@@ -1,5 +1,5 @@
 package sockets_server
 
-type InitUser struct {
+type Heartbit struct {
 	UserId string
 }
