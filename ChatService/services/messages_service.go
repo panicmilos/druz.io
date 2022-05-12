@@ -1,9 +1,12 @@
 package services
 
 import (
+	"encoding/json"
 	"strings"
 	"time"
 
+	"github.com/ambelovsky/gosf"
+	"github.com/jellydator/ttlcache/v3"
 	"github.com/panicmilos/druz.io/ChatService/dto"
 	"github.com/panicmilos/druz.io/ChatService/errors"
 	"github.com/panicmilos/druz.io/ChatService/helpers"
@@ -15,6 +18,7 @@ type MessagesService struct {
 	repository *repository.Repository
 
 	UsersService   *UsersService
+	Clients        *ttlcache.Cache[string, *gosf.Client]
 	SessionStorage *helpers.SessionStorage
 }
 
@@ -55,11 +59,36 @@ func (messagesService *MessagesService) Create(message *models.Message) (*models
 		return nil, err
 	}
 
+	if err := messagesService.NotifyMessagedUser(message); err != nil {
+		return nil, err
+	}
+
 	message.CreatedAt = time.Now()
 	message.DeletedBy1 = ""
 	message.DeletedBy2 = ""
 
 	return messagesService.repository.Messages.Create(message), nil
+}
+
+func (messagesService *MessagesService) NotifyMessagedUser(message *models.Message) error {
+	if messagesService.Clients.Get(message.ToId) == nil {
+		return nil
+	}
+
+	from, err := messagesService.UsersService.ReadById(message.FromId)
+	if err != nil {
+		return err
+	}
+
+	messageNotification := &dto.MessageNotification{
+		Message: message,
+		From:    from,
+	}
+
+	serializedNotification, _ := json.Marshal(messageNotification)
+	gosf.Broadcast(message.ToId, "messages", gosf.NewSuccessMessage(string(serializedNotification)))
+
+	return nil
 }
 
 func (messagesService *MessagesService) DeleteMessage(chat string, messageId string, mode string) (*models.Message, error) {

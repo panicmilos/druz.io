@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/ambelovsky/gosf"
+	"github.com/jellydator/ttlcache/v3"
 	"github.com/panicmilos/druz.io/ChatService/helpers"
 	"github.com/panicmilos/druz.io/ChatService/repository"
 	ravendb "github.com/ravendb/ravendb-go-client"
@@ -13,6 +15,7 @@ import (
 var Provider = buildServiceContainer()
 
 const (
+	ClientsCache         = "ClientsCache"
 	DocumentStore        = "DocumentStore"
 	AppDatabaseInstance  = "AppDatabaseInstance"
 	DatabaseConnection   = "DatabaseConnection"
@@ -25,6 +28,21 @@ const (
 )
 
 var serviceContainer = []di.Def{
+	{
+		Name:  ClientsCache,
+		Scope: di.App,
+		Build: func(ctn di.Container) (interface{}, error) {
+			cache := ttlcache.New[string, *gosf.Client]()
+
+			return cache, nil
+		},
+		Close: func(obj interface{}) error {
+			cashe := obj.(*ttlcache.Cache[string, *gosf.Client])
+			cashe.DeleteAll()
+
+			return nil
+		},
+	},
 	{
 		Name:  DocumentStore,
 		Scope: di.App,
@@ -153,11 +171,13 @@ var serviceContainer = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			repository := ctn.Get(Repository).(*repository.Repository)
 			usersService := ctn.Get(UserService).(*UsersService)
+			clientsCache := ctn.Get(ClientsCache).(*ttlcache.Cache[string, *gosf.Client])
 			sessionStorage := ctn.Get(SessionStorage).(*helpers.SessionStorage)
 
 			return &MessagesService{
 				repository:     repository,
 				UsersService:   usersService,
+				Clients:        clientsCache,
 				SessionStorage: sessionStorage,
 			}, nil
 		},

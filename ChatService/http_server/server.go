@@ -1,4 +1,4 @@
-package server
+package http_server
 
 import (
 	"net/http"
@@ -8,12 +8,12 @@ import (
 	"github.com/panicmilos/druz.io/ChatService/controllers"
 )
 
-type Server struct {
+type HttpServer struct {
 	Router *mux.Router
 }
 
-func New() *Server {
-	server := &Server{
+func New() *HttpServer {
+	server := &HttpServer{
 		Router: mux.NewRouter(),
 	}
 
@@ -24,7 +24,7 @@ func New() *Server {
 	return server
 }
 
-func (server *Server) addHandlers() {
+func (server *HttpServer) addHandlers() {
 	router := server.Router
 
 	router.Handle("/users/{id}/message", AuthenticateMiddlewate(controllers.SendMessage)).Methods("POST")
@@ -32,16 +32,15 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(controllers.ReadChat)).Methods("GET")
 	router.Handle("/users/chats/{chat}/{messageId}", AuthenticateMiddlewate(controllers.DeleteMessage)).Methods("DELETE")
 	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(controllers.DeleteChat)).Methods("DELETE")
-
 }
 
-func (server *Server) addMiddlewares() {
+func (server *HttpServer) addMiddlewares() {
 	router := server.Router
 
 	router.Use(DiMiddleware)
 }
 
-func (server *Server) addSwagger() {
+func (server *HttpServer) addSwagger() {
 	router := server.Router
 
 	router.Handle("/swagger.json", http.FileServer(http.Dir("./docs/")))
@@ -50,7 +49,7 @@ func (server *Server) addSwagger() {
 	router.Handle("/docs", sh)
 }
 
-func (server *Server) Start() {
+func (server *HttpServer) Start() {
 	router := server.Router
 
 	http.ListenAndServe(":8002", router)
