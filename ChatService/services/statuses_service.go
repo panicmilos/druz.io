@@ -17,6 +17,29 @@ type StatusesService struct {
 	Clients      *ttlcache.Cache[string, *gosf.Client]
 }
 
+func (statusesService *StatusesService) ReadStatuses(id string) *[]dto.Status {
+	userFriends := statusesService.repository.UserFriends.ReadByUserId(id)
+
+	statuses := []dto.Status{}
+
+	for _, userFriend := range userFriends {
+		var status string
+
+		if statusesService.Clients.Get(userFriend.FriendId) != nil {
+			status = "online"
+		} else {
+			status = "offline"
+		}
+
+		statuses = append(statuses, dto.Status{
+			Status: status,
+			UserId: userFriend.FriendId,
+		})
+	}
+
+	return &statuses
+}
+
 func (statusesService *StatusesService) NotifyCameOnline(id string) {
 	statusesService.notifyStatusChange(id, "online")
 }

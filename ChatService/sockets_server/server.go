@@ -19,7 +19,7 @@ type SocketsServer struct {
 func New() *SocketsServer {
 	_server = &SocketsServer{
 		Clients:         services.Provider.Get(services.ClientsCache).(*ttlcache.Cache[string, *gosf.Client]),
-		StatusesService: services.Provider.Get(services.StatusService).(*services.StatusesService),
+		StatusesService: services.Provider.Get(services.AppStatusService).(*services.StatusesService),
 	}
 
 	_server.addListeners()

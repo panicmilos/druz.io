@@ -27,6 +27,7 @@ const (
 	MessageService       = "MessageService"
 	SessionStorage       = "SessionStorage"
 	StatusService        = "StatusService"
+	AppStatusService     = "AppStatusService"
 )
 
 var serviceContainer = []di.Def{
@@ -197,6 +198,21 @@ var serviceContainer = []di.Def{
 	},
 	{
 		Name:  StatusService,
+		Scope: di.Request,
+		Build: func(ctn di.Container) (interface{}, error) {
+			repository := ctn.Get(Repository).(*repository.Repository)
+			usersService := ctn.Get(UserService).(*UsersService)
+			clientsCache := ctn.Get(ClientsCache).(*ttlcache.Cache[string, *gosf.Client])
+
+			return &StatusesService{
+				repository:   repository,
+				UsersService: usersService,
+				Clients:      clientsCache,
+			}, nil
+		},
+	},
+	{
+		Name:  AppStatusService,
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
 			appDatabaseInstance := ctn.Get(AppDatabaseInstance).(*ravendb.DocumentSession)

@@ -24,6 +24,14 @@ var ChatsWith = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	helpers.JSONResponse(w, 200, messagesService.ChatsWith(forId))
 })
 
+var ReadStatuses = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	userId := r.Header.Get("name")
+
+	statusesService := di.Get(r, services.StatusService).(*services.StatusesService)
+
+	helpers.JSONResponse(w, 200, statusesService.ReadStatuses(userId))
+})
+
 var ReadChat = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 	chat := mux.Vars(r)["chat"]
