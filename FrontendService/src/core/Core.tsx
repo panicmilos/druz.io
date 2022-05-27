@@ -7,6 +7,7 @@ import { Routes } from "./Routes";
 
 export type InitParams = {
   registerPlugin: (plugin: Plugin) => any;
+  registerAllPlugins: (plugins: Plugin[]) => any;
 }
 
 type Props = {
@@ -30,38 +31,73 @@ const defaultTheme: Theme = {
   }
 }
 
+type CoreState = {
+  registeredFeaturePluginIds: string[];
+  menuItems: MenuItem[];
+  pages: Page[];
+  Sidebar: JSX.Element;
+  registeredContextPluginIds: string[];
+  providers: FC[];
+}
+
 export const Core: FC<Props> = ({ initialize }) => {
   const [theme] = useState<Theme>(defaultTheme);
 
-  const [registeredFeaturePluginIds, setRegisteredFeaturePluginIds] = useState<string[]>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [pages, setPages] = useState<Page[]>([]);
-  
-  const [Sidebar, setSidebar] = useState<JSX.Element>(<></>);
+  const [state, setState] = useState<CoreState>({
+    registeredFeaturePluginIds: [],
+    menuItems: [],
+    pages: [],
+    Sidebar: <></>,
+    registeredContextPluginIds: [],
+    providers: []
+  });
 
-  const [registeredContextPluginIds, setRegisteredContextPluginIds] = useState<string[]>([]);
-  const [providers, setProviders] = useState<FC[]>([]);
+  const { registeredFeaturePluginIds, menuItems, pages, Sidebar, registeredContextPluginIds, providers } = state;
 
   const registerPlugin = (plugin: Plugin) => {
     if(plugin.type === "FeaturePlugin") {
       const featurePlugin = plugin as FeaturePlugin;
       if(registeredFeaturePluginIds.includes(featurePlugin.id)) return;
-      setRegisteredFeaturePluginIds(prevPluginIds => [...prevPluginIds, featurePlugin.id]);
-      setMenuItems(prevMenuItems => [...prevMenuItems, ...featurePlugin.menuItems]);
-      setPages(prevPages => [...prevPages, ...featurePlugin.pages]);
+      setState(prevState => ({
+        ...prevState,
+        registeredFeaturePluginIds: [...prevState.registeredFeaturePluginIds, featurePlugin.id],
+        menuItems: [...prevState.menuItems, ...featurePlugin.menuItems],
+        pages: [...prevState.pages, ...featurePlugin.pages],
+      }));
     } else if(plugin.type === "SidebarPlugin") {
       const sidebarPlugin = plugin as SidebarPlugin;
-      setSidebar(sidebarPlugin.component);
+      setState(prevState => ({
+        ...prevState,
+        Sidebar: sidebarPlugin.component,
+    }));
     } else if(plugin.type === "ContextPlugin") {
       const contextPlugin = plugin as ContextPlugin;
       if(registeredContextPluginIds.includes(contextPlugin.id)) return;
-      setRegisteredContextPluginIds(prevPluginIds => [...prevPluginIds, contextPlugin.id]);
-      setProviders(prevProviders => [...prevProviders, contextPlugin.Provider]);
+      setState(prevState => ({
+        ...prevState,
+        registeredContextPluginIds: [...prevState.registeredContextPluginIds, contextPlugin.id],
+        providers: [...prevState.providers, contextPlugin.Provider],
+      }));
     }
   }
 
+  const registerAllPlugins = (plugins: Plugin[]) => {
+    const featurePlugins = plugins.filter(p => p.type === "FeaturePlugin") as FeaturePlugin[];
+    const sidebarPlugin = plugins.find(p => p.type === "SidebarPlugin") as SidebarPlugin;
+    const contextPlugins = plugins.filter(p => p.type === "ContextPlugin") as ContextPlugin[];
+    setState(prevState => ({
+      ...prevState,
+      registeredFeaturePluginIds: featurePlugins.map(p => p.id),
+      menuItems: featurePlugins.reduce<MenuItem[]>((acc, p) => [...acc, ...p.menuItems], []),
+      pages: featurePlugins.reduce<Page[]>((acc, p) => [...acc, ...p.pages], []),
+      Sidebar: sidebarPlugin?.component,
+      registeredContextPluginIds: contextPlugins.map(p => p.id),
+      providers: contextPlugins.map(p => p.Provider),
+    }));
+  }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => initialize({ registerPlugin }), []);
+  useEffect(() => initialize({ registerPlugin, registerAllPlugins }), []);
 
   return (
     <CoreContext.Provider value={{ menuItems, pages }}>

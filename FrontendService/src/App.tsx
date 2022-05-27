@@ -20,8 +20,8 @@ const toastrOptions: ToastContainerProps = {
 axios.defaults.withCredentials = true;
 
 const App = () => {
-  const init = ({ registerPlugin }: InitParams) => {
-    registerPlugins(registerPlugin);
+  const init = ({ registerAllPlugins }: InitParams) => {
+    registerPlugins(registerAllPlugins);
   };
 
   return (
