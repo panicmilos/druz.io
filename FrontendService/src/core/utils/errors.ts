@@ -1,0 +1,1 @@
+export const extractErrorMessage = (errorData: any) => errorData.ErrorMessage || errorData.errors[0].message;
