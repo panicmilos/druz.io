@@ -8,16 +8,15 @@ export type IsAuthorizedParams = {
 export type IsAuthorizedFunction = (params?: IsAuthorizedParams) => boolean;
 
 export function useIsAuthorized(): IsAuthorizedFunction {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
 
   return ({ roles = undefined } = {}) => {
-
-    const userRole = 'TODO';
+    const userRole = user?.role ?? '';
 
     const hasOneOfRoles =
       !roles ||
-      (userRole &&
-        roles.reduce<boolean>(          
+      (!!userRole &&
+      roles.reduce<boolean>(
           (acc, curr) => acc || curr === userRole,
           false
         ));

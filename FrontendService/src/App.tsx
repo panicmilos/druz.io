@@ -3,7 +3,6 @@ import { registerPlugins } from "./plugins/registerPlugins";
 import { ToastContainer, ToastContainerProps } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
 
 const toastrOptions: ToastContainerProps = {
   position: "top-center",
@@ -16,8 +15,6 @@ const toastrOptions: ToastContainerProps = {
   draggable: true,
   pauseOnHover: true,
 };
-
-axios.defaults.withCredentials = true;
 
 const App = () => {
   const init = ({ registerAllPlugins }: InitParams) => {

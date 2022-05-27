@@ -62,7 +62,7 @@ export const LoginForm: FC<Props> = () => {
 
   useEffect(() => {
     if(isAuthenticated) {
-      nav("/users/certificates");
+      nav("/");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
@@ -88,7 +88,7 @@ export const LoginForm: FC<Props> = () => {
 
 
   const handleAuthResponse = (response: AuthResponse) => {
-    sessionStorage.setItem("jwt-token", response.token.value);
+    sessionStorage.setItem("jwt-token", response.token);
     setAuthenticated(true);
     setUser(response.user);
 

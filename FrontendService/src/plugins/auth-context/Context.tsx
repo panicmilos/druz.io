@@ -37,9 +37,10 @@ export const AuthContextProvider: FC = ({ children }) => {
     });
   }
 
+  configureInterceptors();
+
   useEffect(() => {
     if(isAuthenticated) {
-      configureInterceptors();
       const groupId = getGroupIdFromToken();
       const userId = getUserIdFromToken();
       const userService = new UsersService(groupId);

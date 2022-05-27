@@ -7,6 +7,7 @@ type Option = {label: string, value: string|number};
 const useStyles = createUseStyles((theme: Theme) => ({
   inputContainer: {
     color: theme.colors.textDark,
+    paddingLeft: "0.7em",
     '& label': {
       display: 'flex',
       fontSize: '15px',
@@ -18,7 +19,7 @@ const useStyles = createUseStyles((theme: Theme) => ({
       color: theme.colors.textDark,
       borderRadius: "20px",
       border: `1px solid ${theme.colors.secondary}`,
-      width: "250px",
+      width: "100%",
       height: "30px",
       paddingLeft: "10px",
     },

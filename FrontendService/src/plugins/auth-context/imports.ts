@@ -8,6 +8,7 @@ export type User = {
   email: string;
   phoneNumber: string;
   groupId: string;
+  role: string;
 };
 export type Role = {
   id: string;

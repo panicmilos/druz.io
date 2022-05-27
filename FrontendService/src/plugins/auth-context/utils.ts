@@ -1,5 +1,5 @@
 import jwt_decode from 'jwt-decode';
-import { AxiosInstance, AxiosResponse } from 'axios';
+import { AxiosInstance } from 'axios';
 
 const interceptors: { [key: string]: any } = {
 
@@ -35,20 +35,9 @@ export function setUnauthorizedRequestInterceptor(axiosInstance: AxiosInstance, 
     axiosInstance.interceptors.response.eject(interceptors[interceptorName]);
   }
 
-  const checkForNewToken = (response: AxiosResponse) => {
-    const newToken = response.headers['new-token'];
-    if (newToken) {
-      sessionStorage.setItem("jwt-token", newToken);
-    }
-  }
-
   interceptors[interceptorName] = axiosInstance.interceptors.response.use(function (response) {
-    checkForNewToken(response);
-    
 		return response;
 	}, function (error) {
-    checkForNewToken(error.response);
-
 		if (401 === error.response.status && getToken()) {
 			onLogout();
 			console.log("Should logout here");
