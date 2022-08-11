@@ -167,3 +167,16 @@ dmypy.json
 cython_debug/
 
 *.code-workspace
+
+# Node
+
+.idea/
+.vscode/
+node_modules/
+build/
+tmp/
+temp/
+database.sql
+config/
+logs/
+.env
