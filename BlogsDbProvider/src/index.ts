@@ -4,12 +4,13 @@ import { AppContainer } from "./AppContainer";
 import { Application, Nimble, NimblyApi } from 'nimbly-api';
 import { PostsController } from './controllers/PostsController';
 import { MissingEntityError } from './errors/MissingEntityError';
-
-const PORT = 80;
+import { PORT } from './config';
 
 main();
 
 function main() {
+
+
   installMiddleware();
 
   const nimble = new Nimble().addLocalServices(PostsController);

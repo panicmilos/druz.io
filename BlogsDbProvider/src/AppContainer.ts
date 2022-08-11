@@ -5,6 +5,8 @@ import { Server } from 'http';
 import { Container } from 'inversify';
 import { IInstaller } from "./contracts/IInstaller";
 import { MiddlewareInstaller } from './installers/MiddlewareInstaller';
+import { DocumentStoreInstaller } from './installers/DocumentStoreInstaller';
+import { PostsService } from './services/PostsService';
 
 
 const AppContainer = new Container();
@@ -18,5 +20,10 @@ AppContainer.bind<Server>(Server).toConstantValue(new Server(AppContainer.get<Ap
 
 // Installers
 AppContainer.bind<IInstaller>("IInstaller").to(MiddlewareInstaller);
+AppContainer.bind<IInstaller>("IInstaller").to(DocumentStoreInstaller);
+
+// Services
+AppContainer.bind<PostsService>("PostsService").to(PostsService).inRequestScope();
+
 
 export { AppContainer };
