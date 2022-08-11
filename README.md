@@ -40,11 +40,11 @@ Funkcionalnosti koje druž.io pruža:
 Web aplikacija će biti bazirana na mikroservisnoj arhitekturi. Za kontejnerizaciju će biti korišten Docker.
 
 - UserMicroservice - servis za rad sa korisnicima i autorizacijom. Tehnologije: Go, MariaDB.
-- UserRelationsMicroservice - servis za sad sa odnosima između korisnika (prijateljstvo, blokiranje). Tehnologije: Go, RavenDB.
+- UserRelationsMicroservice - servis za sad sa odnosima između korisnika (prijateljstvo, blokiranje). Tehnologije: Go, MariaDB.
 - PostMicroservice - servis za rad sa objavama, komentarima, reakcijama. Tehnologije: Rust, proizvoljna DB.
 - ChatMicroservice - servis za interakciju korisnika. Tehnologije: Go, RavenDB, WebSockets.
 - EmailService - servis za slanje emailova. Sa ovim servisom će se komunicirati preko RabbitMQ. Tehnologije: Python, RabbitMQ.
-- FileService - servis za rad sa fajlovima. Tehnologije: Rust.
+- ImageService - servis za rad sa slikama. Tehnologije: Rust.
 - Frontend - klijentska aplikacija. Tehnologije: React.
 
 Projekat se po potrebi može proširiti sa stranicama, grupama, reklamama ili nekom analitikom.
