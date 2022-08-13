@@ -14,7 +14,8 @@ mod errors;
 mod requests;
 mod models;
 mod route_handlers;
-
+mod repository;
+mod services;
 
 fn main() {
     println!("Hello, world!");
@@ -28,6 +29,7 @@ fn main() {
 
     rocket::custom(cfg)
         .mount("/posts",  routes![
+            route_handlers::posts::get_posts,
             route_handlers::posts::create_post
         ])
         .launch();

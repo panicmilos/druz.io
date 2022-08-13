@@ -24,18 +24,15 @@ pub trait HandleError {
   fn to_api_response(&self) -> Option<ApiResponse>;
 }
 
-impl<T> HandleError for HandableResult<T> {
+impl HandleError for HandableError {
   fn to_api_response(&self) -> Option<ApiResponse> {
 
-    match &self
+    match &self.error
     {
-      Ok(_) => None,
-      Err(handableError) => match handableError.error {
-        HandableErrorType::BadLogic => Some(ApiResponse { json: Json(json!({ "message": handableError.message })), status: Status::BadRequest }),
-        HandableErrorType::Unauthorized => Some(ApiResponse { json: Json(json!({ "message": handableError.message })), status: Status::Unauthorized }),
-        HandableErrorType::Forbidden => Some(ApiResponse { json: Json(json!({ "message": handableError.message })), status: Status::Forbidden }),
-        HandableErrorType::MissingEntity => Some(ApiResponse { json: Json(json!({ "message": handableError.message })), status: Status::NotFound })
-      }
+      HandableErrorType::BadLogic => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::BadRequest }),
+      HandableErrorType::Unauthorized => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::Unauthorized }),
+      HandableErrorType::Forbidden => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::Forbidden }),
+      HandableErrorType::MissingEntity => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::NotFound })
     }
   }
 }
