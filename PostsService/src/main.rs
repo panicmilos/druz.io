@@ -10,6 +10,7 @@ extern crate base64;
 extern crate dotenv;
 extern crate uuid;
 
+mod errors;
 mod requests;
 mod models;
 mod route_handlers;
