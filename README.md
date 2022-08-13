@@ -41,11 +41,10 @@ Web aplikacija će biti bazirana na mikroservisnoj arhitekturi. Za kontejnerizac
 
 - UserMicroservice - servis za rad sa korisnicima i autorizacijom. Tehnologije: Go, MariaDB.
 - UserRelationsMicroservice - servis za sad sa odnosima između korisnika (prijateljstvo, blokiranje). Tehnologije: Go, MariaDB.
-- PostMicroservice - servis za rad sa objavama, komentarima, reakcijama. Tehnologije: Rust, proizvoljna DB.
+- PostMicroservice - servis za rad sa objavama, komentarima, reakcijama. Tehnologije: Rust, RavenDB.
 - ChatMicroservice - servis za interakciju korisnika. Tehnologije: Go, RavenDB, WebSockets.
 - EmailService - servis za slanje emailova. Sa ovim servisom će se komunicirati preko RabbitMQ. Tehnologije: Python, RabbitMQ.
 - ImageService - servis za rad sa slikama. Tehnologije: Rust.
 - Frontend - klijentska aplikacija. Tehnologije: React.
 
-Projekat se po potrebi može proširiti sa stranicama, grupama, reklamama ili nekom analitikom.
-Po potrebi će biti korišćeni: Redis (Cache), RabbitMQ (za asinhronu komunikaziju između MS).
+Dodatno, za replikaciju podataka između mikroservisa će biti korišćen RabbitMQ.
