@@ -47,6 +47,8 @@ func (server *Server) addHandlers() {
 	router.Handle("/reports/{id}/ignore", controllers.IgnoreReport).Methods("DELETE")
 
 	router.Handle("/auth", controllers.Authenticate).Methods("POST")
+
+	router.Handle("/authorize", AuthenticateMiddlewate(controllers.Authorize)).Methods("POST")
 }
 
 func (server *Server) addMiddlewares() {
