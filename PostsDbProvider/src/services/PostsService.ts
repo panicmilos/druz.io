@@ -58,6 +58,7 @@ export class PostsService {
     const session = this.store.openSession();
     const existingPost = await session.load(id) as Post;
     existingPost.text = post.text;
+    existingPost.likedBy = post.likedBy;
     await session.saveChanges();
 
     return existingPost;

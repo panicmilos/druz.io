@@ -32,7 +32,10 @@ fn main() {
             route_handlers::posts::get_posts,
             route_handlers::posts::create_post,
             route_handlers::posts::update_post,
-            route_handlers::posts::delete_post
+            route_handlers::posts::delete_post,
+
+            route_handlers::likes::like_post,
+            route_handlers::likes::dislike_post
         ])
         .launch();
 

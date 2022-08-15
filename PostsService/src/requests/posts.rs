@@ -1,6 +1,6 @@
 use serde_derive::{Serialize, Deserialize};
 
-use crate::{models::post::Post, errors::{HandableResult, HandableError, HandableErrorType}};
+use crate::{models::post::{Post}, errors::{HandableResult, HandableError, HandableErrorType}};
 
 
 
@@ -15,6 +15,8 @@ impl CreatePostRequest {
       id: "".to_string(),
       createdAt: "".to_string(),
       text: self.text.clone(),
+      writtenBy: "".to_string(),
+      likedBy: Vec::<String>::with_capacity(0)
     }
   }
 
@@ -42,6 +44,8 @@ impl UpdatePostRequest {
       id: "".to_string(),
       createdAt: "".to_string(),
       text: self.text.clone(),
+      writtenBy: "".to_string(),
+      likedBy: Vec::<String>::with_capacity(0)
     }
   }
 

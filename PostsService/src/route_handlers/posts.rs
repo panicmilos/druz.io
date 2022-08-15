@@ -46,7 +46,13 @@ pub fn get_posts(token: Token) -> ApiResponse {
 }
 
 #[post("/", format = "application/json", data = "<post_request>")]
-pub fn create_post(post_request: Json<CreatePostRequest>) -> ApiResponse {
+pub fn create_post(token: Token, post_request: Json<CreatePostRequest>) -> ApiResponse {
+
+  let authService = AuthService::New();
+  let authenticatedUser = match authService.Authorize(&token.0.to_string(), &vec![User.to_string()]) {
+    Ok(authenticatedUser) => authenticatedUser,
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
   let post_request = post_request.into_inner();
 
@@ -56,7 +62,8 @@ pub fn create_post(post_request: Json<CreatePostRequest>) -> ApiResponse {
     Err(err) => return err.to_api_response().unwrap()
   }
 
-  let post = post_request.to_post();
+  let mut post = post_request.to_post();
+  post.writtenBy = authenticatedUser.Id.to_string();
   let postsService = PostsService::New();
 
   match postsService.Create(&post) {
@@ -67,7 +74,13 @@ pub fn create_post(post_request: Json<CreatePostRequest>) -> ApiResponse {
 }
 
 #[put("/<id>", format = "application/json", data = "<post_request>")]
-pub fn update_post(id: &RawStr, post_request: Json<UpdatePostRequest>) -> ApiResponse {
+pub fn update_post(id: &RawStr, token: Token, post_request: Json<UpdatePostRequest>) -> ApiResponse {
+
+  let authService = AuthService::New();
+  match authService.Authorize(&token.0.to_string(), &vec![User.to_string()]) {
+    Ok(_) => {},
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
   let post_request = post_request.into_inner();
 
@@ -89,7 +102,13 @@ pub fn update_post(id: &RawStr, post_request: Json<UpdatePostRequest>) -> ApiRes
 }
 
 #[delete("/<id>", format = "application/json")]
-pub fn delete_post(id: &RawStr) -> ApiResponse {
+pub fn delete_post(id: &RawStr, token: Token) -> ApiResponse {
+
+  let authService = AuthService::New();
+  match authService.Authorize(&token.0.to_string(), &vec![User.to_string()]) {
+    Ok(_) => {},
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
   let postsService = PostsService::New();
 

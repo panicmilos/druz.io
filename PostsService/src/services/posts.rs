@@ -61,6 +61,7 @@ impl PostsService {
     };
 
     existingPost.text = post.text.to_string();
+    existingPost.likedBy = post.likedBy.clone();
 
     match self.repository.Update(&existingPost) {
       Some(post) => Ok(post),

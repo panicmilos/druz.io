@@ -1,8 +1,11 @@
+use std::collections::HashMap;
+
 use reqwest::StatusCode;
 
 use crate::models::post::Post;
 
 use super::GetDbProviderUrl;
+use serde_json::{Value, json};
 
 
 
@@ -45,9 +48,14 @@ impl PostsRepository {
 
   pub fn Create(&self, post: &Post) -> Option<Post> {
 
+    let mut map = HashMap::new();
+    map.insert("text", Value::String(post.text.to_string()));
+    map.insert("writtenBy", Value::String(post.writtenBy.to_string()));
+    map.insert("likedBy", Value::Array(vec![]));
+    
     Some(
       self.client.post(format!("{0}/posts", GetDbProviderUrl()))
-      .form(&post)
+      .json(&map)
       .send()
       .unwrap()
       .json::<Post>()
@@ -58,9 +66,14 @@ impl PostsRepository {
 
   pub fn Update(&self, post: &Post) -> Option<Post> {
 
+    let mut map = HashMap::new();
+    map.insert("text", Value::String(post.text.to_string()));
+    map.insert("writtenBy", Value::String(post.writtenBy.to_string()));
+    map.insert("likedBy", Value::Array(post.likedBy.iter().map(|x| Value::String(x.to_string())).collect()));
+    
     Some(
       self.client.put(format!("{0}/posts/{1}", GetDbProviderUrl(), post.id))
-      .form(&post)
+      .json(&map)
       .send()
       .unwrap()
       .json::<Post>()

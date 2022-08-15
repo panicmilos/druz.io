@@ -2,6 +2,7 @@ use std::env;
 
 pub mod posts;
 pub mod auth;
+pub mod likes;
 
 pub fn GetUserServiceUrl() -> String {
   env::var("USER_SERVICE_URL").unwrap().to_string()
