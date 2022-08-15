@@ -30,3 +30,30 @@ impl CreatePostRequest {
     return Ok(());
   }
 }
+
+#[derive(Serialize, Clone, Deserialize)]
+pub struct UpdatePostRequest {
+  pub text: String
+}
+
+impl UpdatePostRequest {
+  pub fn to_post(&self) -> Post {
+    Post {
+      id: "".to_string(),
+      createdAt: "".to_string(),
+      text: self.text.clone(),
+    }
+  }
+
+  pub fn validate(&self) -> HandableResult<()> {
+
+    if self.text.len() < 5 {
+      return Err(HandableError {
+        message: "Text should have at least 5 charactes.".to_string(),
+        error: HandableErrorType::BadLogic
+      })
+    }
+
+    return Ok(());
+  }
+}

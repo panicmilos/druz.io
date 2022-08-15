@@ -14,7 +14,7 @@
       "dotenv": "^16.0.1",
       "express": "^4.15.4",
       "inversify": "^5.0.5",
-      "nimbly-api": "^1.5.1",
+      "nimbly-api": "^1.5.3",
       "ravendb": "^5.2.6",
       "reflect-metadata": "^0.1.13",
       "rxjs": "^7.5.6"

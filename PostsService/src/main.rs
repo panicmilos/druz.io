@@ -30,7 +30,9 @@ fn main() {
     rocket::custom(cfg)
         .mount("/posts",  routes![
             route_handlers::posts::get_posts,
-            route_handlers::posts::create_post
+            route_handlers::posts::create_post,
+            route_handlers::posts::update_post,
+            route_handlers::posts::delete_post
         ])
         .launch();
 

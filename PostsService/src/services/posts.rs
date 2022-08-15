@@ -19,9 +19,27 @@ impl PostsService {
 
     match self.repository.GetAll() {
       Some(posts) => Ok(posts),
+      None => Err(HandableError { error: HandableErrorType::FatalError, message: "Some fatal error has occured.".to_string() })
+    }
+
+  }
+
+  pub fn GetById(&self, id: &String) -> HandableResult<Post> {
+
+    match self.repository.GetById(&id) {
+      Some(post) => Ok(post),
+      None => Err(HandableError { error: HandableErrorType::FatalError, message: "Some fatal error has occured.".to_string() })
+    }
+
+  }
+
+  pub fn GetByIdOrThrow(&self, id: &String) -> HandableResult<Post> {
+
+    match self.repository.GetById(&id) {
+      Some(post) => Ok(post),
       None => Err(HandableError {
-        message: "Error while fetching posts".to_string(),
-        error: HandableErrorType::BadLogic
+        message: format!("Post with id {0} does not exist.", id),
+        error: HandableErrorType::MissingEntity
       })
     }
 
@@ -30,11 +48,38 @@ impl PostsService {
   pub fn Create(&self, post: &Post) -> HandableResult<Post> {
 
     match self.repository.Create(&post) {
-      Some(posts) => Ok(posts),
-      None => Err(HandableError {
-        message: "Error while creating a new post".to_string(),
-        error: HandableErrorType::BadLogic
-      })
+      Some(post) => Ok(post),
+      None => Err(HandableError { error: HandableErrorType::FatalError, message: "Some fatal error has occured.".to_string() })
     }
   }
+
+  pub fn Update(&self, post: &Post) -> HandableResult<Post> {
+
+    let mut existingPost = match self.GetByIdOrThrow(&post.id) {
+      Ok(post) => post,
+      Err(err) => return Err(err)
+    };
+
+    existingPost.text = post.text.to_string();
+
+    match self.repository.Update(&existingPost) {
+      Some(post) => Ok(post),
+      None => Err(HandableError { error: HandableErrorType::FatalError, message: "Some fatal error has occured.".to_string() })
+    }
+  }
+
+  pub fn Delete(&self, id: &String) -> HandableResult<Post> {
+
+    match self.GetByIdOrThrow(&id) {
+      Ok(post) => post,
+      Err(err) => return Err(err)
+    };
+
+    match self.repository.Delete(&id) {
+      Some(post) => Ok(post),
+      None => Err(HandableError { error: HandableErrorType::FatalError, message: "Some fatal error has occured.".to_string() })
+    }
+  }
+
+
 }

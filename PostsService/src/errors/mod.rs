@@ -15,7 +15,8 @@ pub enum HandableErrorType {
   BadLogic,
   Unauthorized,
   Forbidden,
-  MissingEntity
+  MissingEntity,
+  FatalError
 }
 
 pub type HandableResult<T> = Result<T, HandableError>;
@@ -32,7 +33,9 @@ impl HandleError for HandableError {
       HandableErrorType::BadLogic => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::BadRequest }),
       HandableErrorType::Unauthorized => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::Unauthorized }),
       HandableErrorType::Forbidden => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::Forbidden }),
-      HandableErrorType::MissingEntity => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::NotFound })
+      HandableErrorType::MissingEntity => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::NotFound }),
+      HandableErrorType::FatalError => Some(ApiResponse { json: Json(json!({ "message": self.message })), status: Status::InternalServerError })
+
     }
   }
 }
