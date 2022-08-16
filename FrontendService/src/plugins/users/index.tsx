@@ -5,6 +5,8 @@ import { Registration } from './pages/Register/Registration';
 import { ChangeProfile } from './pages/Profile/ChangeProfile';
 import { RequestReactivation } from './pages/ReactivationRequests/RequestReactivation';
 import { Reactivation } from './pages/Reactivation/Reactivation';
+import { ForgotPasswordRequest } from './pages/ForgotPasswordRequest/ForgotpasswordRequest';
+import { ForgotPassword } from './pages/ForgotPassword/ForgotPassword';
 
 export * from './exports';
 
@@ -22,6 +24,12 @@ export function getPluginDefinition(): FeaturePlugin {
       {
         label: 'Request Reactivation',
         path: 'request-reactivation',
+        icon: <GroupIcon/>,
+        shouldShow: unauthorized()
+      },
+      {
+        label: 'Request Password Recovery',
+        path: 'password-recovery',
         icon: <GroupIcon/>,
         shouldShow: unauthorized()
       },
@@ -52,6 +60,20 @@ export function getPluginDefinition(): FeaturePlugin {
             <Reactivation />
           </PaddingContainer>,
         path: 'users/:id/reactivation',
+        shouldShow: unauthorized()
+      },
+      {
+        component: <PaddingContainer>
+            <ForgotPasswordRequest />
+          </PaddingContainer>,
+        path: 'password-recovery',
+        shouldShow: unauthorized()
+      },
+      {
+        component: <PaddingContainer>
+            <ForgotPassword />
+          </PaddingContainer>,
+        path: 'users/:id/password/recovery',
         shouldShow: unauthorized()
       },
       {

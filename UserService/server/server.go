@@ -41,7 +41,7 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/reactivation/request", controllers.UserReactivation).Methods("POST")
 	router.Handle("/users/{id}/reactivation", controllers.ReactivateUser).Methods("PUT")
 
-	router.Handle("/users/password/recover/request", controllers.PasswordRecovery).Methods("GET")
+	router.Handle("/users/password/recover/request", controllers.PasswordRecovery).Methods("POST")
 	router.Handle("/users/{id}/password/recover", controllers.RecoverPassword).Methods("PUT")
 	router.Handle("/users/{id}/report", AuthenticateMiddlewate(controllers.ReportUser)).Methods("POST")
 
