@@ -24,5 +24,13 @@ export class UserService extends CrudService<Profile> {
     return (await axios.put( `${this.baseUrl}/${userId}/disable`)).data;
   }
 
+  public async block(userId: string): Promise<Profile> {
+    return (await axios.delete( `${this.baseUrl}/${userId}/block`)).data;
+  }
+
+  public async report(userId: string, reason: string): Promise<any> {
+    return (await axios.post( `${this.baseUrl}/${userId}/report`, {reason})).data;
+  }
+
 
 }

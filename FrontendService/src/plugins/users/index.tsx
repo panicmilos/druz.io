@@ -2,11 +2,13 @@ import { FeaturePlugin, PaddingContainer } from './imports';
 import GroupIcon from '@mui/icons-material/Group';
 import { authorizedFor, unauthorized } from '../auth-context';
 import { Registration } from './pages/Register/Registration';
-import { ChangeProfile } from './pages/Profile/ChangeProfile';
+import { ChangeProfile } from './pages/ChangeProfile/ChangeProfile';
 import { RequestReactivation } from './pages/ReactivationRequests/RequestReactivation';
 import { Reactivation } from './pages/Reactivation/Reactivation';
 import { ForgotPasswordRequest } from './pages/ForgotPasswordRequest/ForgotpasswordRequest';
 import { ForgotPassword } from './pages/ForgotPassword/ForgotPassword';
+import { Profile } from './pages/Profile/Profile';
+import { Reports } from './pages/Reports/Reports';
 
 export * from './exports';
 
@@ -38,6 +40,12 @@ export function getPluginDefinition(): FeaturePlugin {
         path: 'profile/settings',
         icon: <GroupIcon/>,
         shouldShow: authorizedFor({ roles: ["0"] })
+      },
+      {
+        label: 'User Reports',
+        path: 'users/reports',
+        icon: <GroupIcon/>,
+        shouldShow: authorizedFor({ roles: ["0", "1"] })
       }
     ],
     pages: [
@@ -78,10 +86,23 @@ export function getPluginDefinition(): FeaturePlugin {
       },
       {
         component: <PaddingContainer>
+            <Profile />
+          </PaddingContainer>,
+        path: 'users/:id/'
+      },
+      {
+        component: <PaddingContainer>
             <ChangeProfile/>
           </PaddingContainer>,
         path: 'profile/settings',
         shouldShow: authorizedFor({ roles: ["0"] })
+      },
+      {
+        component: <PaddingContainer>
+            <Reports/>
+          </PaddingContainer>,
+        path: 'users/reports',
+        shouldShow: authorizedFor({ roles: ["0", "1"] })
       }
     ]
   }

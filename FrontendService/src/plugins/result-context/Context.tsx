@@ -8,12 +8,12 @@ export type ResultType = {
 
 export type ResultContextType = {
   result: any
-  setResult: (r: ResultType) => any
+  setResult: (r: ResultType|undefined) => any
 }
 
 const initialResultValue = {
   result: undefined,
-  setResult: (_: any) => {}
+  setResult: (_: ResultType|undefined) => {}
 }
 
 export const ResultContext = createContext<ResultContextType>(initialResultValue);
@@ -28,7 +28,7 @@ export const useResult = (scope: string) => {
     debounce(() => setScopedResult(undefined), 100);
   }
 
-  return { result: result[scope] as ResultType|undefined, setResult: (r: ResultType) => setScopedResult(r) };
+  return { result: result[scope] as ResultType|undefined, setResult: (r: ResultType|undefined) => setScopedResult(r) };
 }
 
 export const ResultContextProvider: FC = ({ children }) => {
