@@ -17,8 +17,11 @@ export class UserService extends CrudService<Profile> {
   }
 
   public async changePassword(userId: string, request: any): Promise<Profile> {
-    console.log(`${this.baseUrl}/${userId}/password`);
     return (await axios.put( `${this.baseUrl}/${userId}/password`, request)).data;
+  }
+
+  public async disable(userId: string): Promise<Profile> {
+    return (await axios.put( `${this.baseUrl}/${userId}/disable`)).data;
   }
 
 

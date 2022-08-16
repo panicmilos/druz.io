@@ -21,7 +21,7 @@ type UserReactivationsService struct {
 func (userReactivationsService *UserReactivationsService) Request(email string) (*models.UserReactivation, error) {
 	profile := userReactivationsService.repository.Users.ReadDeactivatedByEmail(email)
 	if profile == nil {
-		return nil, errors.NewErrNotFound("Profile is given email is not deactivated.")
+		return nil, errors.NewErrNotFound("Profile with given email is not deactivated.")
 	}
 
 	userReactivationsService.repository.UserReactivationsCollection.DeleteByProfileId(profile.ID)

@@ -6,7 +6,6 @@ from template_manager import TemplateManager
 
 
 templateManager = TemplateManager()
-emailSender = EmailSender()
 
 
 def callback(ch, method, properties, body):
@@ -19,6 +18,7 @@ def callback(ch, method, properties, body):
     message = templateManager.compute_tempalte(data['message']['template'], data['message']['params'])
   )
 
+  emailSender = EmailSender()
   emailSender.send(email)
 
 

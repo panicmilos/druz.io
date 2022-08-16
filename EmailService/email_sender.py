@@ -35,7 +35,8 @@ class Email:
 
 class EmailSender:
   def __init__(self, smtpParams = DefaultSMTPParams()):
-    self._server = smtplib.SMTP(smtpParams.host, smtpParams.port)
+    self._server = smtplib.SMTP()
+    self._server.connect(smtpParams.host, smtpParams.port)
     self._server.login(smtpParams.username, smtpParams.password)
 
   def send(self, email):
