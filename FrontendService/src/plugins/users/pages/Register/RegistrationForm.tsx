@@ -64,7 +64,6 @@ export const RegistrationForm: FC = () => {
       notificationService.success('You have successfully created new profile.');
     },
     onError: (error: AxiosError) => {
-      console.log(error.response?.data);
       notificationService.error(extractErrorMessage(error.response?.data));
     }
   });

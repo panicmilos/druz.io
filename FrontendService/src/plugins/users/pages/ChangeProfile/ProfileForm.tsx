@@ -1,13 +1,16 @@
 import { FC, useState } from "react";
 import { createUseStyles } from "react-jss";
-import { Button, Form, FormDateInput, FormSelectOptionInput, FormTextInput, PHONE_NUMBER_REGEX, ALPHANUMERIC_REGEX, FormTextAreaInput, Card } from "../../imports";
-import { Profile } from "../../models/User";
+import { Button, Form, FormDateInput, FormSelectOptionInput, FormTextInput, PHONE_NUMBER_REGEX, ALPHANUMERIC_REGEX, FormTextAreaInput, Card, useNotificationService, extractErrorMessage } from "../../imports";
+import { Education, LivePlace, Profile, WorkPlace } from "../../models/User";
 import * as Yup from 'yup';
 import moment from "moment";
 import { LivePlacesForm } from "./LivePlacesForm";
 import { WorkPlacesForm } from "./WorkPlacesForm";
 import { EducationsForm } from "./EducationsForm";
 import { InteresesForm } from "./Intereses";
+import { useUserService } from "../../services";
+import { useMutation } from "react-query";
+import { AxiosError } from "axios";
 
 type Props = {
   user?: Profile;
@@ -34,6 +37,9 @@ function subtractYears(numOfYears: number, date = new Date()) {
 
 export const ProfileForm: FC<Props> = ({ user }) => {
 
+  const userService = useUserService();
+  const notificationService = useNotificationService();
+  
   const [livePlaces, setLivePlaces] = useState(user?.LivePlaces ?? []);
   const [workPlaces, setWorkPlaces] = useState(user?.WorkPlaces ?? []);
   const [educations, setEducations] = useState(user?.Educations ?? []);
@@ -61,6 +67,16 @@ export const ProfileForm: FC<Props> = ({ user }) => {
       .matches(PHONE_NUMBER_REGEX, () => ({About: "Must be a valid phone number."})),
   });
 
+  const updateProfileMutator = useMutation((profile: Profile) => userService.update(profile?.ID, profile), {
+    onSuccess: (_) => {
+      notificationService.success("You have successfully updated your profile.");
+    },
+    onError: (error: AxiosError) => {
+      notificationService.error(extractErrorMessage(error.response?.data));
+    }
+  });
+  const updateProfile = (profile: Profile) => updateProfileMutator.mutate(profile);
+
   return (
 
     <Form
@@ -68,9 +84,16 @@ export const ProfileForm: FC<Props> = ({ user }) => {
       schema={schema}
       onSubmit={(values: any) => {
         const updateUser = {
-        
+          ID: user?.ID,
+          ...values,
+          Birthday: moment(values.Birthday).format(),
+          LivePlaces: livePlaces || [],
+          WorkPlaces: workPlaces?.map((wp: WorkPlace) => ({ ...wp, From: moment(wp.From).format(), To: moment(wp.To).format() })) ?? [],
+          Educations: educations?.map((e: Education) => ({ ...e, From: moment(e.From).format(), To: moment(e.To).format() })) ?? [],
+          Intereses: intereses || []
         }
 
+        updateProfile(updateUser);
       }}
     >
       <FormTextInput type="text" label="First Name" name="FirstName" />

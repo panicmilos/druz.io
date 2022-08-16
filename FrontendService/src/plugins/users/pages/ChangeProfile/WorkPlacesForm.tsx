@@ -1,3 +1,4 @@
+import moment from "moment";
 import { FC, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { DateInput } from "../../../../core";
@@ -97,8 +98,8 @@ export const WorkPlacesForm: FC<Props> = ({ workPlaces, onChange }) => {
               key={i}          
               cells={[
                 workPlace.Place,
-                workPlace.To,
-                workPlace.From,
+                moment(workPlace.To).format('yyyy-MM-DD'),
+                moment(workPlace.From).format('yyyy-MM-DD'),
                 <Button type="button" onClick={() => handleRemove(workPlace.Place)}>Remove</Button>
               ]}
             />

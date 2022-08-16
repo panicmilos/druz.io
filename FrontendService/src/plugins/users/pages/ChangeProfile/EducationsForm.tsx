@@ -1,3 +1,4 @@
+import moment from "moment";
 import { FC, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { DateInput } from "../../../../core";
@@ -97,8 +98,8 @@ export const EducationsForm: FC<Props> = ({ educations, onChange }) => {
               key={i}          
               cells={[
                 education.Place,
-                education.To,
-                education.From,
+                moment(education.To).format('yyyy-MM-DD'),
+                moment(education.From).format('yyyy-MM-DD'),
                 <Button type="button" onClick={() => handleRemove(education.Place)}>Remove</Button>
               ]}
             />

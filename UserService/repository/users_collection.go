@@ -86,7 +86,7 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 
 	query := userCollection.DB.Table("profiles")
 	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ?)", userCollection.SessionStorage.AuthenticatedUserId)
-	result := query.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
+	result := query.Preload("LivePlaces").Preload("WorkPlaces").Preload("Educations").Preload("Intereses").First(profile, id)
 	if result.RowsAffected == 0 || profile.Disabled {
 		return nil
 	}
@@ -106,7 +106,7 @@ func (userCollection *UsersCollection) ReadDeactivatedByEmail(email string) *mod
 
 func (userCollection *UsersCollection) ReadDeactivatedById(id uint) *models.Profile {
 	profile := &models.Profile{}
-	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Education").Preload("Intereses").First(profile, id)
+	result := userCollection.DB.Preload("LivePlaces").Preload("WorkPlaces").Preload("Educations").Preload("Intereses").First(profile, id)
 	if result.RowsAffected == 0 || !profile.Disabled {
 		return nil
 	}
