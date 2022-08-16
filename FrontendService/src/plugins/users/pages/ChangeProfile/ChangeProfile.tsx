@@ -3,6 +3,7 @@ import { AuthContext, Container } from "../../imports"
 import { Profile } from "../../models/User";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { DeactivateProfile } from "./DeactivateProfile";
+import { ProfileForm } from "./ProfileForm";
 
 export const ChangeProfile: FC = () => {
 
@@ -11,6 +12,8 @@ export const ChangeProfile: FC = () => {
   return (
     <>
       <Container flexDirection="column">
+        
+        <ProfileForm user={user as Profile} />
         
         <ChangePasswordForm user={user as Profile} />
 

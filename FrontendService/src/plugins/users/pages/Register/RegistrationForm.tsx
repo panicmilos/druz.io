@@ -50,8 +50,8 @@ export const RegistrationForm: FC = () => {
       .required(() => ({ FirstName: "First name must be provided." })) 
       .matches(ALPHANUMERIC_REGEX, () => ({FirstName: "Must be a valid first name."})),
     LastName: Yup.string()
-      .required(() => ({ LastName: "Last name be provided." })) 
-      .matches(ALPHANUMERIC_REGEX, () => ({LastName: "Must be a last name."})),
+      .required(() => ({ LastName: "Last name must be provided." })) 
+      .matches(ALPHANUMERIC_REGEX, () => ({LastName: "Must be a valid last name."})),
     Birthday: Yup.date()
       .required(() => ({ Birthday: "Birthday must be provided." })) 
       .max(subtractYears(13), () => ({Birthday: "Must be at least 13 year old."})),

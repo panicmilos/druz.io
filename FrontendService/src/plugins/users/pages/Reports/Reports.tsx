@@ -18,9 +18,6 @@ export const Reports = () => {
     if (!result) return;
     setResult(undefined);
   }, [result]);
-  
-  console.log(reports);
-
 
   return (
     <>

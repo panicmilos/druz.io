@@ -1,0 +1,104 @@
+import { FC, useState } from "react";
+import { createUseStyles } from "react-jss";
+import { Button, Form, FormDateInput, FormSelectOptionInput, FormTextInput, PHONE_NUMBER_REGEX, ALPHANUMERIC_REGEX, FormTextAreaInput, Card } from "../../imports";
+import { Profile } from "../../models/User";
+import * as Yup from 'yup';
+import moment from "moment";
+import { LivePlacesForm } from "./LivePlacesForm";
+import { WorkPlacesForm } from "./WorkPlacesForm";
+import { EducationsForm } from "./EducationsForm";
+import { InteresesForm } from "./Intereses";
+
+type Props = {
+  user?: Profile;
+}
+
+const useStyles = createUseStyles({
+  submitButton: {
+    marginTop: '1em',
+  }
+});
+
+const GenderOptions = [
+  { label: 'Male', value: 0 },
+  { label: 'Female', value: 1 },
+  { label: 'Other', value: 2 }
+]
+
+function subtractYears(numOfYears: number, date = new Date()) {
+  date.setFullYear(date.getFullYear() - numOfYears);
+
+  return date;
+}
+
+
+export const ProfileForm: FC<Props> = ({ user }) => {
+
+  const [livePlaces, setLivePlaces] = useState(user?.LivePlaces ?? []);
+  const [workPlaces, setWorkPlaces] = useState(user?.WorkPlaces ?? []);
+  const [educations, setEducations] = useState(user?.Educations ?? []);
+  const [intereses, setIntereses] = useState(user?.Intereses ?? []);
+
+  const classes = useStyles();
+
+  const schema = Yup.object().shape({
+    FirstName: Yup.string()
+      .required(() => ({ FirstName: "First name must be provided." })) 
+      .matches(ALPHANUMERIC_REGEX, () => ({FirstName: "Must be a valid first name."})),
+    LastName: Yup.string()
+      .required(() => ({ LastName: "Last name mustbe provided." })) 
+      .matches(ALPHANUMERIC_REGEX, () => ({LastName: "Must be a valid last name."})),
+    Birthday: Yup.date()
+      .required(() => ({ Birthday: "Birthday must be provided." })) 
+      .max(subtractYears(13), () => ({Birthday: "Must be at least 13 year old."})),
+    Gender: Yup.number()
+      .required(() => ({ Gender: "Gender must be provided." })),
+    About: Yup.string()
+      .required(() => ({ About: "About must be provided." })) 
+      .matches(ALPHANUMERIC_REGEX, () => ({About: "Must be a valid about."})),
+    PhoneNumber: Yup.string()
+      .required(() => ({ About: "Phone number must be provided." })) 
+      .matches(PHONE_NUMBER_REGEX, () => ({About: "Must be a valid phone number."})),
+  });
+
+  return (
+
+    <Form
+      initialValue={{ ...user, Birthday: moment(user?.Birthday).format('yyyy-MM-DD')}}
+      schema={schema}
+      onSubmit={(values: any) => {
+        const updateUser = {
+        
+        }
+
+      }}
+    >
+      <FormTextInput type="text" label="First Name" name="FirstName" />
+      <FormTextInput type="text" label="Last Name" name="LastName" />
+      <FormDateInput label="Birthday" name="Birthday" />
+      <FormSelectOptionInput label="Gender" options={GenderOptions} name="Gender" />
+
+      <FormTextAreaInput label="About" name="About" />
+      <FormTextInput type="text" label="Phone Number" name="PhoneNumber" />
+
+      <Card title={"Live Places"} >
+        <LivePlacesForm livePlaces={livePlaces} onChange={setLivePlaces} />
+      </Card>
+
+      <Card title={"Work Places"} >
+        <WorkPlacesForm workPlaces={workPlaces} onChange={setWorkPlaces} />
+      </Card>
+
+      <Card title={"Educations"} >
+        <EducationsForm educations={educations} onChange={setEducations} />
+      </Card>
+
+      <Card title={"Intereses"} >
+        <InteresesForm intereses={intereses} onChange={setIntereses} />
+      </Card>
+
+      <Button className={classes.submitButton} type="submit">Submit</Button>
+    </Form>
+
+  );
+}

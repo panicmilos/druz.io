@@ -39,7 +39,8 @@ export {
   ConfirmationModal,
 
   ALPHANUMERIC_REGEX,
-  EMAIL_REGEX
+  EMAIL_REGEX,
+  PHONE_NUMBER_REGEX
 } from "../../core";
 
 export { PaddingContainer } from "../sidebar";
