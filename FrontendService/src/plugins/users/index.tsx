@@ -9,6 +9,7 @@ import { ForgotPasswordRequest } from './pages/ForgotPasswordRequest/Forgotpassw
 import { ForgotPassword } from './pages/ForgotPassword/ForgotPassword';
 import { Profile } from './pages/Profile/Profile';
 import { Reports } from './pages/Reports/Reports';
+import { Users } from './pages/Users/Users';
 
 export * from './exports';
 
@@ -46,6 +47,12 @@ export function getPluginDefinition(): FeaturePlugin {
         path: 'users/reports',
         icon: <GroupIcon/>,
         shouldShow: authorizedFor({ roles: ["0", "1"] })
+      },
+      {
+        label: 'Users',
+        path: 'users',
+        icon: <GroupIcon/>,
+        shouldShow: authorizedFor({ roles: ["0"] })
       }
     ],
     pages: [
@@ -103,6 +110,13 @@ export function getPluginDefinition(): FeaturePlugin {
           </PaddingContainer>,
         path: 'users/reports',
         shouldShow: authorizedFor({ roles: ["0", "1"] })
+      },
+      {
+        component: <PaddingContainer>
+            <Users/>
+          </PaddingContainer>,
+        path: 'users',
+        shouldShow: authorizedFor({ roles: ["0"] })
       }
     ]
   }
