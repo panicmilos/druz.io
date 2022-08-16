@@ -52,15 +52,11 @@ export function getToken() {
 }
 
 export function getUserIdFromToken() {
-	return decodeToken()?.sub;
-}
-
-export function getGroupIdFromToken() {
-	return decodeToken()?.groupId;
+	return decodeToken()?.name;
 }
 
 function decodeToken(): any {
 	const token = getToken();
 
-	return !!token ? jwt_decode(token.split(' ')[1]) : null;
+	return !!token ? jwt_decode(token) : null;
 }

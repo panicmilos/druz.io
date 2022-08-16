@@ -1,8 +1,7 @@
-export type User = {
+export type Profile = {
   id: string,
   fullName: string, 
   email: string,
   phoneNumber: string,
-  groupId: string,
   role: string
 }

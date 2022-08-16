@@ -1,11 +1,10 @@
 import axios from "axios";
 import { createContext, FC, useEffect, useState } from "react";
 import {
-  User,
+  Profile,
   UsersService,
 } from './imports';
 import {
-  getGroupIdFromToken,
   getToken,
   getUserIdFromToken,
   setAxiosInterceptors,
@@ -13,8 +12,8 @@ import {
 
 type AuthContextValue = {
   isAuthenticated: boolean;
-  user?: User,
-  setUser: (u: User|undefined) => any,
+  user?: Profile,
+  setUser: (u: Profile|undefined) => any,
   setAuthenticated: (a: boolean) => any
 }
 
@@ -27,7 +26,7 @@ export const AuthContext = createContext<AuthContextValue>({
 
 export const AuthContextProvider: FC = ({ children }) => {
   const [isAuthenticated, setAuthenticated] = useState<boolean>(!!getToken());
-  const [user, setUser] = useState<User>();
+  const [user, setUser] = useState<Profile>();
 
   const configureInterceptors = () => {
     setAxiosInterceptors(axios, () => {
@@ -41,9 +40,8 @@ export const AuthContextProvider: FC = ({ children }) => {
 
   useEffect(() => {
     if(isAuthenticated) {
-      const groupId = getGroupIdFromToken();
       const userId = getUserIdFromToken();
-      const userService = new UsersService(groupId);
+      const userService = new UsersService();
       userService.fetch(userId)
         .then(setUser)
         .catch(console.log);

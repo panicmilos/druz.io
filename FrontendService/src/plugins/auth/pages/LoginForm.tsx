@@ -88,9 +88,9 @@ export const LoginForm: FC<Props> = () => {
 
 
   const handleAuthResponse = (response: AuthResponse) => {
-    sessionStorage.setItem("jwt-token", response.token);
+    sessionStorage.setItem("jwt-token", response.Jwt);
     setAuthenticated(true);
-    setUser(response.user);
+    setUser(response.Profile);
 
     configureInterceptors();
   };

@@ -2,6 +2,7 @@ package http_server
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
@@ -53,5 +54,5 @@ func (server *HttpServer) addSwagger() {
 func (server *HttpServer) Start() {
 	router := server.Router
 
-	http.ListenAndServe(":8002", router)
+	http.ListenAndServe(os.Getenv("PORT"), router)
 }

@@ -34,7 +34,25 @@ services:
       - "15672:15672"
       - "5672:5672"
         
-        
+  
+  posts-db-provider:
+    image: druzio-posts-db-provider
+    environment:          
+      - RAVENDB_URL=${RAVENDB_URL}
+      - RAVENDB_DATABASE=${PS_DB_NAME}      
+      - PORT=80
+
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 45s
+
+    ports:
+      - "80"
+    depends_on:
+      - ravendb
+
+
   email-service:
     image: druzio-email-service
     environment:          
@@ -59,11 +77,10 @@ services:
       - message-queue
 
 
-  posts-db-provider:
-    image: druzio-posts-db-provider
+  image-service:
+    image: druzio-image-service
     environment:          
-      - RAVENDB_URL=${RAVENDB_URL}
-      - RAVENDB_DATABASE=${PS_DB_NAME}      
+      - HOST=${IS_HOST}
       - PORT=80
 
     deploy:
@@ -72,9 +89,31 @@ services:
         delay: 45s
 
     ports:
-      - "80:80"
+      - "80"
+
+
+  posts-service:
+    image: druzio-posts-service
+    environment:          
+      - HOST=${PS_HOST}
+      - PORT=80
+
+      - DB_PROVIDER_URL=${PS_DB_PROVIDER_URL}
+      - USER_SERVICE_URL=${US_URL}
+
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 45s
+
+    ports:
+      - "80"
+
     depends_on:
-      - ravendb
+      - posts-db-provider
+      # - user-service
+
+  
         
 
   # user-service:
@@ -114,6 +153,7 @@ services:
     depends_on:
       # - user-service
       - posts-db-provider
+      - posts-service
     ports:
       - 3030:80
 

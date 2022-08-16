@@ -32,6 +32,7 @@ require (
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
 	github.com/panicmilos/druz.io/AMQPGO v0.0.0-20220813231806-a017f109c283 // indirect
+	github.com/rs/cors v1.8.2 // indirect
 	github.com/sarulabs/di v2.0.0+incompatible // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/stroiman/go-automapper v0.0.0-20200419053654-7c63d5bb0eb4 // indirect

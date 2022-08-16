@@ -1,6 +1,6 @@
-import { User } from "./User";
+import { Profile } from "./User";
 
 export type AuthResponse = {
-  user: User;
-  token: string;
+  Profile: Profile;
+  Jwt: string;
 }
