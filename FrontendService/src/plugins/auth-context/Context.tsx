@@ -5,6 +5,7 @@ import {
   UsersService,
 } from './imports';
 import {
+  getRoleFromToken,
   getToken,
   getUserIdFromToken,
   setAxiosInterceptors,
@@ -43,7 +44,10 @@ export const AuthContextProvider: FC = ({ children }) => {
       const userId = getUserIdFromToken();
       const userService = new UsersService();
       userService.fetch(userId)
-        .then(setUser)
+        .then(user => {
+          user.Role = getRoleFromToken();
+          setUser(user);
+        })
         .catch(console.log);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

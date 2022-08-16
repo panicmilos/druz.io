@@ -1,4 +1,12 @@
+import { useState } from "react";
 import { toast } from "react-toastify";
+
+export const useNotificationService = () => {
+
+  const [notificationService] = useState(new NotificationService());
+
+  return notificationService;
+}
 
 export class NotificationService {
 

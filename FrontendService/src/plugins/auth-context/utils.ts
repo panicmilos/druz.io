@@ -55,6 +55,10 @@ export function getUserIdFromToken() {
 	return decodeToken()?.name;
 }
 
+export function getRoleFromToken() {
+	return decodeToken()?.role;
+}
+
 function decodeToken(): any {
 	const token = getToken();
 

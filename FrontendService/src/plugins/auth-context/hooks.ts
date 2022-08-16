@@ -11,7 +11,7 @@ export function useIsAuthorized(): IsAuthorizedFunction {
   const { isAuthenticated, user } = useContext(AuthContext);
 
   return ({ roles = undefined } = {}) => {
-    const userRole = user?.role ?? '';
+    const userRole = user?.Role ?? '';
 
     const hasOneOfRoles =
       !roles ||
