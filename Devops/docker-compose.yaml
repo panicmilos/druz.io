@@ -1,64 +1,121 @@
 version: "3.9"
 services:
 
-    mariadb:
-        image: mariadb:10.5.8-focal
-        environment:
-          - MYSQL_DATABASE=${MARIADB_DB_NAME}
-          - MYSQL_ROOT_PASSWORD=${MARIADB_PASSWORD}
-        ports:
-          - "3306:3306"
-        volumes:
-          - ./db_data:/var/lib/mysql
-          - ./config/mariadb:/docker-entrypoint-initdb.d/
-    
-    message-queue:
-        image: rabbitmq:3-management-alpine
-        environment: 
-          - RABBITMQ_DEFAULT_USER=${AMQP_USERNAME}
-          - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD}
-        ports:
-          - "15672:15672"
-          - "5672:5672"
-          
-    # user-service:
-        # image: druzio-user-service
-        # environment:          
-          # - DB_USERNAME=${US_DB_USERNAME}
-          # - DB_PASSWORD=${US_DB_PASSWORD}
-          # - DB_ADDRESS=${US_DB_ADDRESS}
-          # - DB_NAME=${US_DB_NAME}
-          
-          # - AMQP_HOST=${AMQP_HOST}
-          # - AMQP_PORT=${AMQP_PORT}
-          # - AMQP_USERNAME=${AMQP_USERNAME}
-          # - AMQP_PASSWORD=${AMQP_PASSWORD}
-          
-          # - PORT=":80"
-          
-        # deploy:
-            # restart_policy:
-                # condition: on-failure
-                # delay: 45s
-                # max_attempts: 1000
+  mariadb:
+    image: mariadb:10.5.8-focal
+    environment:
+      - MYSQL_DATABASE=${MARIADB_DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${MARIADB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db_data:/var/lib/mysql
+      - ./config/mariadb:/docker-entrypoint-initdb.d/
+  
 
-        # ports:
-          # - "8000:80"
-        # depends_on:
-          # - mariadb
-          # - message-queue
+  ravendb:
+    image: ravendb/ravendb
+    environment:
+      - RAVEN_Security_UnsecuredAccessAllowed=PrivateNetwork
+      - RAVEN_License_Eula_Accepted=true
+      - RAVEN_Setup_Mode=None
+    ports:
+      - 8888:8080
+    volumes:
+      - ./ravendb_data:/opt/RavenDB/Server/RavenData
 
 
-    # http-proxy:
-        # image: nginx:stable-alpine
-        # volumes:
-          # - ./config/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
-        # networks:
-          # - default
-        # depends_on:
-          # - user-service
-        # ports:
-          # - 3030:80
+  message-queue:
+    image: rabbitmq:3-management-alpine
+    environment: 
+      - RABBITMQ_DEFAULT_USER=${AMQP_USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${AMQP_PASSWORD}
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+        
+        
+  email-service:
+    image: druzio-email-service
+    environment:          
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      
+      - AMQP_HOST=${AMQP_HOST}
+      - AMQP_PORT=${AMQP_PORT}
+      - AMQP_USERNAME=${AMQP_USERNAME}
+      - AMQP_PASSWORD=${AMQP_PASSWORD}
+
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 45s
+
+    ports:
+      - "80"
+    depends_on:
+      - message-queue
+
+
+  posts-db-provider:
+    image: druzio-posts-db-provider
+    environment:          
+      - RAVENDB_URL=${RAVENDB_URL}
+      - RAVENDB_DATABASE=${PS_DB_NAME}      
+      - PORT=80
+
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 45s
+
+    ports:
+      - "80:80"
+    depends_on:
+      - ravendb
+        
+
+  # user-service:
+    # image: druzio-user-service
+    # environment:          
+      # - DB_USERNAME=${DB_USERNAME}
+      # - DB_PASSWORD=${DB_PASSWORD}
+      # - DB_ADDRESS=${DB_ADDRESS}
+      # - DB_NAME=${US_DB_NAME}
+      
+      # - AMQP_HOST=${AMQP_HOST}
+      # - AMQP_PORT=${AMQP_PORT}
+      # - AMQP_USERNAME=${AMQP_USERNAME}
+      # - AMQP_PASSWORD=${AMQP_PASSWORD}
+      
+      # - PORT=":80"
+      
+    # deploy:
+        # restart_policy:
+            # condition: on-failure
+            # delay: 45s
+            # max_attempts: 1000
+
+    # ports:
+      # - "8000:80"
+    # depends_on:
+      # - mariadb
+      # - message-queue
+
+
+  http-proxy:
+    image: nginx:stable-alpine
+    volumes:
+      - ./config/proxy/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - default
+    depends_on:
+      # - user-service
+      - posts-db-provider
+    ports:
+      - 3030:80
 
 networks:
   default:
