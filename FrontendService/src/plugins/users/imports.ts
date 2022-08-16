@@ -4,7 +4,7 @@ export { AuthContext } from "../auth-context";
 
 export type { FeaturePlugin, Result, Theme } from "../../core";
 
-export { USERS_SERVICE_URL } from '../../urls';
+export { USERS_SERVICE_URL, USER_RELATIONS_SERVICE_URL } from '../../urls';
 
 export {
   useResult

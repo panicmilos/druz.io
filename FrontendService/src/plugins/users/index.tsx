@@ -10,6 +10,7 @@ import { ForgotPassword } from './pages/ForgotPassword/ForgotPassword';
 import { Profile } from './pages/Profile/Profile';
 import { Reports } from './pages/Reports/Reports';
 import { Users } from './pages/Users/Users';
+import { BlockedUsers } from './pages/BlockedUsers/BlockedUsers';
 
 export * from './exports';
 
@@ -51,6 +52,12 @@ export function getPluginDefinition(): FeaturePlugin {
       {
         label: 'Users',
         path: 'users',
+        icon: <GroupIcon/>,
+        shouldShow: authorizedFor({ roles: ["0"] })
+      },
+      {
+        label: 'Blocked Users',
+        path: 'users/blocked',
         icon: <GroupIcon/>,
         shouldShow: authorizedFor({ roles: ["0"] })
       }
@@ -116,6 +123,13 @@ export function getPluginDefinition(): FeaturePlugin {
             <Users/>
           </PaddingContainer>,
         path: 'users',
+        shouldShow: authorizedFor({ roles: ["0"] })
+      },
+      {
+        component: <PaddingContainer>
+            <BlockedUsers/>
+          </PaddingContainer>,
+        path: 'users/blocked',
         shouldShow: authorizedFor({ roles: ["0"] })
       }
     ]

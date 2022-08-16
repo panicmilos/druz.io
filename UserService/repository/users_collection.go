@@ -23,7 +23,8 @@ func (userCollection *UsersCollection) Search(params *dto.UsersSearchParams) *[]
 	query := userCollection.DB.Table("profiles")
 	query.Where("profiles.id != ?", userCollection.SessionStorage.AuthenticatedUserId)
 	query.Where("(profiles.disabled is NULL OR profiles.disabled = 0)")
-	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ?)", userCollection.SessionStorage.AuthenticatedUserId)
+	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ? AND deleted_at is NULL)", userCollection.SessionStorage.AuthenticatedUserId)
+	query.Where("profiles.id not in (select blocked_id from user_blocks where blocked_by_id = ? AND deleted_at is NULL)", userCollection.SessionStorage.AuthenticatedUserId)
 
 	if len(strings.TrimSpace(params.Name)) != 0 {
 		query.Where("CONCAT(LOWER(profiles.first_name), ' ', LOWER(profiles.last_name)) like ?", "%"+strings.ToLower(params.Name)+"%")
@@ -85,7 +86,9 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.Profile {
 	profile := &models.Profile{}
 
 	query := userCollection.DB.Table("profiles")
-	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ?)", userCollection.SessionStorage.AuthenticatedUserId)
+	query.Where("profiles.id not in (select blocked_by_id from user_blocks where blocked_id = ? AND deleted_at is NULL)", userCollection.SessionStorage.AuthenticatedUserId)
+	query.Where("profiles.id not in (select blocked_id from user_blocks where blocked_by_id = ? AND deleted_at is NULL)", userCollection.SessionStorage.AuthenticatedUserId)
+
 	result := query.Preload("LivePlaces").Preload("WorkPlaces").Preload("Educations").Preload("Intereses").First(profile, id)
 	if result.RowsAffected == 0 || profile.Disabled {
 		return nil

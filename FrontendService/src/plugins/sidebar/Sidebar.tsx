@@ -118,14 +118,10 @@ export const Sidebar: FC<Props> = () => {
   const nav = useNavigate();
 
   const onLogout = () => {
-    authService.logout()
-      .then(() => {
-        setUser(undefined);
-        setAuthenticated(false);
-        nav('/');
-        sessionStorage.removeItem('jwt-token');
-      })
-      .catch(console.log);
+    setUser(undefined);
+    setAuthenticated(false);
+    nav('/');
+    sessionStorage.removeItem('jwt-token');
   }
 
   return (

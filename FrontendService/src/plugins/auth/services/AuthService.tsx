@@ -16,8 +16,4 @@ export class AuthService extends Service {
     return (await axios.post(`${this.baseUrl}`, { email, password })).data;
   }
 
-  public async logout(): Promise<void> {
-    return (await axios.post(`${this.baseUrl}/logout`, {}));
-  }
-
 }

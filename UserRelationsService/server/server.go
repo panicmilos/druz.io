@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 	"github.com/panicmilos/druz.io/UserRelationsService/controllers"
+	"github.com/rs/cors"
 )
 
 type Server struct {
@@ -47,6 +48,7 @@ func (server *Server) addMiddlewares() {
 	router := server.Router
 
 	router.Use(DiMiddleware)
+	router.Use(AccessControlMiddleware)
 }
 
 func (server *Server) addSwagger() {
@@ -61,5 +63,19 @@ func (server *Server) addSwagger() {
 func (server *Server) Start() {
 	router := server.Router
 
-	http.ListenAndServe(os.Getenv("PORT"), router)
+	corsOpts := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedHeaders: []string{"*"},
+		AllowedMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodHead,
+		},
+	})
+
+	http.ListenAndServe(os.Getenv("PORT"), corsOpts.Handler(router))
 }
