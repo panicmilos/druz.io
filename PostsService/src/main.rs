@@ -35,7 +35,11 @@ fn main() {
             route_handlers::posts::delete_post,
 
             route_handlers::likes::like_post,
-            route_handlers::likes::dislike_post
+            route_handlers::likes::dislike_post,
+
+            route_handlers::comments::create_comment,
+            route_handlers::comments::update_comment,
+            route_handlers::comments::delete_comment
         ])
         .launch();
 

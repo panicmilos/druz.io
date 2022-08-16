@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Path, Post, Put } from "nimbly-api";
+import { Body, Controller, Delete, Get, Path, Post, Put } from "nimbly-api";
 import { AppContainer } from "../AppContainer";
 import { IController } from "../contracts/IController";
 import { PostsService } from "../services/PostsService";

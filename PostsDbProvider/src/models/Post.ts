@@ -4,4 +4,5 @@ export type Post = {
   text: string;
   writtenBy: string;
   likedBy: string[];
+  comments: any;
 }

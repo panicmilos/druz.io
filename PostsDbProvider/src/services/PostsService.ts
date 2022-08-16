@@ -2,6 +2,7 @@ import { inject, injectable } from "inversify";
 import DocumentStore from "ravendb";
 import { MissingEntityError } from "../errors/MissingEntityError";
 import { Post } from "../models/Post";
+import { v4 as uuidv4 } from 'uuid';
 
 const COLLECTION_NAME = "Posts";
 
@@ -59,6 +60,12 @@ export class PostsService {
     const existingPost = await session.load(id) as Post;
     existingPost.text = post.text;
     existingPost.likedBy = post.likedBy;
+    existingPost.comments = post.comments;
+    existingPost.comments.forEach(comment => {
+      !comment.id && (comment.id = uuidv4().toString());
+      !comment.createdAt && (comment.createdAt = new Date().toISOString());
+    });
+    
     await session.saveChanges();
 
     return existingPost;

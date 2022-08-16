@@ -1,23 +1,22 @@
 use serde_derive::{Serialize, Deserialize};
 
-use crate::{models::{post::{Post}, comments::Comment}, errors::{HandableResult, HandableError, HandableErrorType}};
+use crate::{models::comments::Comment, errors::{HandableResult, HandableError, HandableErrorType}};
 
 
 
 #[derive(Serialize, Clone, Deserialize)]
-pub struct CreatePostRequest {
+pub struct CreateCommentRequest {
   pub text: String
 }
 
-impl CreatePostRequest {
-  pub fn to_post(&self) -> Post {
-    Post {
+impl CreateCommentRequest {
+  pub fn to_comment(&self) -> Comment {
+    Comment {
       id: "".to_string(),
       createdAt: "".to_string(),
+      postId: "".to_string(),
+      userId: "".to_string(),
       text: self.text.clone(),
-      writtenBy: "".to_string(),
-      likedBy: Vec::<String>::with_capacity(0),
-      comments: Vec::<Comment>::with_capacity(0)
     }
   }
 
@@ -35,19 +34,18 @@ impl CreatePostRequest {
 }
 
 #[derive(Serialize, Clone, Deserialize)]
-pub struct UpdatePostRequest {
+pub struct UpdateCommentRequest {
   pub text: String
 }
 
-impl UpdatePostRequest {
-  pub fn to_post(&self) -> Post {
-    Post {
+impl UpdateCommentRequest {
+  pub fn to_comment(&self) -> Comment {
+    Comment {
       id: "".to_string(),
       createdAt: "".to_string(),
+      postId: "".to_string(),
+      userId: "".to_string(),
       text: self.text.clone(),
-      writtenBy: "".to_string(),
-      likedBy: Vec::<String>::with_capacity(0),
-      comments: Vec::<Comment>::with_capacity(0)
     }
   }
 

@@ -52,7 +52,8 @@ impl PostsRepository {
     map.insert("text", Value::String(post.text.to_string()));
     map.insert("writtenBy", Value::String(post.writtenBy.to_string()));
     map.insert("likedBy", Value::Array(vec![]));
-    
+    map.insert("comments", Value::Array(vec![]));
+
     Some(
       self.client.post(format!("{0}/posts", GetDbProviderUrl()))
       .json(&map)
@@ -70,7 +71,8 @@ impl PostsRepository {
     map.insert("text", Value::String(post.text.to_string()));
     map.insert("writtenBy", Value::String(post.writtenBy.to_string()));
     map.insert("likedBy", Value::Array(post.likedBy.iter().map(|x| Value::String(x.to_string())).collect()));
-    
+    map.insert("comments", Value::Array(post.comments.iter().map(|x| json!(x)).collect()));
+
     Some(
       self.client.put(format!("{0}/posts/{1}", GetDbProviderUrl(), post.id))
       .json(&map)
