@@ -1,3 +1,4 @@
+import moment from "moment";
 import { FC } from "react";
 import { Form, FormDateInput, FormSelectOptionInput, FormTextAreaInput, FormTextInput } from "../../imports";
 import { Profile } from "../../models/User";
@@ -18,7 +19,10 @@ export const ProfileForm: FC<Props> = ({ user }) => {
     <>
       <Form
         schema={undefined}
-        initialValue={user}
+        initialValue={{
+          ...user,
+          Birthday: moment(user?.Birthday).format('yyyy-MM-DD')
+        }}
       >
         <FormTextInput type="text" label="First Name" name="FirstName" disabled={true} />
         <FormTextInput type="text" label="Last Name" name="LastName" disabled={true} />

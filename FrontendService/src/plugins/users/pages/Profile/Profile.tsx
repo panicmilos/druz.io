@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useReportsResult } from "../../hooks";
 import { AuthContext, Button, ConfirmationModal, Container, extractErrorMessage, Modal, useNotificationService } from "../../imports";
 import { Profile as ProfileT } from "../../models/User";
-import { useFriendRequestsService, useUserBlocksService, useUserService } from "../../services";
+import { useFriendRequestsService, useUserBlocksService, useUserFriendsService, useUserService } from "../../services";
 import { AdditionalProfileForm } from "./AdditionalProfileForm";
 import { ProfileForm } from "./ProfileForm";
 import { ReportUserForm } from "./ReportUserForm";
@@ -37,9 +37,11 @@ export const Profile: FC = () => {
   const userService = useUserService();
   const userBlocksService = useUserBlocksService(authContext.user?.ID ?? '');
   const friendRequestsService = useFriendRequestsService(authContext.user?.ID ?? '');
+  const userFriendsService = useUserFriendsService(authContext.user?.ID ?? '');
   const notificationService = useNotificationService();
 
   const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
+  const [isRemoveFriendOpen, setIsRemoveFriendOpen] = useState(false);
   const [isBlockUserOpen, setIsBlockUserOpen] = useState(false);
   const [isReportUserOpen, setIsReportUserOpen] = useState(false);
 
@@ -71,6 +73,18 @@ export const Profile: FC = () => {
   });
   const addFriend = () => addFriendMutation.mutate();
 
+  const removeFriendMutation = useMutation(() => userFriendsService.delete(user?.ID ?? ''), {
+    onSuccess: () => {
+      notificationService.success('You have successfully removed user from the friend list.');
+      setResult({ status: 'OK', type: 'REMOVE_FRIEND' });
+    },
+    onError: (error: AxiosError) => {
+      notificationService.error(extractErrorMessage(error.response?.data));
+      setResult({ status: 'ERROR', type: 'REMOVE_FRIEND' });
+    }
+  });
+  const removeFriend = () => removeFriendMutation.mutate();
+
 
   const { result, setResult } = useReportsResult();
 
@@ -87,6 +101,10 @@ export const Profile: FC = () => {
 
     if (result.status === 'OK' && result.type === 'ADD_FRIEND') {
       setIsAddFriendOpen(false);
+    }
+
+    if (result.status === 'OK' && result.type === 'REMOVE_FRIEND') {
+      setIsRemoveFriendOpen(false);
     }
     setResult(undefined);
   }, [result]);
@@ -113,8 +131,13 @@ export const Profile: FC = () => {
                 <p>Are you sure you want to add this user?</p>
               </ConfirmationModal>
 
+              <ConfirmationModal title="Remove User" open={isRemoveFriendOpen} onClose={() => setIsRemoveFriendOpen(false)} onYes={removeFriend}>
+                <p>Are you sure you want to remove this user from friend list?</p>
+              </ConfirmationModal>
+
               <div className={classes.buttonReportUser}>
-              <Button onClick={() => { setIsAddFriendOpen(true)} }>Add User</Button>
+                <Button onClick={() => { setIsAddFriendOpen(true)} }>Add User</Button>         
+                <Button onClick={() => { setIsRemoveFriendOpen(true)} }>Remove User</Button>
                 <Button onClick={() => { setIsBlockUserOpen(true)} }>Block User</Button>
                 <Button onClick={() => { setIsReportUserOpen(true)} }>Report User</Button>
               </div>
