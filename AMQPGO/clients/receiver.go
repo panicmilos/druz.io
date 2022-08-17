@@ -14,24 +14,46 @@ type AMQPReceiver struct {
 	queue      *amqp.Queue
 }
 
-func (receiver *AMQPReceiver) Initialize(settings *settings.AMQPSettings, queueName string) {
+func (receiver *AMQPReceiver) Initialize(settings *settings.AMQPSettings, exchangeName string) {
 	conn, err := amqp.Dial(settings.ToConnectionString())
 	errors.FailOnError(err, "Failed to connect to RabbitMQ")
 	receiver.connection = conn
 
 	ch, err := conn.Channel()
 	errors.FailOnError(err, "Failed to open a channel")
+
+	err = ch.ExchangeDeclare(
+		exchangeName, // name
+		"fanout",     // type
+		true,         // durable
+		false,        // auto-deleted
+		false,        // internal
+		false,        // no-wait
+		nil,          // arguments
+	)
+	errors.FailOnError(err, "Failed to declare an exchange")
+
 	receiver.channel = ch
 
 	q, err := ch.QueueDeclare(
-		queueName, // name
-		false,     // durable
-		false,     // delete when unused
-		false,     // exclusive
-		false,     // no-wait
-		nil,       // arguments
+		"",    // name
+		false, // durable
+		false, // delete when unused
+		true,  // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
 	errors.FailOnError(err, "Failed to declare a queue")
+
+	err = ch.QueueBind(
+		q.Name,       // queue name
+		"",           // routing key
+		exchangeName, // exchange
+		false,
+		nil,
+	)
+	errors.FailOnError(err, "Failed to bind a queue")
+
 	receiver.queue = &q
 }
 
