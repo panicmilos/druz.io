@@ -81,7 +81,7 @@ func (friendRequestService *FriendRequestsService) Accept(friendRequest *models.
 		FriendId: friendRequest.FriendId,
 	})
 
-	return friendRequestService.Delete(existingFriendRequest.ID)
+	return friendRequestService.DeleteById(existingFriendRequest.ID)
 }
 
 func (friendRequestService *FriendRequestsService) Decline(friendRequest *models.FriendRequest) (*models.FriendRequest, error) {
@@ -90,10 +90,19 @@ func (friendRequestService *FriendRequestsService) Decline(friendRequest *models
 		return nil, errors.NewErrNotFound("You don't have friend request from that user.")
 	}
 
-	return friendRequestService.Delete(existingFriendRequest.ID)
+	return friendRequestService.DeleteById(existingFriendRequest.ID)
 }
 
-func (friendRequestService *FriendRequestsService) Delete(id uint) (*models.FriendRequest, error) {
+func (friendRequestService *FriendRequestsService) Delete(friendRequest *models.FriendRequest) (*models.FriendRequest, error) {
+	existingFriendRequest := friendRequestService.repository.FriendRequests.ReadByIds(friendRequest.FriendId, friendRequest.UserId)
+	if existingFriendRequest == nil {
+		return nil, errors.NewErrNotFound("You didn't send friend request to that user.")
+	}
+
+	return friendRequestService.DeleteById(existingFriendRequest.ID)
+}
+
+func (friendRequestService *FriendRequestsService) DeleteById(id uint) (*models.FriendRequest, error) {
 
 	_, err := friendRequestService.ReadById(id)
 	if err != nil {

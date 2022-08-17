@@ -2,7 +2,7 @@ use rocket::{request::{FromRequest, self}, Request, Outcome, http::{Status, RawS
 use rocket_contrib::json::Json;
 use serde_json::json;
 
-use crate::{models::likes::Like, services::{likes::LikesService, auth::AuthService, User}, errors::HandleError};
+use crate::{models::likes::Like, services::{likes::LikesService, auth::AuthService, User, react::ReactService}, errors::HandleError};
 
 use super::api_response::ApiResponse;
 
@@ -36,6 +36,12 @@ pub fn like_post(post_id: &RawStr, token: Token) -> ApiResponse {
     Err(err) => return err.to_api_response().unwrap()
   };
 
+  // let reactService = ReactService::New();
+  // match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
+  //   Ok(_) => {},
+  //   Err(err) => return err.to_api_response().unwrap()
+  // };
+
   let like = Like {
     postId: post_id.to_string(),
     userId: authenticatedUser.Id.to_string()
@@ -58,6 +64,12 @@ pub fn dislike_post(post_id: &RawStr, token: Token) -> ApiResponse {
     Ok(authenticatedUser) => authenticatedUser,
     Err(err) => return err.to_api_response().unwrap()
   };
+
+  // let reactService = ReactService::New();
+  // match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
+  //   Ok(_) => {},
+  //   Err(err) => return err.to_api_response().unwrap()
+  // };
 
   let like = Like {
     postId: post_id.to_string(),

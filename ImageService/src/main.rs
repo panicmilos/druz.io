@@ -3,6 +3,8 @@
 use std::env;
 use dotenv::dotenv;
 use rocket::{Config, config::Environment};
+use rocket::http::Method;
+use rocket_cors::{AllowedOrigins, CorsOptions};
 
 #[macro_use] extern crate rocket;
 extern crate base64;
@@ -22,7 +24,18 @@ fn main() {
         .port(env::var("PORT").unwrap().parse().unwrap())   
         .unwrap();
 
+    let cors = CorsOptions::default()
+        .allowed_origins(AllowedOrigins::all())
+        .allowed_methods(
+            vec![Method::Get, Method::Post, Method::Put, Method::Delete, Method::Patch]
+                .into_iter()
+                .map(From::from)
+                .collect(),
+        )
+        .allow_credentials(true);
+
     rocket::custom(cfg)
+        .attach(cors.to_cors().unwrap())
         .mount("/images",  routes![
             route_handlers::get_image, route_handlers::upload_image
         ])

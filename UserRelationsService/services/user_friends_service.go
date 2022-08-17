@@ -17,6 +17,16 @@ func (userFriendService *UserFriendsService) ReadByUserId(id uint) *[]models.Use
 	return userFriendService.repository.UserFriends.ReadByUserId(id)
 }
 
+func (userFriendService *UserFriendsService) ReadByIds(userFriend *models.UserFriend) (*models.UserFriend, error) {
+
+	existingUserFriend := userFriendService.repository.UserFriends.ReadByIds(userFriend.UserId, userFriend.FriendId)
+	if existingUserFriend == nil {
+		return nil, errors.NewErrNotFound("You are not friend with that user.")
+	}
+
+	return existingUserFriend, nil
+}
+
 func (userFriendService *UserFriendsService) Create(userFriend *models.UserFriend) (*models.UserFriend, error) {
 
 	reversedUserFriend := &models.UserFriend{

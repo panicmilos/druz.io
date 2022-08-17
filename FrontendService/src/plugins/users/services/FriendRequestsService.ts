@@ -29,6 +29,10 @@ export class FriendRequestsService {
     return (await axios.get(`${this.baseUrl}/sent`)).data;
   }
 
+  public async deleteSent(friendId: string): Promise<FriendRequest[]> {
+    return (await axios.delete(`${this.baseUrl}/sent`, { data: { FriendId: +friendId }})).data;
+  }
+
   public async fetchReceived(): Promise<FriendRequest[]> {
     return (await axios.get(`${this.baseUrl}/received`)).data;
   }

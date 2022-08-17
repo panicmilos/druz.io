@@ -22,6 +22,25 @@ var ReadFriendsList = http.HandlerFunc(func(w http.ResponseWriter, r *http.Reque
 	helpers.JSONResponse(w, 200, userFriendsService.ReadByUserId(uint(id)))
 })
 
+var ReadByIds = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	userId, _ := strconv.Atoi(mux.Vars(r)["id"])
+	friendId, _ := strconv.Atoi(mux.Vars(r)["friendId"])
+
+	userFriend := &models.UserFriend{
+		UserId:   uint(userId),
+		FriendId: uint(friendId),
+	}
+
+	userFriendsService := di.Get(r, services.UserFriendService).(*services.UserFriendsService)
+	existingUserFriend, err := userFriendsService.ReadByIds(userFriend)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, existingUserFriend)
+})
+
 var UnfriendUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	var request *api_contracts.UnfriendUserRequest
 	err := helpers.ReadJSONBody(r, &request)

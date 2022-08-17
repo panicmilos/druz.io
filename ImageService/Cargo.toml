@@ -15,6 +15,7 @@ serde_json = "1.0.83"
 rocket = "0.4.4"
 rocket_codegen = "0.4.4"
 rocket_contrib = "0.4.4"
+rocket_cors = "0.5.2"
 
 [dependencies.uuid]
 version = "1.1.2"

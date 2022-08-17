@@ -29,6 +29,10 @@ export class UserFriendsService {
     return (await axios.get(`${this.baseUrl}`)).data;
   }
 
+  public async fetchById(id: string): Promise<UserFriend> {
+    return (await axios.get(`${this.baseUrl}/${id}`)).data;
+  }
+
   public async delete(friendId: string): Promise<UserFriend> {
     return (await axios.delete(`${this.baseUrl}`, { data: { FriendId: +friendId } })).data;
   }

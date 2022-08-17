@@ -2,7 +2,7 @@ use rocket::{request::{FromRequest, self}, Request, Outcome, http::{Status, RawS
 use rocket_contrib::json::{Json};
 use serde_json::json;
 
-use crate::{services::{auth::AuthService, comments::CommentsService, User}, requests::comments::{CreateCommentRequest, UpdateCommentRequest}, errors::{HandleError, HandableResult}, models::comments::Comment};
+use crate::{services::{auth::AuthService, comments::CommentsService, User, react::ReactService}, requests::comments::{CreateCommentRequest, UpdateCommentRequest}, errors::{HandleError, HandableResult}, models::comments::Comment};
 
 use super::api_response::ApiResponse;
 
@@ -43,6 +43,12 @@ pub fn create_comment(post_id: &RawStr, token: Token, comment_request: Json<Crea
     Ok(authenticatedUser) => authenticatedUser,
     Err(err) => return err.to_api_response().unwrap()
   };
+
+  // let reactService = ReactService::New();
+  // match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
+  //   Ok(_) => {},
+  //   Err(err) => return err.to_api_response().unwrap()
+  // };
 
   let mut comment = comment_request.to_comment();
   comment.postId = post_id.to_string();

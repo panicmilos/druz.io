@@ -34,9 +34,11 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/{id}/block-list", controllers.UnblockUser).Methods("DELETE")
 
 	router.Handle("/users/{id}/friends", controllers.ReadFriendsList).Methods("GET")
+	router.Handle("/users/{id}/friends/{friendId}", controllers.ReadByIds).Methods("GET")
 	router.Handle("/users/{id}/friends", controllers.UnfriendUser).Methods("DELETE")
 
 	router.Handle("/users/{id}/friends/requests/sent", controllers.ReadSentFriendRequests).Methods("GET")
+	router.Handle("/users/{id}/friends/requests/sent", controllers.DeleteSentFriendRequests).Methods("DELETE")
 	router.Handle("/users/{id}/friends/requests/received", controllers.ReadReceivedFriendRequests).Methods("GET")
 	router.Handle("/users/{id}/friends/requests", controllers.SendFriendRequests).Methods("POST")
 	router.Handle("/users/{id}/friends/requests/accept", controllers.AcceptFriendRequest).Methods("POST")
