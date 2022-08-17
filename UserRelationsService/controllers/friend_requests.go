@@ -115,8 +115,8 @@ var DeleteSentFriendRequests = http.HandlerFunc(func(w http.ResponseWriter, r *h
 	userId, _ := strconv.Atoi(mux.Vars(r)["id"])
 
 	friendRequest := &models.FriendRequest{
-		UserId:   uint(userId),
-		FriendId: uint(request.FriendId),
+		UserId:   uint(request.FriendId),
+		FriendId: uint(userId),
 	}
 
 	friendRequestService := di.Get(r, services.FriendRequestService).(*services.FriendRequestsService)

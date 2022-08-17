@@ -1,4 +1,5 @@
 import { AxiosError } from "axios"
+import moment from "moment"
 import { FC, useContext, useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
 import { useMutation } from "react-query"
@@ -15,7 +16,7 @@ type Props = {
 
 const useStyles = createUseStyles({
   container: {
-    margin: '2% 3% 0% 3%',
+    marginTop: '-8%',
     '& button': {
       margin: '0.5em 0.5em 0.5em 0.5em'
     },
@@ -59,6 +60,10 @@ export const CommentsList: FC<Props> = ({ post }) => {
     if (result.status === 'OK' && ['ADD_COMMENT', 'UPDATE_COMMENT'].includes(result.type)) {
       setIsCommentModalOpen(false);
     }
+
+    if (result.status === 'OK' && result.type === 'DELETE_COMMENT') {
+      setIsDeletePostOpen(false);
+    }
   }, [result]);
 
   const classes = useStyles();
@@ -66,12 +71,12 @@ export const CommentsList: FC<Props> = ({ post }) => {
   return (
     <div className={classes.container}>
 
-      <Modal title="Write Comment" open={isCommentModalOpen} onClose={() => setIsCommentModalOpen(false)}>
+      <Modal title={!!selectedComment ? "Update Comment" : "Write Comment"} open={isCommentModalOpen} onClose={() => setIsCommentModalOpen(false)}>
         <CommentsForm postId={post.id} existingComment={selectedComment} isEdit={!!selectedComment} />
       </Modal>
 
       <div className={classes.buttons}>
-        <Button onClick={() => { setSelectedComment(undefined); setIsCommentModalOpen(true)} }>Write</Button>         
+        <Button onClick={() => { setSelectedComment(undefined); setIsCommentModalOpen(true)} }>Comment</Button>         
       </div>
 
       <ConfirmationModal title="Delete Comment" open={isDeletePostOpen} onClose={() => setIsDeletePostOpen(false)} onYes={deleteComment}>
@@ -80,18 +85,26 @@ export const CommentsList: FC<Props> = ({ post }) => {
 
       {
         post.comments?.map((comment: Comment) =>
-          <Card>
-            {
-              user?.ID === comment.userId ?
-                <>
-                  <Button onClick={() => { setSelectedComment(comment); setIsCommentModalOpen(true)} }>Update</Button>         
-                  <Button onClick={() => { setSelectedComment(comment); setIsDeletePostOpen(true)} }>Delete</Button>         
-                </> : <></>
-            }
+          <Card key={comment.id}>
+
+            <div style={{display: 'flex'}}>
+              <div style={{flexGrow: 1, marginTop: '1em'}}>
+                {
+                  user?.ID + '' === comment.userId ? 'Your Comment' : usersMap[comment.userId]} @ {moment(comment.createdAt).format('yyyy-MM-DD HH:mm')
+                } 
+              </div>
+              <div style={{float: 'right'}}>
+                {
+                  user?.ID + '' === comment.userId ?
+                    <>
+                      <Button onClick={() => { setSelectedComment(comment); setIsCommentModalOpen(true)} }>Update</Button>         
+                      <Button onClick={() => { setSelectedComment(comment); setIsDeletePostOpen(true)} }>Delete</Button>         
+                    </> : <></>
+                }
+              </div>
+            </div>
 
             <p>{comment.text}</p>
-            <p>{comment.createdAt}</p>
-            <p>{usersMap[comment.userId]}</p>
           </Card>
         )
       }

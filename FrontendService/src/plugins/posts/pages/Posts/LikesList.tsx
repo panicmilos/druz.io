@@ -45,16 +45,16 @@ export const LikesList: FC<Props> = ({ post }) => {
   
   return (
     <>
-
-     {
-      post?.likedBy.map(l => usersMap[l]).join(', ')
-     }
-
-     {
-      !post.likedBy.includes(user?.ID ?? '') ?
-        <Button onClick={like} type="submit">Like</Button> :
-        <Button onClick={dislike} type="submit">Dislike</Button>
-     }
+      <div style={{marginTop: '5%'}}>
+        {
+          !post.likedBy.includes(user?.ID + '') ?
+            <Button onClick={like} type="submit">Like</Button> :
+            <Button onClick={dislike} type="submit">Dislike</Button>
+        }
+        {
+          post?.likedBy.map(l => user?.ID + '' === l ? 'You' : usersMap[l]).join(', ')
+        }
+      </div>
 
     </>
   )

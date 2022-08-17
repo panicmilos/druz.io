@@ -27,7 +27,7 @@ impl<'a, 'r> FromRequest<'a, 'r> for Token {
   }
 }
 
-#[post("/<post_id>/like", format = "application/json")]
+#[post("/<post_id>/like")]
 pub fn like_post(post_id: &RawStr, token: Token) -> ApiResponse {
 
   let authService = AuthService::New();
@@ -36,11 +36,11 @@ pub fn like_post(post_id: &RawStr, token: Token) -> ApiResponse {
     Err(err) => return err.to_api_response().unwrap()
   };
 
-  // let reactService = ReactService::New();
-  // match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
-  //   Ok(_) => {},
-  //   Err(err) => return err.to_api_response().unwrap()
-  // };
+  let reactService = ReactService::New();
+  match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
+    Ok(_) => {},
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
   let like = Like {
     postId: post_id.to_string(),
@@ -56,7 +56,7 @@ pub fn like_post(post_id: &RawStr, token: Token) -> ApiResponse {
     
 }
 
-#[post("/<post_id>/dislike", format = "application/json")]
+#[post("/<post_id>/dislike")]
 pub fn dislike_post(post_id: &RawStr, token: Token) -> ApiResponse {
 
   let authService = AuthService::New();
@@ -65,11 +65,11 @@ pub fn dislike_post(post_id: &RawStr, token: Token) -> ApiResponse {
     Err(err) => return err.to_api_response().unwrap()
   };
 
-  // let reactService = ReactService::New();
-  // match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
-  //   Ok(_) => {},
-  //   Err(err) => return err.to_api_response().unwrap()
-  // };
+  let reactService = ReactService::New();
+  match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
+    Ok(_) => {},
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
   let like = Like {
     postId: post_id.to_string(),

@@ -1,1 +1,1 @@
-export const extractErrorMessage = (errorData: any) => errorData.ErrorMessage || errorData.error || errorData.errors[0].message;
+export const extractErrorMessage = (errorData: any) => errorData.ErrorMessage || errorData.error || errorData.message || errorData.errors[0].message;

@@ -43,28 +43,28 @@ pub fn get_posts(token: Token) -> ApiResponse {
     Err(err) => return err.to_api_response().unwrap()
   };
 
-  // let userFriendsService = UserFriendsService::New();
-  // let userFriends = match userFriendsService.ReadById(&token.0.to_string(), &authenticatedUser.Id) {
-  //   Ok(userFriends) => userFriends,
-  //   Err(err) => return err.to_api_response().unwrap()
-  // };
+  let userFriendsService = UserFriendsService::New();
+  let userFriends = match userFriendsService.ReadById(&token.0.to_string(), &authenticatedUser.Id) {
+    Ok(userFriends) => userFriends,
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
-  // let filteredPosts = posts.iter().filter(|p| {
-  //   if (p.writtenBy == authenticatedUser.Id) {
-  //     return true;
-  //   }
+  let filteredPosts = posts.iter().filter(|p| {
+    if (p.writtenBy == authenticatedUser.Id) {
+      return true;
+    }
 
-  //   if (userFriends.iter().any(|uf| p.writtenBy == uf.FriendId)) {
-  //     return true;
-  //   }
+    if (userFriends.iter().any(|uf| p.writtenBy == uf.FriendId.to_string())) {
+      return true;
+    }
 
-  //   return false;
+    return false;
 
-  // }).collect::<Vec::<&Post>>();
+  }).collect::<Vec::<&Post>>();
 
-  // ApiResponse { json: Json(json!(filteredPosts)), status: Status::Ok }
+  ApiResponse { json: Json(json!(filteredPosts)), status: Status::Ok }
 
-    ApiResponse { json: Json(json!(posts)), status: Status::Ok }
+    // ApiResponse { json: Json(json!(posts)), status: Status::Ok }
 
     
 }
@@ -125,7 +125,7 @@ pub fn update_post(id: &RawStr, token: Token, post_request: Json<UpdatePostReque
     
 }
 
-#[delete("/<id>", format = "application/json")]
+#[delete("/<id>")]
 pub fn delete_post(id: &RawStr, token: Token) -> ApiResponse {
 
   let authService = AuthService::New();

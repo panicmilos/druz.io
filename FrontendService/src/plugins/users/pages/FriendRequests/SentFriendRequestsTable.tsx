@@ -31,7 +31,7 @@ export const SentFriendRequestsTable: FC<Props> = ({ friendRequests }) => {
   
   const { result, setResult } = useFriendRequestsResult();
 
-  const deleteRequestMutation = useMutation(() => friendRequestsService.deleteSent(selectedRequest?.UserId + ''), {
+  const deleteRequestMutation = useMutation(() => friendRequestsService.deleteSent(selectedRequest?.FriendId + ''), {
     onSuccess: () => {
       notificationService.success('You have successfully removed friend request.');
       setResult({ status: 'OK', type: 'DELETE_FRIEND_REQUEST' });

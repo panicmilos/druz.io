@@ -29,8 +29,8 @@ impl ReactService {
     }
 
     match self.userFriendsService.ReadByIds(token, &UserFriend {
-      UserId: userId.to_string(),
-      FriendId: post.writtenBy.to_string()
+      UserId: userId.parse::<u32>().unwrap(),
+      FriendId: post.writtenBy.parse::<u32>().unwrap()
     }) {
       Ok(_) => Ok(()),
       Err(err) => Err(err)

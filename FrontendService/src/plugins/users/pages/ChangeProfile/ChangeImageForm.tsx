@@ -49,7 +49,7 @@ export const ChangeImageForm: FC<Props> = ({ user }) => {
 
   const saveProfileMutator = useMutation([userService], () => userService.changeImage(user?.ID ?? '', localImageUrl), {
     onSuccess: (_) => {
-      notificationService.error("You have successfully changed the profile image.");
+      notificationService.success("You have successfully changed the profile image.");
     },
     onError: (_) => {
       notificationService.error("Unable to change the picture.");
@@ -74,19 +74,22 @@ export const ChangeImageForm: FC<Props> = ({ user }) => {
 
   return (
     <>
-      <div>
-        <img src={localImageUrl} alt="Profile" />
+      <div style={{ display: 'flex', justifyContent: 'center', textAlign: 'center' }}>
 
-        <h1>Select Image</h1>
-        <input
-          type="file"
-          accept=".png, .jpg, .jpeg" 
-          onChange={onImageChange}
-        />
+        <div>
+          <img src={localImageUrl} style={{maxWidth: '300px', minWidth: '300px'}} alt="Profile" />
+
+          <h3>Select Image</h3>
+          <input
+            type="file"
+            accept=".png, .jpg, .jpeg" 
+            onChange={onImageChange}
+            />
+
+          <Button onClick={saveImage} type="button">Save</Button>
+          <Button onClick={clearImage} type="button">Clear</Button>
+        </div>
       </div>
-
-      <Button onClick={saveImage} type="button">Save</Button>
-      <Button onClick={clearImage} type="button">Clear</Button>
     </>
   );
 }

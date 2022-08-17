@@ -44,11 +44,11 @@ pub fn create_comment(post_id: &RawStr, token: Token, comment_request: Json<Crea
     Err(err) => return err.to_api_response().unwrap()
   };
 
-  // let reactService = ReactService::New();
-  // match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
-  //   Ok(_) => {},
-  //   Err(err) => return err.to_api_response().unwrap()
-  // };
+  let reactService = ReactService::New();
+  match reactService.CanReact(&post_id.to_string(), &authenticatedUser.Id, &token.0.to_string()) {
+    Ok(_) => {},
+    Err(err) => return err.to_api_response().unwrap()
+  };
 
   let mut comment = comment_request.to_comment();
   comment.postId = post_id.to_string();
@@ -92,7 +92,7 @@ pub fn update_comment(post_id: &RawStr, comment_id: &RawStr, token: Token, comme
     
 }
 
-#[delete("/<post_id>/comments/<comment_id>", format = "application/json")]
+#[delete("/<post_id>/comments/<comment_id>")]
 pub fn delete_comment(post_id: &RawStr, comment_id: &RawStr, token: Token) -> ApiResponse {
 
   let authService = AuthService::New();

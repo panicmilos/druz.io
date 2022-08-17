@@ -1,4 +1,5 @@
 import { AxiosError } from "axios";
+import moment from "moment";
 import { FC, useContext, useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMutation } from "react-query";
@@ -71,7 +72,7 @@ export const PostsList:FC<Props> = ({ posts }) => {
   return (
     <div className={classes.container}>
 
-      <Modal title="Write Post" open={isPostModalOpen} onClose={() => setIsPostModalOpen(false)}>
+      <Modal title={!!selectedPost ? "Update Post": "Write Post"} open={isPostModalOpen} onClose={() => setIsPostModalOpen(false)}>
         <PostsForm existingPost={selectedPost} isEdit={!!selectedPost} />
       </Modal>
 
@@ -83,21 +84,29 @@ export const PostsList:FC<Props> = ({ posts }) => {
         <p>Are you sure you want to delete this post?</p>
       </ConfirmationModal>
 
+      
       {
         posts?.map((post: Post) => 
-          <Card>
+          <Card key={post.id}>
 
-            {
-              user?.ID === post.writtenBy ?
-                <>
-                  <Button onClick={() => { setSelectedPost(post); setIsPostModalOpen(true)} }>Update</Button>
-                  <Button onClick={() => { setSelectedPost(post); setIsDeletePostOpen(true)} }>Delete</Button>
-                </> : <></>
-            }
+            <div style={{display: 'flex'}}>
+              <div style={{flexGrow: 1, marginTop: '0.5em'}}>
+                {
+                  user?.ID + '' === post.writtenBy ? 'Your Post' : usersMap[post.writtenBy]} @ {moment(post.createdAt).format('yyyy-MM-DD HH:mm')
+                } 
+              </div>
+              <div style={{float: 'right'}}>
+                {
+                  user?.ID + '' === post.writtenBy ?
+                    <>
+                      <Button onClick={() => { setSelectedPost(post); setIsPostModalOpen(true)} }>Update</Button>
+                      <Button onClick={() => { setSelectedPost(post); setIsDeletePostOpen(true)} }>Delete</Button>
+                    </> : <></>
+                }
+              </div>
+            </div>
 
             <p>{post.text}</p>
-            <p>{post.createdAt}</p>
-            <p>{usersMap[post.writtenBy]}</p>
 
             <LikesList post={post} />
             <CommentsList post={post} />
