@@ -33,4 +33,16 @@ impl UserFriendsService {
       })
     }
   }
+
+  pub fn ReadById(&self, token: &String, userId: &String) -> HandableResult<Vec::<UserFriend>> {
+
+    Ok(
+      self.client.get(format!("{0}/users/{1}/friends", GetUserRelationServiceUrl(), userId))
+      .header("Authorization", token)
+      .send()
+      .unwrap()
+      .json::<Vec::<UserFriend>>()
+      .unwrap()
+    )
+  }
 }
