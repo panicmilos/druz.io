@@ -103,6 +103,26 @@ var UpdateUser = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	helpers.JSONResponse(w, 200, updatedUser)
 })
 
+var ChangeImage = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	var request *api_contracts.ChangeImageRequest
+	err := helpers.ReadJSONBody(r, &request)
+
+	if errors.Handle(err, w) {
+		return
+	}
+
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	userService := di.Get(r, services.UsersService).(*services.UserService)
+	updatedUser, err := userService.ChangeImage(uint(id), request.Image)
+	if errors.Handle(err, w) {
+		return
+	}
+
+	helpers.JSONResponse(w, 200, updatedUser)
+})
+
 var ChangePassword = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 	var request *api_contracts.ChangePasswordRequest
 	err := helpers.ReadJSONBody(r, &request)

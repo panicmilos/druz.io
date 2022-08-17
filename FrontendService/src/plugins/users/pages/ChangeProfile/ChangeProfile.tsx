@@ -1,6 +1,7 @@
 import { FC, useContext } from "react"
-import { AuthContext, Container } from "../../imports"
+import { AuthContext, Card, Container } from "../../imports"
 import { Profile } from "../../models/User";
+import { ChangeImageForm } from "./ChangeImageForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { DeactivateProfile } from "./DeactivateProfile";
 import { ProfileForm } from "./ProfileForm";
@@ -13,11 +14,19 @@ export const ChangeProfile: FC = () => {
     <>
       <Container flexDirection="column">
         
-        <ProfileForm user={user as Profile} />
-        
-        <ChangePasswordForm user={user as Profile} />
+        <Card title="Change Profile">
+          <ChangeImageForm user={user as Profile} />
 
-        <DeactivateProfile user={user as Profile} />
+          <ProfileForm user={user as Profile} />
+        </Card>
+          
+        <Card title="Change Password">
+          <ChangePasswordForm user={user as Profile} />
+        </Card>
+
+        <Card title="Disable Profile">
+          <DeactivateProfile user={user as Profile} />
+        </Card>
 
       </Container>
     </>

@@ -2,7 +2,7 @@ import { FC } from "react";
 import { Profile } from "../../models/User";
 import * as Yup from 'yup';
 import { useUserService } from "../../services";
-import { Button, Card, extractErrorMessage, Form, FormTextInput, useNotificationService } from "../../imports";
+import { Button, extractErrorMessage, Form, FormTextInput, useNotificationService } from "../../imports";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { createUseStyles } from "react-jss";
@@ -47,17 +47,15 @@ export const ChangePasswordForm: FC<Props> = ({ user }) => {
   const classes = useStyles();
 
   return (
-    <Card title="Change Password">
-      <Form
-          schema={schema}
-          onSubmit={changePassword}
-        >
-          <FormTextInput type="password" label="Current Password" name="CurrentPassword" />
-          <FormTextInput type="password" label="New Password" name="NewPassword" />
-          <FormTextInput type="password" label="Confirm password" name="ConfirmPassword" />
+    <Form
+        schema={schema}
+        onSubmit={changePassword}
+      >
+        <FormTextInput type="password" label="Current Password" name="CurrentPassword" />
+        <FormTextInput type="password" label="New Password" name="NewPassword" />
+        <FormTextInput type="password" label="Confirm password" name="ConfirmPassword" />
 
-          <Button className={classes.submitButton} type="submit">Submit</Button>
-        </Form>
-    </Card>
+        <Button className={classes.submitButton} type="submit">Submit</Button>
+      </Form>
   );
 }

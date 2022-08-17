@@ -20,6 +20,9 @@ export class UserService extends CrudService<Profile> {
     return (await axios.get( `${this.baseUrl}/search`, {params})).data;
   }
 
+  public async changeImage(userId: string, image: any): Promise<Profile> {
+    return (await axios.put( `${this.baseUrl}/${userId}/image`, { image })).data;
+  }
 
   public async changePassword(userId: string, request: any): Promise<Profile> {
     return (await axios.put( `${this.baseUrl}/${userId}/password`, request)).data;

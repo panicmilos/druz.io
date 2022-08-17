@@ -34,6 +34,7 @@ func (server *Server) addHandlers() {
 	router.Handle("/users/{id}", AuthenticateMiddlewate(controllers.ReadUserById)).Methods("GET")
 	router.Handle("/users", controllers.CreateUser).Methods("POST")
 	router.Handle("/users/{id}", controllers.UpdateUser).Methods("PUT")
+	router.Handle("/users/{id}/image", controllers.ChangeImage).Methods("PUT")
 	router.Handle("/users/{id}/password", controllers.ChangePassword).Methods("PUT")
 	router.Handle("/users/{id}/block", controllers.BlockUser).Methods("DELETE")
 

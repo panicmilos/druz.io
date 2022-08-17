@@ -78,6 +78,24 @@ func (userService *UserService) Update(profile *models.Profile) (*models.Profile
 	return updatedUser, nil
 }
 
+func (userService *UserService) ChangeImage(id uint, image string) (*models.Profile, error) {
+	existingProfile, err := userService.ReadById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	existingProfile.Image = image
+
+	updatedUser := userService.repository.Users.UpdateProfile(existingProfile)
+
+	userService.userReplicator.Replicate(&dto.UserReplication{
+		ReplicationType: "Update",
+		User:            updatedUser,
+	})
+
+	return updatedUser, nil
+}
+
 func (userService *UserService) ChangePassword(id uint, currentPassword string, newPassword string) (*models.Profile, error) {
 	account := userService.repository.Users.ReadAccountByProfileId(id)
 	if account == nil {

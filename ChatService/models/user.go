@@ -6,4 +6,5 @@ type User struct {
 	FirstName string
 	LastName  string
 	Disabled  bool
+	Image     string
 }

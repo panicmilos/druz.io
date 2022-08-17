@@ -5,6 +5,8 @@ type Props = {};
 
 export const Login: FC<Props> = () => {
   return (
-    <><LoginForm /></>
+    <>
+      <LoginForm />
+    </>
   )
 }

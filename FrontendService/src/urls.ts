@@ -7,6 +7,7 @@ export const API_URL = env.SAME_HOST === 'true' ?
 
 export const USERS_SERVICE_URL = `http://localhost:8000`;
 export const USER_RELATIONS_SERVICE_URL = `http://localhost:8001`;
+export const IMAGES_SERVICE_URL = `http://localhost:8003`;
 export const POSTS_SERVICE_URL = `http://localhost:8004`;
 
 

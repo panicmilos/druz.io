@@ -11,7 +11,9 @@ export type Profile = {
   LivePlaces: LivePlace[],
   WorkPlaces: WorkPlace[],
   Educations: Education[],
-  Intereses: Interes[]
+  Intereses: Interes[],
+
+  Image: string
 }
 
 export enum Gender {

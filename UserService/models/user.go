@@ -34,6 +34,8 @@ type Profile struct {
 
 	AccountID uint
 	Disabled  bool
+
+	Image string
 }
 
 type LivePlaceType int64

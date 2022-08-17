@@ -1,7 +1,7 @@
 import { FC, useContext } from "react";
 import { Profile } from "../../models/User";
 import { useUserService } from "../../services";
-import { AuthContext, Button, Card, extractErrorMessage, Form, FormTextInput, useNotificationService } from "../../imports";
+import { AuthContext, Button, extractErrorMessage, useNotificationService } from "../../imports";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { createUseStyles } from "react-jss";
@@ -42,9 +42,9 @@ export const DeactivateProfile: FC<Props> = ({ user }) => {
   const classes = useStyles();
 
   return (
-    <Card title="Disable Profile">
+    <>
       Are you sure that you want to disable your profile?
       <Button className={classes.submitButton} onClick={deactivateProfile} type="button">Submit</Button>
-    </Card>
+    </>
   );
 }
