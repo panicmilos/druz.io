@@ -16,3 +16,8 @@ export type Comment = {
   userId: string,
   text: string
 }
+
+export type Like = {
+  userId: string,
+  postId: string
+}

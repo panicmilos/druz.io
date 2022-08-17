@@ -6,6 +6,8 @@ import { usePostsResult } from "../../hooks";
 import { Button, Card, ConfirmationModal, extractErrorMessage, Modal, useNotificationService } from "../../imports";
 import { Post } from "../../models/Post";
 import { usePostsService } from "../../services";
+import { CommentsList } from "./CommentsList";
+import { LikesList } from "./LikesList";
 import { PostsForm } from "./PostsForm";
 
 type Props = {
@@ -88,6 +90,9 @@ export const PostsList:FC<Props> = ({ posts }) => {
             <p>{post.text}</p>
             <p>{post.createdAt}</p>
             <p>{post.writtenBy}</p>
+
+            <LikesList post={post} />
+            <CommentsList post={post} />
           </Card>
         )
       }

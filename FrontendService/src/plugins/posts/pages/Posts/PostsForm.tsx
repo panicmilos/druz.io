@@ -1,4 +1,4 @@
-import { Button, Card, extractErrorMessage, Form, FormTextAreaInput, useNotificationService } from "../../imports";
+import { Button, extractErrorMessage, Form, FormTextAreaInput, useNotificationService } from "../../imports";
 import { usePostsService } from "../../services"
 
 import * as Yup from 'yup';
