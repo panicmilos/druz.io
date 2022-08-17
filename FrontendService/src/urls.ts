@@ -7,7 +7,6 @@ export const API_URL = env.SAME_HOST === 'true' ?
 
 export const USERS_SERVICE_URL = `http://localhost:8000`;
 export const USER_RELATIONS_SERVICE_URL = `http://localhost:8001`;
+export const POSTS_SERVICE_URL = `http://localhost:8004`;
 
 
-export const HOME_SERVICE_URL = `http://localhost:5003`;
-export const PKI_SERVICE_URL = `http://localhost:5001`;

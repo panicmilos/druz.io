@@ -18,7 +18,7 @@ const useStyles = createUseStyles({
       margin: '0.5em 0.5em 0.5em 0.5em'
     }
   },
-  buttonReportUser: {
+  buttons: {
     display: 'flex',
     justifyContent: 'flex-end',
     marginTop: '20px'
@@ -135,7 +135,7 @@ export const Profile: FC = () => {
                 <p>Are you sure you want to remove this user from friend list?</p>
               </ConfirmationModal>
 
-              <div className={classes.buttonReportUser}>
+              <div className={classes.buttons}>
                 <Button onClick={() => { setIsAddFriendOpen(true)} }>Add User</Button>         
                 <Button onClick={() => { setIsRemoveFriendOpen(true)} }>Remove User</Button>
                 <Button onClick={() => { setIsBlockUserOpen(true)} }>Block User</Button>

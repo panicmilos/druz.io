@@ -4,6 +4,8 @@ use std::env;
 
 use dotenv::dotenv;
 use rocket::{Config, config::Environment};
+use rocket::http::Method;
+use rocket_cors::{AllowedOrigins, CorsOptions};
 
 #[macro_use] extern crate rocket;
 extern crate base64;
@@ -27,7 +29,19 @@ fn main() {
         .port(env::var("PORT").unwrap().parse().unwrap())   
         .unwrap();
 
+    let cors = CorsOptions::default()
+        .allowed_origins(AllowedOrigins::all())
+        .allowed_methods(
+            vec![Method::Get, Method::Post, Method::Put, Method::Delete, Method::Patch]
+                .into_iter()
+                .map(From::from)
+                .collect(),
+        )
+        .allow_credentials(true);
+    
+
     rocket::custom(cfg)
+        .attach(cors.to_cors().unwrap())
         .mount("/posts",  routes![
             route_handlers::posts::get_posts,
             route_handlers::posts::create_post,
