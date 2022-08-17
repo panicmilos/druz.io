@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { useReportsResult } from "../../hooks";
 import { AuthContext, Button, ConfirmationModal, Container, extractErrorMessage, Modal, useNotificationService } from "../../imports";
 import { Profile as ProfileT } from "../../models/User";
-import { UserBlocksService, useUserBlocksService, useUserService } from "../../services";
+import { useFriendRequestsService, useUserBlocksService, useUserService } from "../../services";
 import { AdditionalProfileForm } from "./AdditionalProfileForm";
 import { ProfileForm } from "./ProfileForm";
 import { ReportUserForm } from "./ReportUserForm";
@@ -36,10 +36,12 @@ export const Profile: FC = () => {
 
   const userService = useUserService();
   const userBlocksService = useUserBlocksService(authContext.user?.ID ?? '');
+  const friendRequestsService = useFriendRequestsService(authContext.user?.ID ?? '');
   const notificationService = useNotificationService();
 
-  const [isReportUserOpen, setIsReportUserOpen] = useState(false);
+  const [isAddFriendOpen, setIsAddFriendOpen] = useState(false);
   const [isBlockUserOpen, setIsBlockUserOpen] = useState(false);
+  const [isReportUserOpen, setIsReportUserOpen] = useState(false);
 
   
   
@@ -57,6 +59,18 @@ export const Profile: FC = () => {
   });
   const blockUser = () => blockUserMutation.mutate();
 
+  const addFriendMutation = useMutation(() => friendRequestsService.add(user?.ID ?? ''), {
+    onSuccess: () => {
+      notificationService.success('You have successfully added user.');
+      setResult({ status: 'OK', type: 'ADD_FRIEND' });
+    },
+    onError: (error: AxiosError) => {
+      notificationService.error(extractErrorMessage(error.response?.data));
+      setResult({ status: 'ERROR', type: 'ADD_FRIEND' });
+    }
+  });
+  const addFriend = () => addFriendMutation.mutate();
+
 
   const { result, setResult } = useReportsResult();
 
@@ -70,7 +84,10 @@ export const Profile: FC = () => {
     if (result.status === 'OK' && result.type === 'BLOCK_USER') {
       setIsBlockUserOpen(false);
     }
-    
+
+    if (result.status === 'OK' && result.type === 'ADD_FRIEND') {
+      setIsAddFriendOpen(false);
+    }
     setResult(undefined);
   }, [result]);
   
@@ -92,10 +109,14 @@ export const Profile: FC = () => {
                 <p>Are you sure you want to block this user?</p>
               </ConfirmationModal>
 
+              <ConfirmationModal title="Add User" open={isAddFriendOpen} onClose={() => setIsAddFriendOpen(false)} onYes={addFriend}>
+                <p>Are you sure you want to add this user?</p>
+              </ConfirmationModal>
 
               <div className={classes.buttonReportUser}>
-                <Button onClick={() => { setIsReportUserOpen(true)} }>Report User</Button>
+              <Button onClick={() => { setIsAddFriendOpen(true)} }>Add User</Button>
                 <Button onClick={() => { setIsBlockUserOpen(true)} }>Block User</Button>
+                <Button onClick={() => { setIsReportUserOpen(true)} }>Report User</Button>
               </div>
 
             </Container>

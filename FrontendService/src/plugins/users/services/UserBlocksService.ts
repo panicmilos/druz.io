@@ -20,7 +20,7 @@ export class UserBlocksService {
   private baseUrl: string;
 
   constructor(userId: number) {
-    this.ID = "UserReportsService";
+    this.ID = "UserBlocksService";
     this.baseUrl = `${USER_RELATIONS_SERVICE_URL}/users/${userId}/block-list`;
   }
 

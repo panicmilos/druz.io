@@ -13,9 +13,8 @@ export const BlockedUsers: FC = () => {
 
   const { result, setResult } = useUserBlocksResult();
 
-  const { data: userBlocks } = useQuery([userBlocksService], () => userBlocksService.fetch(), { enabled: !result });
+  const { data: userBlocks } = useQuery([result, userBlocksService], () => userBlocksService.fetch(), { enabled: !result });
 
-  console.log(userBlocks);
 
   useEffect(() => {
     if (!result) return;

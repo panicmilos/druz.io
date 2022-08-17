@@ -11,6 +11,7 @@ import { Profile } from './pages/Profile/Profile';
 import { Reports } from './pages/Reports/Reports';
 import { Users } from './pages/Users/Users';
 import { BlockedUsers } from './pages/BlockedUsers/BlockedUsers';
+import { FriendRequests } from './pages/FriendRequests/FriendRequests';
 
 export * from './exports';
 
@@ -58,6 +59,12 @@ export function getPluginDefinition(): FeaturePlugin {
       {
         label: 'Blocked Users',
         path: 'users/blocked',
+        icon: <GroupIcon/>,
+        shouldShow: authorizedFor({ roles: ["0"] })
+      },
+      {
+        label: 'Friend Requests',
+        path: 'users/friends/requests',
         icon: <GroupIcon/>,
         shouldShow: authorizedFor({ roles: ["0"] })
       }
@@ -130,6 +137,13 @@ export function getPluginDefinition(): FeaturePlugin {
             <BlockedUsers/>
           </PaddingContainer>,
         path: 'users/blocked',
+        shouldShow: authorizedFor({ roles: ["0"] })
+      },
+      {
+        component: <PaddingContainer>
+            <FriendRequests/>
+          </PaddingContainer>,
+        path: 'users/friends/requests',
         shouldShow: authorizedFor({ roles: ["0"] })
       }
     ]
