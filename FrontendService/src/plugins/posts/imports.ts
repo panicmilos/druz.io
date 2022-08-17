@@ -11,6 +11,10 @@ export {
 } from '../result-context';
 
 export {
+  useUserService
+} from '../users';
+
+export {
   CrudService,
   useNotificationService,
   Card,
@@ -37,6 +41,7 @@ export {
   useDebounce,
   MAX_INT,
   ConfirmationModal,
+  createEntitiesMap,
 
   ALPHANUMERIC_REGEX,
   EMAIL_REGEX,

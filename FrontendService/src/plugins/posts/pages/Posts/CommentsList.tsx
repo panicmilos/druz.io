@@ -1,9 +1,9 @@
 import { AxiosError } from "axios"
-import { FC, useEffect, useState } from "react"
+import { FC, useContext, useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
 import { useMutation } from "react-query"
-import { usePostsResult } from "../../hooks"
-import { Button, Card, ConfirmationModal, extractErrorMessage, Modal, useNotificationService } from "../../imports"
+import { usePostsResult, useUsersMap } from "../../hooks"
+import { AuthContext, Button, Card, ConfirmationModal, extractErrorMessage, Modal, useNotificationService } from "../../imports"
 import { Post, Comment } from "../../models/Post"
 import { useCommentsService } from "../../services"
 import { CommentsForm } from "./CommentsForm"
@@ -30,12 +30,15 @@ const useStyles = createUseStyles({
 
 export const CommentsList: FC<Props> = ({ post }) => {
 
+  const { user } = useContext(AuthContext);
+
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [isDeletePostOpen, setIsDeletePostOpen] = useState(false);
   const [selectedComment, setSelectedComment] = useState<Comment|undefined>();
 
   const commentsService = useCommentsService(post.id);
   const notificationService = useNotificationService();
+  const usersMap = useUsersMap();
   const { result, setResult } = usePostsResult();
 
   const deleteCommentMutation = useMutation(() => commentsService.delete(selectedComment?.id ?? ''), {
@@ -78,12 +81,17 @@ export const CommentsList: FC<Props> = ({ post }) => {
       {
         post.comments?.map((comment: Comment) =>
           <Card>
-            <Button onClick={() => { setSelectedComment(comment); setIsCommentModalOpen(true)} }>Update</Button>         
-            <Button onClick={() => { setSelectedComment(comment); setIsDeletePostOpen(true)} }>Delete</Button>         
+            {
+              user?.ID === comment.userId ?
+                <>
+                  <Button onClick={() => { setSelectedComment(comment); setIsCommentModalOpen(true)} }>Update</Button>         
+                  <Button onClick={() => { setSelectedComment(comment); setIsDeletePostOpen(true)} }>Delete</Button>         
+                </> : <></>
+            }
 
             <p>{comment.text}</p>
             <p>{comment.createdAt}</p>
-            <p>{comment.userId}</p>
+            <p>{usersMap[comment.userId]}</p>
           </Card>
         )
       }

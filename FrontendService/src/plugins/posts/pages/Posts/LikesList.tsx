@@ -1,7 +1,7 @@
 import { AxiosError } from "axios"
 import { FC, useContext } from "react"
 import { useMutation } from "react-query"
-import { usePostsResult } from "../../hooks"
+import { usePostsResult, useUsersMap } from "../../hooks"
 import { AuthContext, Button, extractErrorMessage, useNotificationService } from "../../imports"
 import { Post } from "../../models/Post"
 import { useLikesService } from "../../services"
@@ -17,6 +17,7 @@ export const LikesList: FC<Props> = ({ post }) => {
   
   const likesService = useLikesService(post.id);
   const notificationService = useNotificationService();
+  const usersMap = useUsersMap();
   const { setResult } = usePostsResult();
 
   const likeMutation = useMutation(() => likesService.like(), {
@@ -46,7 +47,7 @@ export const LikesList: FC<Props> = ({ post }) => {
     <>
 
      {
-      post?.likedBy.join(', ')
+      post?.likedBy.map(l => usersMap[l]).join(', ')
      }
 
      {
