@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 	"github.com/panicmilos/druz.io/ChatService/controllers"
+	"github.com/panicmilos/druz.io/ChatService/models"
 	"github.com/rs/cors"
 )
 
@@ -29,12 +30,12 @@ func New() *HttpServer {
 func (server *HttpServer) addHandlers() {
 	router := server.Router
 
-	router.Handle("/users/{id}/message", AuthenticateMiddlewate(controllers.SendMessage)).Methods("POST")
-	router.Handle("/users/chats", AuthenticateMiddlewate(controllers.ChatsWith)).Methods("GET")
-	router.Handle("/users/chats/statuses", AuthenticateMiddlewate(controllers.ReadStatuses)).Methods("GET")
-	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(controllers.ReadChat)).Methods("GET")
-	router.Handle("/users/chats/{chat}/{messageId}", AuthenticateMiddlewate(controllers.DeleteMessage)).Methods("DELETE")
-	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(controllers.DeleteChat)).Methods("DELETE")
+	router.Handle("/users/{id}/message", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.SendMessage, models.NormalUser))).Methods("POST")
+	router.Handle("/users/chats", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ChatsWith, models.NormalUser))).Methods("GET")
+	router.Handle("/users/chats/statuses", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadStatuses, models.NormalUser))).Methods("GET")
+	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadChat, models.NormalUser))).Methods("GET")
+	router.Handle("/users/chats/{chat}/{messageId}", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.DeleteMessage, models.NormalUser))).Methods("DELETE")
+	router.Handle("/users/chats/{chat}", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.DeleteChat, models.NormalUser))).Methods("DELETE")
 }
 
 func (server *HttpServer) addMiddlewares() {

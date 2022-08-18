@@ -1,6 +1,6 @@
 import { createContext, FC, useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { AuthContext, SOCKET_SERVICE_URL, useNotificationService } from "./imports";
+import { AuthContext, SOCKET_SERVICE_URL, useNotificationService, ADMIN_ROLE } from "./imports";
 
 
 export type SocketContextType = {
@@ -37,7 +37,7 @@ export const SocketContextProvider: FC = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || user.Role === ADMIN_ROLE) return;
 
     const client = (window as any).io.connect(`${SOCKET_SERVICE_URL}`, {
       transports: ['websocket']

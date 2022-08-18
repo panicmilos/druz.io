@@ -48,7 +48,7 @@ export function setUnauthorizedRequestInterceptor(axiosInstance: AxiosInstance, 
 }
 
 export function getToken() {
-  return sessionStorage.getItem('jwt-token');
+  return localStorage.getItem('jwt-token');
 }
 
 export function getUserIdFromToken() {

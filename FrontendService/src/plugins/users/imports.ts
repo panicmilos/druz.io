@@ -1,6 +1,6 @@
 
 
-export { AuthContext } from "../auth-context";
+export { AuthContext, ADMIN_ROLE, USER_ROLE } from "../auth-context";
 
 export type { FeaturePlugin, Result, Theme } from "../../core";
 

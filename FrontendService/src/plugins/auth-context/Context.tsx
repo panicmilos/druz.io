@@ -32,8 +32,9 @@ export const AuthContextProvider: FC = ({ children }) => {
   const configureInterceptors = () => {
     setAxiosInterceptors(axios, () => {
       setAuthenticated(false);
+      setUser(undefined);
       window.location.href = "/";
-      sessionStorage.removeItem('jwt-token');
+      localStorage.removeItem('jwt-token');
     });
   }
 

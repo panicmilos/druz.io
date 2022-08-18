@@ -63,10 +63,6 @@ pub fn get_posts(token: Token) -> ApiResponse {
   }).collect::<Vec::<&Post>>();
 
   ApiResponse { json: Json(json!(filteredPosts)), status: Status::Ok }
-
-    // ApiResponse { json: Json(json!(posts)), status: Status::Ok }
-
-    
 }
 
 #[post("/", format = "application/json", data = "<post_request>")]

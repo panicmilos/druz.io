@@ -33,7 +33,6 @@ export const ChatMessages: FC<Props> = ({ chat, onInitial }) => {
 
   const [searchText, setSearchText] = useState('');
   const debouncedSearchText = useDebounce(searchText, 300);
-  console.log(debouncedSearchText);
 
   useQuery([chat, chatService, debouncedSearchText], () => chatService.fetchById(chat.chatId || '', debouncedSearchText), {
     enabled: chat.chatId !== 'NOT_CREATED_YET',

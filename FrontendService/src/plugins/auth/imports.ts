@@ -15,4 +15,4 @@ export {
   Service
 } from "../../core";
 
-export { AuthContext, setAxiosInterceptors } from '../auth-context';
+export { AuthContext, setAxiosInterceptors, USER_ROLE } from '../auth-context';

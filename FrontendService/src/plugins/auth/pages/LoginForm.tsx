@@ -1,6 +1,6 @@
 import { AuthService } from "../services/AuthService";
 import { AuthResponse } from "../models/AuthResponse";
-import {  } from "../../auth-context/utils";
+import { getRoleFromToken } from "../../auth-context/utils";
 import { FC, useContext, useEffect, useState } from "react";
 import * as Yup from "yup";
 import { createUseStyles } from "react-jss";
@@ -55,8 +55,9 @@ export const LoginForm: FC<Props> = () => {
   const configureInterceptors = () => {
     setAxiosInterceptors(axios, () => {
       setAuthenticated(false);
+      setUser(undefined);
       nav('/');
-      sessionStorage.removeItem('jwt-token');
+      localStorage.removeItem('jwt-token');
     });
   }
 
@@ -88,8 +89,9 @@ export const LoginForm: FC<Props> = () => {
 
 
   const handleAuthResponse = (response: AuthResponse) => {
-    sessionStorage.setItem("jwt-token", response.Jwt);
+    localStorage.setItem("jwt-token", response.Jwt);
     setAuthenticated(true);
+    response.Profile.Role = getRoleFromToken();
     setUser(response.Profile);
 
     configureInterceptors();

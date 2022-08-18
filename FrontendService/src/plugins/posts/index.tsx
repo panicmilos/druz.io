@@ -1,6 +1,6 @@
 import { FeaturePlugin, PaddingContainer } from './imports';
 import GroupIcon from '@mui/icons-material/Group';
-import { authorizedFor } from '../auth-context';
+import { authorizedFor, USER_ROLE } from '../auth-context';
 import { Posts } from './pages/Posts/Posts';
 
 export * from './exports';
@@ -14,7 +14,7 @@ export function getPluginDefinition(): FeaturePlugin {
         label: 'Posts',
         path: 'posts',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       }
     ],
     pages: [
@@ -23,7 +23,7 @@ export function getPluginDefinition(): FeaturePlugin {
             <Posts/>
           </PaddingContainer>,
         path: 'posts',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       }
     ]
   }

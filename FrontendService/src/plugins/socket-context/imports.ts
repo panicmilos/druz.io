@@ -5,7 +5,8 @@ export type {
 } from '../../core';
 
 export {
-  AuthContext
+  AuthContext,
+  ADMIN_ROLE
 } from '../auth-context';
 
 export {

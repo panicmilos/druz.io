@@ -1,6 +1,6 @@
 import { FeaturePlugin, PaddingContainer } from './imports';
 import GroupIcon from '@mui/icons-material/Group';
-import { authorizedFor } from '../auth-context';
+import { authorizedFor, USER_ROLE } from '../auth-context';
 import { Chat } from './pages/Chat/Chat';
 
 export * from './exports';
@@ -14,7 +14,7 @@ export function getPluginDefinition(): FeaturePlugin {
         label: 'Chat',
         path: 'chat',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       }
     ],
     pages: [
@@ -23,7 +23,7 @@ export function getPluginDefinition(): FeaturePlugin {
             <Chat/>
           </PaddingContainer>,
         path: 'chat',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       }
     ]
   }

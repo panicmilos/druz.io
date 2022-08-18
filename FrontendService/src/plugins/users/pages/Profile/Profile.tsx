@@ -4,7 +4,7 @@ import { createUseStyles } from "react-jss";
 import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { useReportsResult } from "../../hooks";
-import { AuthContext, Button, ConfirmationModal, Container, extractErrorMessage, Modal, useNotificationService } from "../../imports";
+import { ADMIN_ROLE, AuthContext, Button, ConfirmationModal, Container, extractErrorMessage, Modal, useNotificationService } from "../../imports";
 import { useFriendRequestsService, useUserBlocksService, useUserFriendsService, useUserService } from "../../services";
 import { AdditionalProfileForm } from "./AdditionalProfileForm";
 import { ProfileForm } from "./ProfileForm";
@@ -48,7 +48,7 @@ export const Profile: FC = () => {
 
   
   const userData = useQuery([id, result, userService], () => userService.fetch(id || ''), { enabled: !!id });
-  const userFriendData = useQuery([id, result, userFriendsService], () => userFriendsService.fetchById(id || ''), { enabled: !!id });
+  const userFriendData = useQuery([id, result, userFriendsService], () => userFriendsService.fetchById(id || ''), { enabled: !!id && authContext?.user?.Role !== ADMIN_ROLE });
 
   const user = userData?.data;
   const userFriend = userFriendData?.data;
@@ -121,7 +121,7 @@ export const Profile: FC = () => {
           <div className={classes.container}>
 
             {
-              id !== authContext.user?.ID + '' ?
+              (id !== authContext.user?.ID + '' && authContext.user?.Role !== ADMIN_ROLE) ?
                 <Container>
                   
                   <Modal title="Report User" open={isReportUserOpen} onClose={() => setIsReportUserOpen(false)}>

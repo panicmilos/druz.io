@@ -7,6 +7,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/gorilla/mux"
 	"github.com/panicmilos/druz.io/UserRelationsService/controllers"
+	"github.com/panicmilos/druz.io/UserRelationsService/models"
 	"github.com/rs/cors"
 )
 
@@ -29,20 +30,20 @@ func New() *Server {
 func (server *Server) addHandlers() {
 	router := server.Router
 
-	router.Handle("/users/{id}/block-list", controllers.ReadBlockList).Methods("GET")
-	router.Handle("/users/{id}/block-list", controllers.BlockUser).Methods("POST")
-	router.Handle("/users/{id}/block-list", controllers.UnblockUser).Methods("DELETE")
+	router.Handle("/users/{id}/block-list", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadBlockList, models.NormalUser))).Methods("GET")
+	router.Handle("/users/{id}/block-list", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.BlockUser, models.NormalUser))).Methods("POST")
+	router.Handle("/users/{id}/block-list", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.UnblockUser, models.NormalUser))).Methods("DELETE")
 
-	router.Handle("/users/{id}/friends", controllers.ReadFriendsList).Methods("GET")
-	router.Handle("/users/{id}/friends/{friendId}", controllers.ReadByIds).Methods("GET")
-	router.Handle("/users/{id}/friends", controllers.UnfriendUser).Methods("DELETE")
+	router.Handle("/users/{id}/friends", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadFriendsList, models.NormalUser))).Methods("GET")
+	router.Handle("/users/{id}/friends/{friendId}", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadByIds, models.NormalUser))).Methods("GET")
+	router.Handle("/users/{id}/friends", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.UnfriendUser, models.NormalUser))).Methods("DELETE")
 
-	router.Handle("/users/{id}/friends/requests/sent", controllers.ReadSentFriendRequests).Methods("GET")
-	router.Handle("/users/{id}/friends/requests/sent", controllers.DeleteSentFriendRequests).Methods("DELETE")
-	router.Handle("/users/{id}/friends/requests/received", controllers.ReadReceivedFriendRequests).Methods("GET")
-	router.Handle("/users/{id}/friends/requests", controllers.SendFriendRequests).Methods("POST")
-	router.Handle("/users/{id}/friends/requests/accept", controllers.AcceptFriendRequest).Methods("POST")
-	router.Handle("/users/{id}/friends/requests/decline", controllers.DeclineFriendRequest).Methods("DELETE")
+	router.Handle("/users/{id}/friends/requests/sent", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadSentFriendRequests, models.NormalUser))).Methods("GET")
+	router.Handle("/users/{id}/friends/requests/sent", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.DeleteSentFriendRequests, models.NormalUser))).Methods("DELETE")
+	router.Handle("/users/{id}/friends/requests/received", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.ReadReceivedFriendRequests, models.NormalUser))).Methods("GET")
+	router.Handle("/users/{id}/friends/requests", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.SendFriendRequests, models.NormalUser))).Methods("POST")
+	router.Handle("/users/{id}/friends/requests/accept", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.AcceptFriendRequest, models.NormalUser))).Methods("POST")
+	router.Handle("/users/{id}/friends/requests/decline", AuthenticateMiddlewate(AuthorizeMiddlewate(controllers.DeclineFriendRequest, models.NormalUser))).Methods("DELETE")
 
 }
 

@@ -1,6 +1,6 @@
-import { FeaturePlugin, PaddingContainer } from './imports';
+import { FeaturePlugin, PaddingContainer, USER_ROLE } from './imports';
 import GroupIcon from '@mui/icons-material/Group';
-import { authorizedFor, unauthorized } from '../auth-context';
+import { ADMIN_ROLE, authorizedFor, unauthorized } from '../auth-context';
 import { Registration } from './pages/Register/Registration';
 import { ChangeProfile } from './pages/ChangeProfile/ChangeProfile';
 import { RequestReactivation } from './pages/ReactivationRequests/RequestReactivation';
@@ -43,37 +43,37 @@ export function getPluginDefinition(): FeaturePlugin {
         label: 'Profile Settings',
         path: 'profile/settings',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       },
       {
         label: 'User Reports',
         path: 'users/reports',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0", "1"] })
+        shouldShow: authorizedFor({ roles: [ADMIN_ROLE] })
       },
       {
         label: 'Users',
         path: 'users',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE, ADMIN_ROLE] })
       },
       {
         label: 'Blocked Users',
         path: 'users/blocked',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       },
       {
         label: 'Friends List',
         path: 'users/friends',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       },
       {
         label: 'Friend Requests',
         path: 'users/friends/requests',
         icon: <GroupIcon/>,
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       }
     ],
     pages: [
@@ -116,49 +116,50 @@ export function getPluginDefinition(): FeaturePlugin {
         component: <PaddingContainer>
             <Profile />
           </PaddingContainer>,
-        path: 'users/:id/'
+        path: 'users/:id/',
+        shouldShow: authorizedFor({ roles: [USER_ROLE, ADMIN_ROLE]})
       },
       {
         component: <PaddingContainer>
             <ChangeProfile/>
           </PaddingContainer>,
         path: 'profile/settings',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       },
       {
         component: <PaddingContainer>
             <Reports/>
           </PaddingContainer>,
         path: 'users/reports',
-        shouldShow: authorizedFor({ roles: ["0", "1"] })
+        shouldShow: authorizedFor({ roles: [ADMIN_ROLE] })
       },
       {
         component: <PaddingContainer>
             <Users/>
           </PaddingContainer>,
         path: 'users',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE, ADMIN_ROLE] })
       },
       {
         component: <PaddingContainer>
             <BlockedUsers/>
           </PaddingContainer>,
         path: 'users/blocked',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       },
       {
         component: <PaddingContainer>
             <UserFriends/>
           </PaddingContainer>,
         path: 'users/friends',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       },
       {
         component: <PaddingContainer>
             <FriendRequests/>
           </PaddingContainer>,
         path: 'users/friends/requests',
-        shouldShow: authorizedFor({ roles: ["0"] })
+        shouldShow: authorizedFor({ roles: [USER_ROLE] })
       }
     ]
   }

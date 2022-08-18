@@ -31,7 +31,7 @@ export const DeactivateProfile: FC<Props> = ({ user }) => {
       setUser(undefined);
       setAuthenticated(false);
       nav('/');
-      sessionStorage.removeItem('jwt-token');
+      localStorage.removeItem('jwt-token');
     },
     onError: (error: AxiosError) => {
       notificationService.error(extractErrorMessage(error.response?.data));
