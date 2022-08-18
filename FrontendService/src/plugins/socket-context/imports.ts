@@ -7,3 +7,7 @@ export type {
 export {
   AuthContext
 } from '../auth-context';
+
+export {
+  useNotificationService
+} from "../../core";

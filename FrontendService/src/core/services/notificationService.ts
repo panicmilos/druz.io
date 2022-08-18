@@ -14,6 +14,10 @@ export class NotificationService {
     toast.success(text);
   }
 
+  public info(text: string) {
+    toast.info(text, { autoClose: 500, position: 'bottom-right' });
+  }
+
   public error(text: string) {
     toast.error(text);
   }

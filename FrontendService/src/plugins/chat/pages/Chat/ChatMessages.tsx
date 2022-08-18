@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from "react";
 import { useChatService } from "../../services";
-import { Button, useNotificationService, extractErrorMessage, SocketContext } from "../../imports";
+import { Button, useNotificationService, extractErrorMessage, SocketContext, useDebounce, TextInput } from "../../imports";
 import { useMutation, useQuery } from "react-query";
 import { Message } from "../../models/Message";
 import { ChatMessagesForm } from "./ChatMessagesForm";
@@ -31,7 +31,11 @@ export const ChatMessages: FC<Props> = ({ chat, onInitial }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   globalMessages = messages;
 
-  useQuery([chat, chatService], () => chatService.fetchById(chat.chatId || ''), {
+  const [searchText, setSearchText] = useState('');
+  const debouncedSearchText = useDebounce(searchText, 300);
+  console.log(debouncedSearchText);
+
+  useQuery([chat, chatService, debouncedSearchText], () => chatService.fetchById(chat.chatId || '', debouncedSearchText), {
     enabled: chat.chatId !== 'NOT_CREATED_YET',
     onSuccess: (messages: Message[]) => { setMessages(messages?.sort((m1: Message, m2: Message) => m1.CreatedAt.localeCompare(m2.CreatedAt)) || []); }
   })
@@ -53,6 +57,15 @@ export const ChatMessages: FC<Props> = ({ chat, onInitial }) => {
       if (!message.ID.includes(`/${chatId}/`)) return;
 
       setMessages([...globalMessages.filter(m => m.ID !== message.ID)]);
+      srollToBottom();
+    });
+
+    client?.on('chat_delete', function(data: any) {
+      const chat = JSON.parse(data.text);
+
+      if (chat.ChatId !== chatId) return;
+
+      setMessages([]);
       srollToBottom();
     });
 
@@ -93,6 +106,10 @@ export const ChatMessages: FC<Props> = ({ chat, onInitial }) => {
     <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 1em 1em 0'}}>
       <Button onClick={() => deleteChat('for_me')}>Delete For Me</Button>
       <Button onClick={() => deleteChat('for_both')}>Delete For Both</Button>
+    </div>
+
+    <div style={{ display: 'flex', justifyContent: 'flex-end', margin: '0 1em 1em 0'}}>
+      <TextInput value={searchText} onChange={setSearchText} placeholder="Keyword..." />
     </div>
 
     <div id="scrollable" style={{ maxHeight: '600px', minHeight: '600px', 'overflowY': 'scroll', display: 'flex', flexDirection: 'column'}}>

@@ -91,14 +91,14 @@ func (messagesCollection *MessagesCollection) ChatsWith(forId string) *[]dto.Cha
 	chats := []dto.Chat{}
 
 	for _, message := range messages {
-		if message.FromId != messagesCollection.SessionStorage.AuthenticatedUserId {
+		if message.ToId == messagesCollection.SessionStorage.AuthenticatedUserId {
 			chat := messagesCollection.makeChat(message.FromId)
 			if !helpers.ContainsChat(chats, *chat) {
 				chats = append(chats, *chat)
 			}
 		}
 
-		if message.ToId != messagesCollection.SessionStorage.AuthenticatedUserId {
+		if message.FromId == messagesCollection.SessionStorage.AuthenticatedUserId {
 			chat := messagesCollection.makeChat(message.ToId)
 			if !helpers.ContainsChat(chats, *chat) {
 				chats = append(chats, *chat)
@@ -137,7 +137,9 @@ func (messagesCollection *MessagesCollection) SearchChat(chat string, searchPara
 	if len(strings.TrimSpace(searchParams.Keywoard)) != 0 {
 		q.Search("Message", searchParams.Keywoard)
 	}
-	q.Take(searchParams.Take)
+	if searchParams.Take > 0 {
+		q.Take(searchParams.Take)
+	}
 	q.OrderBy("CreatedAt")
 
 	var messages []*models.Message
@@ -171,7 +173,7 @@ func (messagesCollection *MessagesCollection) DeleteMessage(chat string, message
 }
 
 func (messagesCollection *MessagesCollection) DeleteChat(chat string, deleteFor []string) []*models.Message {
-	messages := messagesCollection.ReadChat(chat)
+	messages := messagesCollection.readChatForDelete(chat)
 
 	for _, message := range messages {
 		setDeleteFor(message, deleteFor)
@@ -182,11 +184,28 @@ func (messagesCollection *MessagesCollection) DeleteChat(chat string, deleteFor 
 	return messages
 }
 
+func (messagesCollection *MessagesCollection) readChatForDelete(chat string) []*models.Message {
+	q := messagesCollection.Session.QueryCollection(formChatCollection(chat))
+
+	q.WaitForNonStaleResults(0)
+
+	var messages []*models.Message
+	err := q.GetResults(&messages)
+	if err != nil || len(messages) == 0 {
+		return nil
+	}
+
+	return messages
+}
+
 func setDeleteFor(message *models.Message, deleteFor []string) {
 	for _, val := range deleteFor {
 		if message.DeletedBy1 == "" {
 			message.DeletedBy1 = val
 		} else {
+			if message.DeletedBy1 == val {
+				continue
+			}
 			message.DeletedBy2 = val
 		}
 	}

@@ -18,8 +18,6 @@ export const Posts = () => {
     setResult(undefined);
   }, [result]);
   
-  console.log(posts);
-
   return (
     <>
       <Card title="Posts">

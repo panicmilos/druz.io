@@ -11,10 +11,13 @@ export const useUserFriendNamesMap = () => {
   const { user } = useContext(AuthContext);
 
   const userFriendsService = useUserFriendsService(user?.ID ?? '');
+  const [userFriendsMap, setUserFriendsMap] = useState<any>({});
   
-  const { data: userFriends } = useQuery([userFriendsService], () => userFriendsService.fetch());
+  useQuery([], () => userFriendsService.fetch(), {
+    onSuccess: (userFriends) => setUserFriendsMap(createEntitiesMap(userFriends, userFriend => `${userFriend.Friend.FirstName} ${userFriend.Friend.LastName}`))
+  });
 
-  return createEntitiesMap(userFriends, userFriend => userFriend.FriendId, userFriend => `${userFriend.Friend.FirstName} ${userFriend.Friend.LastName}`);
+  return userFriendsMap; 
 }
 
 export const useUserFriendsMap = () => {
@@ -22,11 +25,13 @@ export const useUserFriendsMap = () => {
   const { user } = useContext(AuthContext);
 
   const userFriendsService = useUserFriendsService(user?.ID ?? '');
-  
-  const { data: userFriends } = useQuery([userFriendsService], () => userFriendsService.fetch());
+  const [userFriendsMap, setUserFriendsMap] = useState<any>({});
 
-  return createEntitiesMap(userFriends, userFriend => userFriend.FriendId, userFriend => userFriend.Friend);
+  useQuery([], () => userFriendsService.fetch(), {
+    onSuccess: (userFriends) => setUserFriendsMap(createEntitiesMap(userFriends, userFriend => userFriend.FriendId, userFriend => userFriend.Friend))
+  });
 
+  return userFriendsMap;
 }
 
 export const useStatusesMap = () => {

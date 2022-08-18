@@ -1,5 +1,6 @@
 import { createContext, FC, useContext, useEffect, useState } from "react";
-import { AuthContext, SOCKET_SERVICE_URL } from "./imports";
+import { useLocation } from "react-router-dom";
+import { AuthContext, SOCKET_SERVICE_URL, useNotificationService } from "./imports";
 
 
 export type SocketContextType = {
@@ -10,6 +11,9 @@ const initialValues = {
   client: undefined
 }
 
+
+var globalLocation: any;
+
 export const SocketContext = createContext<SocketContextType>(initialValues);
 
 export const SocketContextProvider: FC = ({ children }) => {
@@ -17,12 +21,17 @@ export const SocketContextProvider: FC = ({ children }) => {
   const { user } = useContext(AuthContext);
   
   const [client, setClient] = useState<any>();
+  const notificationService = useNotificationService();
+  const location = useLocation();
+  globalLocation = location;
 
   const removeListeners = () => {
     client?.removeAllListeners('statuses');
     client?.removeAllListeners('messages_sidebar');
     client?.removeAllListeners('messages_chat');
+    client?.removeAllListeners('messages_global');
     client?.removeAllListeners('messages_delete');
+    client?.removeAllListeners('chat_delete');
     client?.removeAllListeners('disconnect');
     (window as any).io.removeAllListeners && (window as any).io.removeAllListeners('connection');
   };
@@ -43,6 +52,11 @@ export const SocketContextProvider: FC = ({ children }) => {
       client.join(user?.ID)
     });
 
+    client.on('messages_global', function(data: any) {
+      if (globalLocation.pathname !== '/chat') {
+        notificationService.info(`You have a new message.`);
+      }
+    });
 
     client.on('disconnect', () => {
       removeListeners();

@@ -30,8 +30,8 @@ export class ChatService {
     return (await axios.get(`${this.baseUrl}/statuses`)).data;
   }
 
-  public async fetchById(chat: string): Promise<Message[]> {
-    return (await axios.get(`${this.baseUrl}/${chat}`)).data;
+  public async fetchById(chat: string, keywoard: string): Promise<Message[]> {
+    return (await axios.get(`${this.baseUrl}/${chat}`, { params: { keywoard }})).data;
   }
 
   public async deleteMessage(chat: string, messageId: string, mode: string = 'for_me'): Promise<Message> {

@@ -30,8 +30,6 @@ export const Reactivation = () => {
         nav('/');
       })
 
-    console.log(id);
-    console.log(token);
   }, []);
 
   return (

@@ -1,9 +1,10 @@
-import { FC, useContext, useState } from "react";
+import { FC, useContext, useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useQuery } from "react-query";
-import { useStatusesMap } from "../../hooks";
+import { useStatusesMap, useUserFriendsMap } from "../../hooks";
 import { Button, Modal, Profile, SocketContext } from "../../imports";
 import { Chat as ChatT } from "../../models/Chat";
+import { Message } from "../../models/Message";
 import { useChatService } from "../../services";
 import { ChatMessages } from "./ChatMessages";
 import { SelectUserToChatForm } from "./SelectUserToChatForm";
@@ -32,17 +33,32 @@ const useStyles = createUseStyles({
   },
   growFlex: {
     flexGrow: 1
+  },
+  userButton: {
+    borderRadius: '0px',
+    textAlign: 'left'
+  },
+  notSelected: {
+    backgroundColor: '#64caf5'
   }
 });
 
 const fixId = (id: string) => id.replace('users/', '');
 
+var globalChats: ChatT[] = [];
+var globalNotificationsMap: any = {};
+var globalUserFriendsMap: any = {};
+var globalSeletedChat: any = {};
+
 export const Chat: FC = () => {
 
   const [isAddNewChatOpen, setIsAddNewChatOpen] = useState(false);
   const [chats, setChats] = useState<ChatT[]>([]);
+  globalChats = chats;
   const [selectedChat, setSelectedChat] = useState<any>(undefined);
+  globalSeletedChat = selectedChat;
   const [fetchChats, setFetchChats] = useState(true);
+  
   
   const chatService = useChatService();
 
@@ -60,7 +76,30 @@ export const Chat: FC = () => {
   const classes = useStyles();
 
   const statusesMap = useStatusesMap();
+  const [notificationsMap, setNotificationsMap] = useState<any>({})
+  globalNotificationsMap = notificationsMap;
 
+  const { client } = useContext(SocketContext);
+  const userFriendsMap = useUserFriendsMap();
+  globalUserFriendsMap = userFriendsMap;
+
+  useEffect(() => {
+    if (!client) return;
+
+    client?.on('messages_sidebar', function(data: any) {
+      const message = JSON.parse(data.text).Message as Message;
+      const messageChatId = message.ID.split('/')[1];
+
+      if (messageChatId === globalSeletedChat?.chatId) { return; }
+
+      if (!globalChats.find(c => c.Chat === messageChatId)) {
+        setChats([{ Chat: messageChatId, User: globalUserFriendsMap[message.FromId] }, ...globalChats]);
+      }
+      setNotificationsMap({...globalNotificationsMap, [messageChatId]: (globalNotificationsMap[messageChatId] || 0) + 1 })
+    });
+
+    return () => { client.removeAllListeners('messages_sidebar'); }
+  }, [client]);
 
   return (
     <>
@@ -88,15 +127,19 @@ export const Chat: FC = () => {
             {
               chats?.map(chat => {
 
+                const chatId = chat.Chat;
                 const friendId = chat.User.ID;
-                const formName = (user: Profile) => `${user.FirstName} ${user.LastName}`;
+                const formName = (user: Profile) => `${user.FirstName} ${user.LastName} `;
 
                 return (                    
                     <Button
-                    key={chat.Chat}
-                      onClick={() => setSelectedChat({ chatId: chat.Chat, friendId: friendId })}
+                      key={chatId}
+                      className={`${classes.userButton} ${selectedChat?.friendId !== friendId ? classes.notSelected : ''}`}
+                      onClick={() => { setSelectedChat({ chatId: chatId, friendId: friendId }); setNotificationsMap({...notificationsMap, [chatId]: 0 }); }}
                     >
-                      {formName(chat.User)} ({ statusesMap[friendId] || 'offline'}) { selectedChat?.friendId === friendId ? 'Selected' : '' }
+                      {formName(chat.User)}
+                      {notificationsMap[chatId] ? `(${notificationsMap[chatId]})`: ``}
+                      <span style={{margin: '0px 5px 0px 5px', fontSize: '20px', color: statusesMap[friendId] === 'online' ? 'green': 'red'}}>●</span>
                     </Button>
                 )
               })

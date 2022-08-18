@@ -91,6 +91,7 @@ func (messagesService *MessagesService) NotifyMessagedUser(message *models.Messa
 	print(string(serializedNotification))
 	gosf.Broadcast(message.ToId, "messages_chat", gosf.NewSuccessMessage(string(serializedNotification)))
 	gosf.Broadcast(message.ToId, "messages_sidebar", gosf.NewSuccessMessage(string(serializedNotification)))
+	gosf.Broadcast(message.ToId, "messages_global", gosf.NewSuccessMessage(string(serializedNotification)))
 
 	return nil
 }
@@ -116,9 +117,6 @@ func (messagesService *MessagesService) DeleteMessage(chat string, messageId str
 }
 
 func (messagesService *MessagesService) NotifyAboutDeletedMesage(message *models.Message) error {
-	if messagesService.Clients.Get(message.ToId) == nil {
-		return nil
-	}
 
 	from, err := messagesService.UsersService.ReadById(message.FromId)
 	if err != nil {
@@ -132,9 +130,13 @@ func (messagesService *MessagesService) NotifyAboutDeletedMesage(message *models
 
 	serializedNotification, _ := json.Marshal(messageNotification)
 	if messagesService.SessionStorage.AuthenticatedUserId != message.ToId {
-		gosf.Broadcast(message.ToId, "messages_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+		if messagesService.Clients.Get(message.ToId) != nil {
+			gosf.Broadcast(message.ToId, "messages_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+		}
 	} else {
-		gosf.Broadcast(message.FromId, "messages_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+		if messagesService.Clients.Get(message.FromId) != nil {
+			gosf.Broadcast(message.FromId, "messages_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+		}
 	}
 
 	return nil
@@ -151,7 +153,32 @@ func (messagesService *MessagesService) DeleteChat(chat string, mode string) ([]
 		deleteFor = append(deleteFor, messagesService.SessionStorage.AuthenticatedUserId)
 	} else {
 		deleteFor = append(deleteFor, strings.Split(chat, "-")...)
+
+		if err := messagesService.NotifyAboutDeletedChat(chat, strings.Split(chat, "-")...); err != nil {
+			return nil, err
+		}
 	}
 
 	return messagesService.repository.Messages.DeleteChat(chat, deleteFor), nil
+}
+
+func (messagesService *MessagesService) NotifyAboutDeletedChat(chat string, users ...string) error {
+
+	deletedChat := &dto.DeletedChatNotification{
+		ChatId: chat,
+	}
+
+	serializedNotification, _ := json.Marshal(deletedChat)
+
+	if messagesService.SessionStorage.AuthenticatedUserId != users[0] {
+		if messagesService.Clients.Get(users[0]) != nil {
+			gosf.Broadcast(users[0], "chat_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+		}
+	} else {
+		if messagesService.Clients.Get(users[1]) != nil {
+			gosf.Broadcast(users[1], "chat_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+		}
+	}
+
+	return nil
 }
