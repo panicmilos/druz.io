@@ -22,7 +22,7 @@ func (usersCollection *UsersCollection) ReadById(id string) *models.User {
 	user := &models.User{}
 
 	err := usersCollection.Session.Load(&user, formUsersKey(id))
-	if err != nil || user.Disabled {
+	if err != nil || (user != nil && user.ID == "") || user.Disabled {
 		return nil
 	}
 

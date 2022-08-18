@@ -50,7 +50,7 @@ func (messagesCollection *MessagesCollection) ReadMessage(chat string, messageId
 
 	err := messagesCollection.Session.Load(&message, formMessageKeyFromChat(chat, messageId))
 	authenticatedUser := messagesCollection.SessionStorage.AuthenticatedUserId
-	if err != nil || message.DeletedBy1 == authenticatedUser || message.DeletedBy2 == authenticatedUser {
+	if err != nil || (message != nil && message.ID == "") || message.DeletedBy1 == authenticatedUser || message.DeletedBy2 == authenticatedUser {
 		return nil
 	}
 

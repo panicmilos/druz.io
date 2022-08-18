@@ -21,7 +21,7 @@ func (userFriendsCollection *UserFriendsCollection) ReadByIds(userID string, fri
 	userFriend := &models.UserFriend{}
 
 	err := userFriendsCollection.Session.Include(formUsersKey(friendID)).Load(&userFriend, formUserFriendsKey(userID, friendID))
-	if err != nil {
+	if err != nil || (userFriend != nil && userFriend.ID == "") {
 		return nil
 	}
 
