@@ -29,6 +29,11 @@ func formMessagesKey(fromId string, toId string) string {
 }
 
 func formCollection(fromId string, toId string) string {
+	fromIdParsed, _ := strconv.ParseUint(fromId, 10, 32)
+	toIdParsed, _ := strconv.ParseUint(toId, 10, 32)
+	if fromIdParsed < toIdParsed {
+		return fmt.Sprintf("%s-%s-%s", messages_prefix, fromId, toId)
+	}
 	return fmt.Sprintf("%s-%s-%s", messages_prefix, toId, fromId)
 }
 

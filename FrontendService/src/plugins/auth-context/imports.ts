@@ -16,7 +16,9 @@ export type Profile = {
   LivePlaces: any[],
   WorkPlaces: any[],
   Educations: any[],
-  Intereses: any[]
+  Intereses: any[],
+
+  Image: string
 };
 
 export class UsersService extends CrudService<Profile> {

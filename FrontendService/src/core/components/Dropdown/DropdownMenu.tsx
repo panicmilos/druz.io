@@ -13,6 +13,7 @@ const useStyles = createUseStyles((theme: Theme) => ({
     position: "absolute",
     top: 'auto',
     bottom: '100%',
+    right: '-20%',
     backgroundColor: "#f1f1f1",
     minWidth: "160px",
     overflow: "auto",
