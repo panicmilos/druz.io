@@ -1,8 +1,10 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { createEntitiesMap } from "../../core";
 import { AuthContext } from "../auth-context";
+import { SocketContext } from "../socket-context";
 import { useUserFriendsService } from "../users";
+import { useChatService } from "./services";
 
 export const useUserFriendNamesMap = () => {
 
@@ -25,4 +27,35 @@ export const useUserFriendsMap = () => {
 
   return createEntitiesMap(userFriends, userFriend => userFriend.FriendId, userFriend => userFriend.Friend);
 
+}
+
+export const useStatusesMap = () => {
+  const chatService = useChatService();
+
+  const [statusesMap, setStatusesMap] = useState<any>({});
+
+  useQuery([chatService], () => chatService.fetchStatuses(), {
+    onSuccess: (statuses) => {
+      const statusesMap = createEntitiesMap(statuses, status => status.UserId, status => status.Status);
+      setStatusesMap(statusesMap);
+
+      console.log(statusesMap);
+
+    }
+  });
+
+  const { client } = useContext(SocketContext);
+
+  useEffect(() => {
+    client?.on('statuses', function (data: any) {
+      const notification = JSON.parse(data.text);
+      const { Status, User: { ID } } = notification;
+      statusesMap[ID.replace('users/', '')] = Status;
+      setStatusesMap(statusesMap);
+    })
+
+    return () => { client?.off('statuses') };
+  }, [client])
+
+  return statusesMap;
 }

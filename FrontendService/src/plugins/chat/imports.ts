@@ -6,6 +6,8 @@ export type { FeaturePlugin, Result, Theme } from "../../core";
 
 export { USERS_SERVICE_URL, USER_RELATIONS_SERVICE_URL, IMAGES_SERVICE_URL, CHAT_SERVICE_URL } from '../../urls';
 
+export { SocketContext } from '../socket-context';
+
 export {
   useResult
 } from '../result-context';

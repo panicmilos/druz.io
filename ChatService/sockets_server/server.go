@@ -45,10 +45,10 @@ func heartbit(client *gosf.Client, request *gosf.Request) *gosf.Message {
 	json.Unmarshal([]byte(text), heartbit)
 
 	if _server.Clients.Get(heartbit.UserId) == nil {
-		client.Join(heartbit.UserId)
 		_server.StatusesService.NotifyCameOnline(heartbit.UserId)
 	}
 
+	client.Join(heartbit.UserId)
 	_server.Clients.Set(heartbit.UserId, client, ttlcache.DefaultTTL)
 
 	return gosf.NewSuccessMessage()
