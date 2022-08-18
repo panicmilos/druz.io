@@ -59,15 +59,17 @@ func (messagesService *MessagesService) Create(message *models.Message) (*models
 		return nil, err
 	}
 
-	if err := messagesService.NotifyMessagedUser(message); err != nil {
-		return nil, err
-	}
-
 	message.CreatedAt = time.Now()
 	message.DeletedBy1 = ""
 	message.DeletedBy2 = ""
 
-	return messagesService.repository.Messages.Create(message), nil
+	createdMessage, err := messagesService.repository.Messages.Create(message), nil
+
+	if err := messagesService.NotifyMessagedUser(message); err != nil {
+		return nil, err
+	}
+
+	return createdMessage, nil
 }
 
 func (messagesService *MessagesService) NotifyMessagedUser(message *models.Message) error {
@@ -86,7 +88,9 @@ func (messagesService *MessagesService) NotifyMessagedUser(message *models.Messa
 	}
 
 	serializedNotification, _ := json.Marshal(messageNotification)
-	gosf.Broadcast(message.ToId, "messages", gosf.NewSuccessMessage(string(serializedNotification)))
+	print(string(serializedNotification))
+	gosf.Broadcast(message.ToId, "messages_chat", gosf.NewSuccessMessage(string(serializedNotification)))
+	gosf.Broadcast(message.ToId, "messages_sidebar", gosf.NewSuccessMessage(string(serializedNotification)))
 
 	return nil
 }
@@ -99,12 +103,41 @@ func (messagesService *MessagesService) DeleteMessage(chat string, messageId str
 
 	deleteFor := []string{}
 	if mode == "for_me" {
-		deleteFor = append(deleteFor, message.FromId)
+		deleteFor = append(deleteFor, messagesService.SessionStorage.AuthenticatedUserId)
 	} else {
 		deleteFor = append(deleteFor, message.FromId, message.ToId)
+
+		if err := messagesService.NotifyAboutDeletedMesage(message); err != nil {
+			return nil, err
+		}
 	}
 
 	return messagesService.repository.Messages.DeleteMessage(chat, messageId, deleteFor), nil
+}
+
+func (messagesService *MessagesService) NotifyAboutDeletedMesage(message *models.Message) error {
+	if messagesService.Clients.Get(message.ToId) == nil {
+		return nil
+	}
+
+	from, err := messagesService.UsersService.ReadById(message.FromId)
+	if err != nil {
+		return err
+	}
+
+	messageNotification := &dto.MessageNotification{
+		Message: message,
+		From:    from,
+	}
+
+	serializedNotification, _ := json.Marshal(messageNotification)
+	if messagesService.SessionStorage.AuthenticatedUserId != message.ToId {
+		gosf.Broadcast(message.ToId, "messages_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+	} else {
+		gosf.Broadcast(message.FromId, "messages_delete", gosf.NewSuccessMessage(string(serializedNotification)))
+	}
+
+	return nil
 }
 
 func (messagesService *MessagesService) DeleteChat(chat string, mode string) ([]*models.Message, error) {

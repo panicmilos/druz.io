@@ -18,6 +18,15 @@ export const SocketContextProvider: FC = ({ children }) => {
   
   const [client, setClient] = useState<any>();
 
+  const removeListeners = () => {
+    client?.removeAllListeners('statuses');
+    client?.removeAllListeners('messages_sidebar');
+    client?.removeAllListeners('messages_chat');
+    client?.removeAllListeners('messages_delete');
+    client?.removeAllListeners('disconnect');
+    (window as any).io.removeAllListeners && (window as any).io.removeAllListeners('connection');
+  };
+
   useEffect(() => {
     if (!user) return;
 
@@ -32,23 +41,22 @@ export const SocketContextProvider: FC = ({ children }) => {
 
     client.on('connection', (client: any) => {
       client.join(user?.ID)
-      console.log(`Connected to socket server.`);
     });
 
 
     client.on('disconnect', () => {
+      removeListeners();
       console.log(`Disconnected from socket server.`);
     });
 
     const interval = setInterval(() => {
       client.emit("heartbit", { text: `{ "UserId": "${user?.ID}" }` });
-      console.log(user?.ID);
-      console.log("Heartbit sent");
-      }, 20000)
+      console.log(`Heartbit sent for ${user?.ID}`);
+      }, 5000)
 
     setClient(client);
 
-    return () => { clearInterval(interval); client?.close(); }
+    return () => { clearInterval(interval); removeListeners(); client?.close(); }
   }, [user]);
 
   return (

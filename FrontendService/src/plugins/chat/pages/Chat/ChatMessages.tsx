@@ -1,7 +1,6 @@
-import { FC, useEffect, useState } from "react";
-import { useChatService, useMessageService } from "../../services";
-import * as Yup from 'yup';
-import { Button, Form, DropdownMenu, TextAreaInput, DropdownItem, useNotificationService, extractErrorMessage } from "../../imports";
+import { FC, useContext, useEffect, useState } from "react";
+import { useChatService } from "../../services";
+import { Button, useNotificationService, extractErrorMessage, SocketContext } from "../../imports";
 import { useMutation, useQuery } from "react-query";
 import { Message } from "../../models/Message";
 import { ChatMessagesForm } from "./ChatMessagesForm";
@@ -13,8 +12,16 @@ type Props = {
   onInitial: () => any
 }
 
+var globalMessages: Message[] = [];
 
-export const ChatMessages: FC<Props> = ({ chat, onInitial}) => {
+const srollToBottom = (timeout = 20) => {
+  setTimeout(() => {
+    var element = document.getElementById("scrollable");
+    element?.scrollTop && (element.scrollTop = element?.scrollHeight);
+  }, timeout);
+}
+
+export const ChatMessages: FC<Props> = ({ chat, onInitial }) => {
 
   const { chatId, friendId } = chat;
 
@@ -22,18 +29,43 @@ export const ChatMessages: FC<Props> = ({ chat, onInitial}) => {
   const notificationService = useNotificationService();
 
   const [messages, setMessages] = useState<Message[]>([]);
-
+  globalMessages = messages;
 
   useQuery([chat, chatService], () => chatService.fetchById(chat.chatId || ''), {
     enabled: chat.chatId !== 'NOT_CREATED_YET',
-    onSuccess: (messages: Message[]) => setMessages(messages || [])
+    onSuccess: (messages: Message[]) => { setMessages(messages?.sort((m1: Message, m2: Message) => m1.CreatedAt.localeCompare(m2.CreatedAt)) || []); }
   })
+
+
+  const { client } = useContext(SocketContext);
+  useEffect(() => {
+    if (!client) return;
+
+    client?.on('messages_chat', function(data: any) {
+      const message = JSON.parse(data.text).Message as Message;
+      if (!message.ID.includes(`/${chatId}/`)) return;
+      setMessages([...globalMessages, message]);
+      srollToBottom();
+    });
+
+    client?.on('messages_delete', function(data: any) {
+      const message = JSON.parse(data.text).Message as Message;
+      if (!message.ID.includes(`/${chatId}/`)) return;
+
+      setMessages([...globalMessages.filter(m => m.ID !== message.ID)]);
+      srollToBottom();
+    });
+
+    return () => { client.removeAllListeners('messages_chat'); client.removeAllListeners('messages_delete'); }
+  }, [client]);
+  
+
+
 
   const OnSendMessage = (message: Message) => { 
     if (chat.chatId !== 'NOT_CREATED_YET') {
       setMessages([...messages, message]);
-      var element = document.getElementById("scrollable");
-      element?.scrollTop && (element.scrollTop = element?.scrollHeight);
+      srollToBottom();
     } else {
       onInitial();
     }

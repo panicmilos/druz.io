@@ -38,9 +38,6 @@ export const useStatusesMap = () => {
     onSuccess: (statuses) => {
       const statusesMap = createEntitiesMap(statuses, status => status.UserId, status => status.Status);
       setStatusesMap(statusesMap);
-
-      console.log(statusesMap);
-
     }
   });
 
@@ -50,11 +47,12 @@ export const useStatusesMap = () => {
     client?.on('statuses', function (data: any) {
       const notification = JSON.parse(data.text);
       const { Status, User: { ID } } = notification;
-      statusesMap[ID.replace('users/', '')] = Status;
-      setStatusesMap(statusesMap);
+      const newStatusesMap = {...statusesMap};
+      newStatusesMap[ID.replace('users/', '')] = Status;
+      setStatusesMap(newStatusesMap);
     })
 
-    return () => { client?.off('statuses') };
+    return () => { client?.removeAllListeners('statuses'); };
   }, [client])
 
   return statusesMap;

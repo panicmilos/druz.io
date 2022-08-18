@@ -1,8 +1,8 @@
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useQuery } from "react-query";
 import { useStatusesMap } from "../../hooks";
-import { Button, Modal, Profile } from "../../imports";
+import { Button, Modal, Profile, SocketContext } from "../../imports";
 import { Chat as ChatT } from "../../models/Chat";
 import { useChatService } from "../../services";
 import { ChatMessages } from "./ChatMessages";
@@ -61,10 +61,6 @@ export const Chat: FC = () => {
 
   const statusesMap = useStatusesMap();
 
-  // const { client } = useContext(SocketContext);
-  // client?.on('messages', function (data: any) {
-  //   console.log('Received message', data);
-  // })
 
   return (
     <>
@@ -97,7 +93,7 @@ export const Chat: FC = () => {
 
                 return (                    
                     <Button
-                      key={chat.Chat}
+                    key={chat.Chat}
                       onClick={() => setSelectedChat({ chatId: chat.Chat, friendId: friendId })}
                     >
                       {formName(chat.User)} ({ statusesMap[friendId] || 'offline'}) { selectedChat?.friendId === friendId ? 'Selected' : '' }

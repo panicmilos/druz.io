@@ -36,7 +36,7 @@ var serviceContainer = []di.Def{
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
 			cache := ttlcache.New(
-				ttlcache.WithTTL[string, *gosf.Client](30 * time.Second),
+				ttlcache.WithTTL[string, *gosf.Client](10 * time.Second),
 			)
 
 			go cache.Start()
