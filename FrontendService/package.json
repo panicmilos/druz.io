@@ -31,8 +31,8 @@
     "@types/react-dom": "^17.0.14"
   },
   "scripts": {
-    "start": "chmod +x ./env.sh && bash env.sh && cp env-config.js ./public/ && rm env-config.js && react-scripts start",
-    "build": "chmod +x ./env.sh && bash env.sh && cp env-config.js ./public/ && rm env-config.js && react-scripts build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

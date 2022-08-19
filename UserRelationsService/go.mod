@@ -27,7 +27,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	// github.com/panicmilos/druz.io/AMQPGO v0.0.0-20220813231806-a017f109c283 // indirect
+	github.com/panicmilos/druz.io/AMQPGO v0.0.0-20220818223120-07e5bcf7ee4b // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/sarulabs/di v2.0.0+incompatible // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
@@ -38,6 +38,3 @@ require (
 	gorm.io/driver/mysql v1.3.3 // indirect
 	gorm.io/gorm v1.23.5 // indirect
 )
-
-require github.com/panicmilos/druz.io/AMQPGO v0.0.0
-replace github.com/panicmilos/druz.io/AMQPGO v0.0.0 => ../AMQPGO

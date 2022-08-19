@@ -3,6 +3,8 @@ package sockets_server
 import (
 	"context"
 	"encoding/json"
+	"os"
+	"strconv"
 
 	"github.com/ambelovsky/gosf"
 	"github.com/jellydator/ttlcache/v3"
@@ -56,5 +58,6 @@ func heartbit(client *gosf.Client, request *gosf.Request) *gosf.Message {
 
 func (server *SocketsServer) Start() {
 
-	go gosf.Startup(map[string]interface{}{"port": 8010})
+	port, _ := strconv.Atoi(os.Getenv("WS_PORT"))
+	go gosf.Startup(map[string]interface{}{"port": port})
 }

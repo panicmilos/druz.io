@@ -35,6 +35,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
+	github.com/panicmilos/druz.io/AMQPGO v0.0.0-20220818223120-07e5bcf7ee4b // indirect
 	github.com/ravendb/ravendb-go-client v0.0.0-20220329095225-8c32f0ab1fe3 // indirect
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/sarulabs/di v2.0.0+incompatible // indirect
@@ -45,7 +46,3 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-require github.com/panicmilos/druz.io/AMQPGO v0.0.0
-
-replace github.com/panicmilos/druz.io/AMQPGO v0.0.0 => ../AMQPGO

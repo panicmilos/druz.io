@@ -71,5 +71,5 @@ func (server *HttpServer) Start() {
 		},
 	})
 
-	http.ListenAndServe(os.Getenv("PORT"), corsOpts.Handler(router))
+	http.ListenAndServe(os.Getenv("HTTP_PORT"), corsOpts.Handler(router))
 }
