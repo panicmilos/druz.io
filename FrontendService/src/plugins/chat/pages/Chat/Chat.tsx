@@ -40,7 +40,19 @@ const useStyles = createUseStyles({
   },
   notSelected: {
     backgroundColor: '#64caf5'
-  }
+  },
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: '5px',
+    },
+    '& img': {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%'
+    }
+  },
 });
 
 const fixId = (id: string) => id.replace('users/', '');
@@ -137,9 +149,14 @@ export const Chat: FC = () => {
                       className={`${classes.userButton} ${selectedChat?.friendId !== friendId ? classes.notSelected : ''}`}
                       onClick={() => { setSelectedChat({ chatId: chatId, friendId: friendId }); setNotificationsMap({...notificationsMap, [chatId]: 0 }); }}
                     >
-                      {formName(chat.User)}
-                      {notificationsMap[chatId] ? `(${notificationsMap[chatId]})`: ``}
-                      <span style={{margin: '0px 5px 0px 5px', fontSize: '20px', color: statusesMap[friendId] === 'online' ? 'green': 'red'}}>●</span>
+                      <div className={classes.nameContainer}>
+                      <img src={chat.User?.Image || '/images/no-image.png'}></img>
+                      <p>
+                        {formName(chat.User)}
+                        {notificationsMap[chatId] ? `(${notificationsMap[chatId]})`: ``}
+                        <span style={{margin: '0px 5px 0px 5px', fontSize: '20px', color: statusesMap[friendId] === 'online' ? 'green': 'red'}}>●</span>
+                      </p>
+                      </div>
                     </Button>
                 )
               })
@@ -150,7 +167,7 @@ export const Chat: FC = () => {
         <div className={`${classes.growFlex}`}>
           {
             selectedChat ?
-              <ChatMessages key={selectedChat?.chatId} chat={selectedChat} onInitial={() => { setFetchChats(!fetchChats); setSelectedChat(undefined); }} /> :
+              <ChatMessages key={selectedChat?.chatId} chat={selectedChat} onInitial={() => { setTimeout(() => { setFetchChats(!fetchChats) }, 300); setSelectedChat(undefined); }} /> :
               <></>
           }
         </div>

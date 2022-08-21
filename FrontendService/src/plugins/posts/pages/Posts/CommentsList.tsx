@@ -3,7 +3,8 @@ import moment from "moment"
 import { FC, useContext, useEffect, useState } from "react"
 import { createUseStyles } from "react-jss"
 import { useMutation } from "react-query"
-import { usePostsResult, useUsersMap } from "../../hooks"
+import { useNavigate } from "react-router-dom"
+import { usePostsResult, useUserImagesMap, useUsersMap } from "../../hooks"
 import { AuthContext, Button, Card, ConfirmationModal, extractErrorMessage, Modal, useNotificationService } from "../../imports"
 import { Post, Comment } from "../../models/Post"
 import { useCommentsService } from "../../services"
@@ -26,6 +27,18 @@ const useStyles = createUseStyles({
     justifyContent: 'flex-end',
     marginTop: '20px'
   },
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: '5px',
+    },
+    '& img': {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%'
+    }
+  },
 });
 
 
@@ -40,6 +53,7 @@ export const CommentsList: FC<Props> = ({ post }) => {
   const commentsService = useCommentsService(post.id);
   const notificationService = useNotificationService();
   const usersMap = useUsersMap();
+  const userImagesMap = useUserImagesMap();
   const { result, setResult } = usePostsResult();
 
   const deleteCommentMutation = useMutation(() => commentsService.delete(selectedComment?.id ?? ''), {
@@ -66,6 +80,11 @@ export const CommentsList: FC<Props> = ({ post }) => {
     }
   }, [result]);
 
+  const nav = useNavigate();
+  const navigateToUser = (userId: number) => {
+    nav(`/users/${userId}/`)
+  }
+  
   const classes = useStyles();
 
   return (
@@ -89,9 +108,14 @@ export const CommentsList: FC<Props> = ({ post }) => {
 
             <div style={{display: 'flex'}}>
               <div style={{flexGrow: 1, marginTop: '1em'}}>
-                {
-                  user?.ID + '' === comment.userId ? 'Your Comment' : usersMap[comment.userId]} @ {moment(comment.createdAt).format('yyyy-MM-DD HH:mm')
-                } 
+                <div onClick={() => navigateToUser(+post.writtenBy)} className={classes.nameContainer}>
+                  <img src={(user?.ID + '' === comment.userId ? user?.Image : userImagesMap[comment.userId]) || '/images/no-image.png' } />
+                  <p>
+                    {
+                      user?.ID + '' === comment.userId ? 'Your Comment' : usersMap[comment.userId]} @ {moment(comment.createdAt).format('yyyy-MM-DD HH:mm')
+                    }
+                  </p>
+                </div>
               </div>
               <div style={{float: 'right'}}>
                 {

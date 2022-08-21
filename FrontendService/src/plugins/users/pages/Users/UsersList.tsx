@@ -29,7 +29,7 @@ export const UsersList:FC<Props> = ({ users }) => {
 
   const nav = useNavigate();
 
-  const userChunks = chunks(users || [], 5);
+  const userChunks = chunks(users || [], 4);
 
   const classes = useStyles();
 
@@ -37,14 +37,13 @@ export const UsersList:FC<Props> = ({ users }) => {
     <>
       {
         userChunks?.map((chunk: Profile[]) => {
-
           return (
             <Container>
               {
                 chunk?.map((profile: Profile) => {
                   return (
                     <div onClick={() => nav(`/users/${profile.ID}`)} className={classes.container}>
-                      <img src={profile.Image} width={'100%'} />
+                      <img src={profile.Image || `/images/no-image.png`} width={'100%'} />
                       <p>{`${profile.FirstName} ${profile.LastName}`}</p>
                     </div>
                   )

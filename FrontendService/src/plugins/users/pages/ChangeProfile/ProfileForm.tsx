@@ -28,12 +28,12 @@ const GenderOptions = [
   { label: 'Other', value: 2 }
 ]
 
-function subtractYears(numOfYears: number, date = new Date()) {
-  date.setFullYear(date.getFullYear() - numOfYears);
+function IsMoreThenYears(numOfYears: number, date: Date) {
+  const secondDate = new Date();
+  secondDate.setFullYear(secondDate.getFullYear() - numOfYears);
 
-  return date;
+  return secondDate < date;
 }
-
 
 export const ProfileForm: FC<Props> = ({ user }) => {
 
@@ -54,17 +54,17 @@ export const ProfileForm: FC<Props> = ({ user }) => {
     LastName: Yup.string()
       .required(() => ({ LastName: "Last name mustbe provided." })) 
       .matches(ALPHANUMERIC_REGEX, () => ({LastName: "Must be a valid last name."})),
-    Birthday: Yup.date()
+    Birthday: Yup.string()
       .required(() => ({ Birthday: "Birthday must be provided." })) 
-      .max(subtractYears(13), () => ({Birthday: "Must be at least 13 year old."})),
-    Gender: Yup.number()
+      .test('be>13', () => ({Birthday: "Must be at least 13 year old."}), (v: any) => !IsMoreThenYears(13, new Date(v))),
+    Gender: Yup.string()
       .required(() => ({ Gender: "Gender must be provided." })),
     About: Yup.string()
       .required(() => ({ About: "About must be provided." })) 
       .matches(ALPHANUMERIC_REGEX, () => ({About: "Must be a valid about."})),
     PhoneNumber: Yup.string()
-      .required(() => ({ About: "Phone number must be provided." })) 
-      .matches(PHONE_NUMBER_REGEX, () => ({About: "Must be a valid phone number."})),
+      .required(() => ({ PhoneNumber: "Phone number must be provided." })) 
+      .matches(PHONE_NUMBER_REGEX, () => ({PhoneNumber: "Must be a valid phone number."})),
   });
 
   const updateProfileMutator = useMutation((profile: Profile) => userService.update(profile?.ID, profile), {
@@ -87,6 +87,7 @@ export const ProfileForm: FC<Props> = ({ user }) => {
           ID: user?.ID,
           ...values,
           Birthday: moment(values.Birthday).format(),
+          Gender: +values.Gender,
           LivePlaces: livePlaces || [],
           WorkPlaces: workPlaces?.map((wp: WorkPlace) => ({ ...wp, From: moment(wp.From).format(), To: moment(wp.To).format() })) ?? [],
           Educations: educations?.map((e: Education) => ({ ...e, From: moment(e.From).format(), To: moment(e.To).format() })) ?? [],

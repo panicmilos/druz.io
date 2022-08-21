@@ -23,7 +23,7 @@ export const SearchReportForm: FC<Props> = ({ onSearch }) => {
       onSubmit={onSearch}
     >
       <FormTextInput label="Reported" name="Reported" />
-      <FormTextInput label="ReportedBy" name="ReportedBy" />
+      <FormTextInput label="Reported By" name="ReportedBy" />
       <FormTextInput label="Reason" name="Reason" />
 
       <Button className={classes.submitButton} type="submit">Submit</Button>

@@ -21,6 +21,7 @@ export const ProfileForm: FC<Props> = ({ user }) => {
         schema={undefined}
         initialValue={{
           ...user,
+          Gender: user?.Gender + '',
           Birthday: moment(user?.Birthday).format('yyyy-MM-DD')
         }}
       >

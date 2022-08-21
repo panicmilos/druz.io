@@ -9,10 +9,10 @@ export const USERS_SERVICE_URL = `http://localhost:8000`;
 export const USER_RELATIONS_SERVICE_URL = `http://localhost:8001`;
 export const CHAT_SERVICE_URL = `http://localhost:8002`;
 export const SOCKET_SERVICE_URL = `ws://localhost:8010`;
-export const IMAGES_SERVICE_URL = `http://localhost:3000/imageService`;
-export const POSTS_SERVICE_URL = `http://localhost:3000/postsService`;
+// export const IMAGES_SERVICE_URL = `http://localhost:3000/imageService`;
+// export const POSTS_SERVICE_URL = `http://localhost:3000/postsService`;
 
-// export const IMAGES_SERVICE_URL = `http://localhost:8003`;
-// export const POSTS_SERVICE_URL = `http://localhost:8004`;
+export const IMAGES_SERVICE_URL = `http://localhost:8003`;
+export const POSTS_SERVICE_URL = `http://localhost:8004`;
 
 

@@ -10,7 +10,7 @@ type Props = {
 
 export const ChangeImageForm: FC<Props> = ({ user }) => {
 
-  const [localImageUrl, setLocalImageUrl] = useState(user?.Image || '');
+  const [localImageUrl, setLocalImageUrl] = useState(user?.Image || '/images/no-image.png');
   const [image, setImage] = useState<any>();
 
   const onImageChange = (event: any) => {
@@ -68,7 +68,7 @@ export const ChangeImageForm: FC<Props> = ({ user }) => {
 
 
   const clearImage = () => {
-    setLocalImageUrl('');
+    setLocalImageUrl('/images/no-image.png');
     setImage(undefined);
   }
 

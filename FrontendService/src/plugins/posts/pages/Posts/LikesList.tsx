@@ -1,6 +1,7 @@
 import { AxiosError } from "axios"
 import { FC, useContext } from "react"
 import { useMutation } from "react-query"
+import { useNavigate } from "react-router-dom"
 import { usePostsResult, useUsersMap } from "../../hooks"
 import { AuthContext, Button, extractErrorMessage, useNotificationService } from "../../imports"
 import { Post } from "../../models/Post"
@@ -41,7 +42,6 @@ export const LikesList: FC<Props> = ({ post }) => {
     }
   });
   const dislike = () => dislikeMutation.mutate();
-
   
   return (
     <>
@@ -55,7 +55,6 @@ export const LikesList: FC<Props> = ({ post }) => {
           post?.likedBy.map(l => user?.ID + '' === l ? 'You' : usersMap[l]).join(', ')
         }
       </div>
-
     </>
   )
 }

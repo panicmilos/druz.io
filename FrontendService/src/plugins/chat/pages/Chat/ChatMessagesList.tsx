@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import moment from "moment";
 import { FC, useContext } from "react";
+import { createUseStyles } from "react-jss";
 import { useMutation } from "react-query";
 import { useUserFriendNamesMap, useUserFriendsMap } from "../../hooks";
 import { AuthContext, DropdownItem, DropdownMenu, extractErrorMessage, useNotificationService } from "../../imports";
@@ -13,6 +14,21 @@ type Props = {
   messages: Message[],
   onDeleteCallback: (message: Message) => any
 }
+
+const useStyles = createUseStyles({
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: '5px',
+    },
+    '& img': {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%'
+    }
+  },
+});
 
 const fixId = (id: string) => id.split('/')[2];
 
@@ -37,6 +53,7 @@ export const ChatMessagesList: FC<Props> = ({ chatId, messages, onDeleteCallback
   });
   const deleteMessage = (deleteMessage: any) => deleteMessageMutator.mutate(deleteMessage);
 
+  const classes = useStyles();
 
   return (
     <>
@@ -44,9 +61,9 @@ export const ChatMessagesList: FC<Props> = ({ chatId, messages, onDeleteCallback
         messages?.map((message: Message) => {
           return (
           <div key={message.ID} style={{width: '98%', marginBottom: '15px'}}>
-            <div style={{display: 'flex'}}>
-              <img src={userFriendsMap[message.FromId]?.Image || user?.Image} width='36px' height='36px' style={{marginRight: '10px'}} />
-              <p style={{marginTop: '8px'}}>{userFriendNamesMap[message.FromId] || 'You'} @ {moment(message.CreatedAt).format('yyyy-MM-DD HH:mm')}: {message.Message}</p>
+            <div className={classes.nameContainer}>
+              <img src={(message.FromId + '' === user?.ID + '' ? user?.Image : userFriendsMap[+message.FromId]?.Image) || '/images/no-image.png'} />
+              <p>{userFriendNamesMap[message.FromId] || 'You'} @ {moment(message.CreatedAt).format('yyyy-MM-DD HH:mm')}: {message.Message}</p>
             </div>
             <div style={{float: 'right', marginTop: '-2.65em'}}>
               <DropdownMenu>

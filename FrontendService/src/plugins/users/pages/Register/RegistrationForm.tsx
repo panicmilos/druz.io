@@ -8,10 +8,11 @@ import { createUseStyles } from "react-jss";
 import moment from "moment";
 
 
-function subtractYears(numOfYears: number, date = new Date()) {
-  date.setFullYear(date.getFullYear() - numOfYears);
+function IsMoreThenYears(numOfYears: number, date: Date) {
+  const secondDate = new Date();
+  secondDate.setFullYear(secondDate.getFullYear() - numOfYears);
 
-  return date;
+  return secondDate < date;
 }
 
 const useStyles = createUseStyles({
@@ -52,11 +53,11 @@ export const RegistrationForm: FC = () => {
     LastName: Yup.string()
       .required(() => ({ LastName: "Last name must be provided." })) 
       .matches(ALPHANUMERIC_REGEX, () => ({LastName: "Must be a valid last name."})),
-    Birthday: Yup.date()
+    Birthday: Yup.string()
       .required(() => ({ Birthday: "Birthday must be provided." })) 
-      .max(subtractYears(13), () => ({Birthday: "Must be at least 13 year old."})),
-    Gender: Yup.number()
-      .required(() => ({ Gender: "Gender must be provided." })) 
+      .test('be>13', () => ({Birthday: "Must be at least 13 year old."}), (v: any) => !IsMoreThenYears(13, new Date(v))),
+    Gender: Yup.string()
+      .required(() => ({ Gender: "Gender must be provided." }))
   });
 
   const registerUserMutation = useMutation((createUser: any) => usersService.add(createUser), {

@@ -29,7 +29,7 @@ export const SearchUserForm: FC<Props> = ({ onSearch }) => {
       onSubmit={(values) => {
         onSearch({
           ...values,
-          Gender: +values.Gender
+          ...(values.Gender ? { Gender: +values.Gender } : {})
         });
       }}
     >

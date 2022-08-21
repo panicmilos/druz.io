@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import { FC, useContext, useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { useFriendRequestsResult } from "../../hooks";
 import { AuthContext, Button, ConfirmationModal, extractErrorMessage, Table, TableBody, TableHead, TableRow, useNotificationService } from "../../imports";
 import { FriendRequest } from "../../models/FriendRequest";
@@ -16,7 +17,19 @@ const useStyles = createUseStyles({
     '& button': {
       margin: '0em 0.5em 0.5em 0.5em'
     }
-  }
+  },
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: '5px',
+    },
+    '& img': {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%'
+    }
+  },
 });
 
 
@@ -78,6 +91,11 @@ export const ReceivedFriendRequestsTable: FC<Props> = ({ friendRequests }) => {
 
   const classes = useStyles();
 
+  const nav = useNavigate();
+  const navigateToUser = (userId: number) => {
+    nav(`/users/${userId}/`)
+  }
+  
   return (
     <div className={classes.container}>
 
@@ -97,7 +115,7 @@ export const ReceivedFriendRequestsTable: FC<Props> = ({ friendRequests }) => {
             <TableRow 
               key={friendRequest.ID}
               cells={[
-                `${friendRequest.User.FirstName} ${friendRequest.User.LastName}`,
+                <div onClick={() => navigateToUser(friendRequest.UserId)} className={classes.nameContainer}><img src={friendRequest.User.Image || '/images/no-image.png'} /><p>{friendRequest.User.FirstName} {friendRequest.User.LastName}</p></div>,
                 <ActionsButtonGroup friendRequest={friendRequest} />
             ]}/>
             )

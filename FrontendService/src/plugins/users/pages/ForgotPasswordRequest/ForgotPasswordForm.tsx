@@ -37,7 +37,7 @@ export const ForgotPasswordForm: FC = () => {
   const classes = useStyles();
 
   return (
-    <Card title="Change Password">
+    <Card title="Password Recovery Request">
       <Form
           schema={schema}
           onSubmit={(values) => requestPasswordRecovery(values.Email)}

@@ -13,8 +13,8 @@ export const useUserFriendNamesMap = () => {
   const userFriendsService = useUserFriendsService(user?.ID ?? '');
   const [userFriendsMap, setUserFriendsMap] = useState<any>({});
   
-  useQuery([], () => userFriendsService.fetch(), {
-    onSuccess: (userFriends) => setUserFriendsMap(createEntitiesMap(userFriends, userFriend => `${userFriend.Friend.FirstName} ${userFriend.Friend.LastName}`))
+  useQuery(['friendNamesMapInChat'], () => userFriendsService.fetch(), {
+    onSuccess: (userFriends) => setUserFriendsMap(createEntitiesMap(userFriends, userFriend => userFriend.FriendId, userFriend => `${userFriend.Friend.FirstName} ${userFriend.Friend.LastName}`))
   });
 
   return userFriendsMap; 
@@ -27,7 +27,7 @@ export const useUserFriendsMap = () => {
   const userFriendsService = useUserFriendsService(user?.ID ?? '');
   const [userFriendsMap, setUserFriendsMap] = useState<any>({});
 
-  useQuery([], () => userFriendsService.fetch(), {
+  useQuery(['friendsMapInChat'], () => userFriendsService.fetch(), {
     onSuccess: (userFriends) => setUserFriendsMap(createEntitiesMap(userFriends, userFriend => userFriend.FriendId, userFriend => userFriend.Friend))
   });
 

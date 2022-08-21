@@ -16,7 +16,19 @@ const useStyles = createUseStyles({
     '& button': {
       margin: '0em 0.5em 0.5em 0.5em'
     }
-  }
+  },
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: '5px',
+    },
+    '& img': {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%'
+    }
+  },
 });
 
 export const BlockedUsersTable: FC<Props> = ({ userBlocks }) => {
@@ -54,7 +66,7 @@ export const BlockedUsersTable: FC<Props> = ({ userBlocks }) => {
 
   const ActionsButtonGroup = ({ userBlok }: any) =>
     <>
-      <Button onClick={() => { setSelectedUserBlock(userBlok); setIsUnblockUserOpen(true); }}>Unlbock</Button>
+      <Button onClick={() => { setSelectedUserBlock(userBlok); setIsUnblockUserOpen(true); }}>Unblock</Button>
     </>
     
   const classes = useStyles();
@@ -74,7 +86,7 @@ export const BlockedUsersTable: FC<Props> = ({ userBlocks }) => {
             <TableRow 
               key={userBlock.ID}
               cells={[
-                `${userBlock.Blocked.FirstName} ${userBlock.Blocked.LastName}`,
+                <div className={classes.nameContainer}><img src={userBlock.Blocked.Image || '/images/no-image.png'} /><p>{userBlock.Blocked.FirstName} {userBlock.Blocked.LastName}</p></div>,
                 <ActionsButtonGroup userBlok={userBlock}/>
             ]}/>
             )

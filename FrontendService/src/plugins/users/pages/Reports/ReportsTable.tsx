@@ -1,7 +1,9 @@
 import { AxiosError } from "axios";
+import { IncomingMessage } from "http";
 import { FC, useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { useReportsResult } from "../../hooks";
 import { Button, ConfirmationModal, extractErrorMessage, Table, TableBody, TableHead, TableRow, useNotificationService } from "../../imports";
 import { Report } from "../../models/Report";
@@ -16,7 +18,20 @@ const useStyles = createUseStyles({
     '& button': {
       margin: '0em 0.5em 0.5em 0.5em'
     }
-  }
+  },
+  nameContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    '& p': {
+      marginLeft: '5px',
+    },
+    '& img': {
+      width: '36px',
+      height: '36px',
+      borderRadius: '50%'
+    }
+  },
+  
 });
 
 export const ReportsTable: FC<Props> = ({ reports }) => {
@@ -75,6 +90,11 @@ export const ReportsTable: FC<Props> = ({ reports }) => {
     <Button onClick={() => { setSelectedReport(report); setIsBlockUserOpen(true); }}>Block</Button>
   </>
 
+  const nav = useNavigate();
+  const navigateToUser = (userId: number) => {
+    nav(`/users/${userId}/`)
+  }
+
   const classes = useStyles();
 
 
@@ -97,8 +117,8 @@ export const ReportsTable: FC<Props> = ({ reports }) => {
             <TableRow 
               key={report.ID}
               cells={[
-                `${report.Reported.FirstName} ${report.Reported.LastName}`,
-                `${report.ReportedBy.FirstName} ${report.ReportedBy.LastName}`,
+                <div onClick={() => navigateToUser(report.ReportedId)} className={classes.nameContainer}><img src={report.Reported.Image || '/images/no-image.png'} /><p>{report.Reported.FirstName} {report.Reported.LastName}</p></div>,
+                <div onClick={() => navigateToUser(report.ReportedById)} className={classes.nameContainer}><img src={report.ReportedBy.Image || '/images/no-image.png'} /><p>{report.ReportedBy.FirstName} {report.ReportedBy.LastName}</p></div>,
                 report.Reason,
                 <ActionsButtonGroup report={report}/>
             ]}/>

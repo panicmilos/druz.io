@@ -37,7 +37,7 @@ export const RequestReactivationForm: FC = () => {
   const classes = useStyles();
 
   return (
-    <Card title="Change Password">
+    <Card title="Profile Reactivation Request">
       <Form
           schema={schema}
           onSubmit={(values) => requestReactivation(values.Email)}

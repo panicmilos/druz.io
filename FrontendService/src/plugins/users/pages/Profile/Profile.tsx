@@ -2,7 +2,7 @@ import { AxiosError } from "axios";
 import { FC, useContext, useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMutation, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useReportsResult } from "../../hooks";
 import { ADMIN_ROLE, AuthContext, Button, ConfirmationModal, Container, extractErrorMessage, Modal, useNotificationService } from "../../imports";
 import { useFriendRequestsService, useUserBlocksService, useUserFriendsService, useUserService } from "../../services";
@@ -32,6 +32,7 @@ export const Profile: FC = () => {
   
   const { id } = useParams();
   const authContext = useContext(AuthContext);
+  const nav = useNavigate();
 
   const userService = useUserService();
   const userBlocksService = useUserBlocksService(authContext.user?.ID ?? '');
@@ -100,6 +101,7 @@ export const Profile: FC = () => {
 
     if (result.status === 'OK' && result.type === 'BLOCK_USER') {
       setIsBlockUserOpen(false);
+      nav('/users/blocked');
     }
 
     if (result.status === 'OK' && result.type === 'ADD_FRIEND') {
@@ -154,7 +156,7 @@ export const Profile: FC = () => {
             }
 
             <Container>
-              <img src={user.Image} style={{maxHeight: '400px'}} />
+              <img src={user.Image || '/images/no-image.png'} style={{maxHeight: '400px'}} />
 
               <ProfileForm user={user} />
             </Container>
