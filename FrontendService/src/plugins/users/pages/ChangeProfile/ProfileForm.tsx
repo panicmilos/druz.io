@@ -60,8 +60,7 @@ export const ProfileForm: FC<Props> = ({ user }) => {
     Gender: Yup.string()
       .required(() => ({ Gender: "Gender must be provided." })),
     About: Yup.string()
-      .required(() => ({ About: "About must be provided." })) 
-      .matches(ALPHANUMERIC_REGEX, () => ({About: "Must be a valid about."})),
+      .required(() => ({ About: "About must be provided." })) ,
     PhoneNumber: Yup.string()
       .required(() => ({ PhoneNumber: "Phone number must be provided." })) 
       .matches(PHONE_NUMBER_REGEX, () => ({PhoneNumber: "Must be a valid phone number."})),
@@ -80,7 +79,7 @@ export const ProfileForm: FC<Props> = ({ user }) => {
   return (
 
     <Form
-      initialValue={{ ...user, Birthday: moment(user?.Birthday).format('yyyy-MM-DD')}}
+      initialValue={{ ...user, Gender: user?.Gender + '', Birthday: moment(user?.Birthday).format('yyyy-MM-DD')}}
       schema={schema}
       onSubmit={(values: any) => {
         const updateUser = {

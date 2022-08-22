@@ -31,9 +31,12 @@ class AMQPConsumer:
       credentials=pika.PlainCredentials(connectionParams.username, connectionParams.password)
     ))
     self._channel = self._connection.channel()
-    self._channel.queue_declare(queue=queue)
+    self._channel.exchange_declare(exchange='emails', exchange_type='fanout', durable=True)
+    result = self._channel.queue_declare(queue='', exclusive=True)
+    queue_name = result.method.queue
+    self._channel.queue_bind(exchange='emails', queue=queue_name)
     self._callback = None
-    self._channel.basic_consume(queue=queue, on_message_callback=self.callback, auto_ack=True)
+    self._channel.basic_consume(queue=queue_name, on_message_callback=self.callback, auto_ack=True)
 
   def callback(self, ch, method, properties, body):
     self._callback(ch, method, properties, body)

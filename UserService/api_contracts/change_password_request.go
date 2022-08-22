@@ -14,9 +14,6 @@ type ChangePasswordRequest struct {
 
 func (request *ChangePasswordRequest) Validate() error {
 	err := validation.ValidateStruct(request,
-		validation.Field(&request.CurrentPassword,
-			*helpers.ValidatePassword()...,
-		),
 		validation.Field(&request.NewPassword,
 			*helpers.ValidatePassword()...,
 		),

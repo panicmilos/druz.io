@@ -15,6 +15,7 @@ type UserDTO struct {
 	ID        uint
 	FirstName string
 	LastName  string
+	Image     string
 	Disabled  bool
 }
 
@@ -23,6 +24,7 @@ func (userDTO *UserDTO) ToModel() *models.User {
 		ID:        strconv.Itoa(int(userDTO.ID)),
 		FirstName: userDTO.FirstName,
 		LastName:  userDTO.LastName,
+		Image:     userDTO.Image,
 		Disabled:  userDTO.Disabled,
 	}
 }

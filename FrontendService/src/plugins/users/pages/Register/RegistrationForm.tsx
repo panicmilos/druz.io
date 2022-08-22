@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { createUseStyles } from "react-jss";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 
 function IsMoreThenYears(numOfYears: number, date: Date) {
@@ -60,9 +61,12 @@ export const RegistrationForm: FC = () => {
       .required(() => ({ Gender: "Gender must be provided." }))
   });
 
+  const nav = useNavigate();
+
   const registerUserMutation = useMutation((createUser: any) => usersService.add(createUser), {
     onSuccess: () => {
       notificationService.success('You have successfully created new profile.');
+      nav('/')
     },
     onError: (error: AxiosError) => {
       notificationService.error(extractErrorMessage(error.response?.data));

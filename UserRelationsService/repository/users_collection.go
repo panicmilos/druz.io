@@ -21,6 +21,17 @@ func (userCollection *UsersCollection) ReadById(id uint) *models.User {
 	return user
 }
 
+func (userCollection *UsersCollection) ReadByIdEvenDisabled(id uint) *models.User {
+	user := &models.User{}
+
+	result := userCollection.DB.First(user, id)
+	if result.RowsAffected == 0 {
+		return nil
+	}
+
+	return user
+}
+
 func (userCollection *UsersCollection) Create(user *models.User) *models.User {
 	userCollection.DB.Create(user)
 
@@ -34,7 +45,7 @@ func (userCollection *UsersCollection) Update(user *models.User) *models.User {
 }
 
 func (userCollection *UsersCollection) Delete(id uint) *models.User {
-	user := userCollection.ReadById(id)
+	user := userCollection.ReadByIdEvenDisabled(id)
 
 	userCollection.DB.Delete(user)
 
@@ -42,7 +53,7 @@ func (userCollection *UsersCollection) Delete(id uint) *models.User {
 }
 
 func (userCollection *UsersCollection) Disable(id uint) *models.User {
-	user := userCollection.ReadById(id)
+	user := userCollection.ReadByIdEvenDisabled(id)
 
 	user.Disabled = true
 
@@ -52,7 +63,7 @@ func (userCollection *UsersCollection) Disable(id uint) *models.User {
 }
 
 func (userCollection *UsersCollection) Reactivate(id uint) *models.User {
-	user := userCollection.ReadById(id)
+	user := userCollection.ReadByIdEvenDisabled(id)
 
 	user.Disabled = false
 

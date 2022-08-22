@@ -51,6 +51,7 @@ func (userFriendsCollection *UserFriendsCollection) Delete(userID string, friend
 	userFriend := userFriendsCollection.ReadByIds(userID, friendID)
 
 	userFriendsCollection.Session.Delete(userFriend)
+	userFriendsCollection.Session.SaveChanges()
 
 	return userFriend
 }

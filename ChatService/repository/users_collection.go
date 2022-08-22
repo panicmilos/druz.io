@@ -43,32 +43,57 @@ func (usersCollection *UsersCollection) Update(user *models.User) *models.User {
 		user.ID = formUsersKey(user.ID)
 	}
 
-	usersCollection.Session.Store(user)
+	existingUser := &models.User{}
+	usersCollection.Session.Load(&existingUser, user.ID)
+
+	existingUser.FirstName = user.FirstName
+	existingUser.LastName = user.LastName
+	existingUser.Image = user.Image
+
 	usersCollection.Session.SaveChanges()
 
-	return user
+	return existingUser
 }
 
 func (usersCollection *UsersCollection) Delete(id string) *models.User {
 	user := usersCollection.ReadById(id)
 
 	usersCollection.Session.Delete(user)
+	usersCollection.Session.SaveChanges()
 
 	return user
 }
 
 func (usersCollection *UsersCollection) Disable(id string) *models.User {
-	user := usersCollection.ReadById(id)
+	if !strings.HasPrefix(id, users_prefix) {
+		id = formUsersKey(id)
+	}
 
-	user.Disabled = true
+	existingUser := &models.User{}
+	usersCollection.Session.Load(&existingUser, id)
 
-	return usersCollection.Update(user)
+	existingUser.Magic = "Disabled"
+	existingUser.Disabled = true
+
+	usersCollection.Session.Store(existingUser)
+	usersCollection.Session.SaveChanges()
+
+	return existingUser
 }
 
 func (usersCollection *UsersCollection) Reactivate(id string) *models.User {
-	user := usersCollection.ReadById(id)
+	if !strings.HasPrefix(id, users_prefix) {
+		id = formUsersKey(id)
+	}
 
-	user.Disabled = false
+	existingUser := &models.User{}
+	usersCollection.Session.Load(&existingUser, id)
 
-	return usersCollection.Update(user)
+	existingUser.Magic = "Enabled"
+	existingUser.Disabled = false
+
+	usersCollection.Session.Store(existingUser)
+	usersCollection.Session.SaveChanges()
+
+	return existingUser
 }

@@ -7,11 +7,12 @@ import (
 	"github.com/panicmilos/druz.io/AMQPGO/settings"
 	"github.com/panicmilos/druz.io/ChatService/dto"
 	"github.com/panicmilos/druz.io/ChatService/repository"
+	ravendb "github.com/ravendb/ravendb-go-client"
 )
 
 type UsersReplicator struct {
 	receiver *clients.AMQPReceiver
-	Users    *repository.UsersCollection
+	store    *ravendb.DocumentStore
 }
 
 func (usersReplicator *UsersReplicator) Initialize() {
@@ -27,18 +28,25 @@ func (usersReplicator *UsersReplicator) StartReplicating() {
 
 		user := userReplication.User.ToModel()
 
+		session, _ := usersReplicator.store.OpenSession("")
+		usersCollection := &repository.UsersCollection{
+			Session: session,
+		}
+
 		switch userReplication.ReplicationType {
 		case "Create":
-			usersReplicator.Users.Create(user)
+			usersCollection.Create(user)
 		case "Update":
-			usersReplicator.Users.Update(user)
+			usersCollection.Update(user)
 		case "Delete":
-			usersReplicator.Users.Delete(user.ID)
+			usersCollection.Delete(user.ID)
 		case "Disable":
-			usersReplicator.Users.Disable(user.ID)
+			usersCollection.Disable(user.ID)
 		case "Reactivate":
-			usersReplicator.Users.Reactivate(user.ID)
+			usersCollection.Reactivate(user.ID)
 		}
+
+		usersCollection.Session.Close()
 	})
 }
 

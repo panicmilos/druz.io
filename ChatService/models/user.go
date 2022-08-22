@@ -7,4 +7,5 @@ type User struct {
 	LastName  string
 	Disabled  bool
 	Image     string
+	Magic     string
 }

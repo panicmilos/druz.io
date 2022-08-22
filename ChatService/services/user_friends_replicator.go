@@ -7,11 +7,12 @@ import (
 	"github.com/panicmilos/druz.io/AMQPGO/settings"
 	"github.com/panicmilos/druz.io/ChatService/dto"
 	"github.com/panicmilos/druz.io/ChatService/repository"
+	ravendb "github.com/ravendb/ravendb-go-client"
 )
 
 type UserFriendsReplicator struct {
-	receiver    *clients.AMQPReceiver
-	UserFriends *repository.UserFriendsCollection
+	receiver *clients.AMQPReceiver
+	store    *ravendb.DocumentStore
 }
 
 func (userFriendsReplicator *UserFriendsReplicator) Initialize() {
@@ -27,12 +28,19 @@ func (userFriendsReplicator *UserFriendsReplicator) StartReplicating() {
 
 		userFriend := userFriendReplication.UserFriend.ToModel()
 
+		session, _ := userFriendsReplicator.store.OpenSession("")
+		userFriendsCollection := &repository.UserFriendsCollection{
+			Session: session,
+		}
+
 		switch userFriendReplication.ReplicationType {
 		case "Add":
-			userFriendsReplicator.UserFriends.Create(userFriend)
+			userFriendsCollection.Create(userFriend)
 		case "Remove":
-			userFriendsReplicator.UserFriends.Delete(userFriend.UserId, userFriend.FriendId)
+			userFriendsCollection.Delete(userFriend.UserId, userFriend.FriendId)
 		}
+
+		userFriendsCollection.Session.Close()
 	})
 }
 

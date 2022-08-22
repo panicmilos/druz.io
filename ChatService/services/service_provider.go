@@ -124,11 +124,9 @@ var serviceContainer = []di.Def{
 		Name:  UserReplicator,
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
-			session := ctn.Get(AppDatabaseInstance).(*ravendb.DocumentSession)
+			store := ctn.Get(DocumentStore).(*ravendb.DocumentStore)
 			usersReplicator := &UsersReplicator{
-				Users: &repository.UsersCollection{
-					Session: session,
-				},
+				store: store,
 			}
 			usersReplicator.Initialize()
 
@@ -145,11 +143,9 @@ var serviceContainer = []di.Def{
 		Name:  UserFriendReplicator,
 		Scope: di.App,
 		Build: func(ctn di.Container) (interface{}, error) {
-			session := ctn.Get(AppDatabaseInstance).(*ravendb.DocumentSession)
+			store := ctn.Get(DocumentStore).(*ravendb.DocumentStore)
 			userFriendsReplicator := &UserFriendsReplicator{
-				UserFriends: &repository.UserFriendsCollection{
-					Session: session,
-				},
+				store: store,
 			}
 			userFriendsReplicator.Initialize()
 
